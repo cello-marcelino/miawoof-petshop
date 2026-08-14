@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+::-moz-placeholder {
+  color: white;
+  opacity: 0.3;
+}
+
+::placeholder {
+  color: white;
+  opacity: 0.3;
+}
+
+body {
+  font-family: "inria sans", sans-serif;
+  position: relative;
+  background-color: rgb(240, 240, 240);
+  overflow-x: hidden;
+}
+
+main {
+  padding: 20px;
+  font-size: 0.9rem;
+}
+@media (min-width: 768px) {
+  main {
+    font-size: 1rem;
+  }
+}
+
+main > input {
+  font-size: 0.9rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+main .main-header {
+  margin-bottom: 1rem;
+}
+
+main > section {
+  background-color: #FDFDFD;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.produk-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.produk-detail {
+  display: flex;
+  gap: 10px;
+}
+.produk-detail img {
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: gainsboro;
+}
+.produk-detail #nama_produk {
+  color: rgb(19, 19, 19);
+  font-size: 1.2rem;
+}
+.produk-detail #harga {
+  font-weight: bold;
+}
+.produk-detail .production, .produk-detail .expired {
+  display: flex;
+  flex-direction: column;
+}
+
+.produk-detail-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.detail-harga-section {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.harga-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.total {
+  border-top: 1px solid gray;
+}
+
+.button-section {
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  box-shadow: unset;
+  gap: 1rem;
+  padding: 0;
+  margin-top: 1rem;
+}
+@media (min-width: 576px) {
+  .button-section {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+.button-section button {
+  padding: 10px 2rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.button-section button:last-child {
+  color: #875749;
+  background-color: #FDFDFD;
+  padding: 8px 2rem;
+  border: 2px solid #875749;
+}
+.button-section #submitBtn {
+  background-color: #875749;
+  color: #FDFDFD;
+}
+
+#displayJumlah {
+  text-transform: lowercase;
+}

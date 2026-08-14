@@ -1,0 +1,176 @@
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+::-moz-placeholder {
+  color: white;
+  opacity: 0.3;
+}
+
+::placeholder {
+  color: white;
+  opacity: 0.3;
+}
+
+body {
+  font-family: "inria sans", sans-serif;
+  position: relative;
+  background-color: rgb(240, 240, 240);
+  overflow-x: hidden;
+}
+
+main {
+  padding: 20px;
+  font-size: 0.9rem;
+}
+@media (min-width: 768px) {
+  main {
+    font-size: 1rem;
+  }
+}
+
+main > input {
+  font-size: 0.9rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 2rem;
+  border-radius: 5px;
+  background-color: #FDFDFD;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .details {
+    flex-direction: row;
+  }
+}
+.details .list-detail {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  border-left: 1px solid gainsboro;
+  gap: 5px;
+}
+.details .list-detail:first-child {
+  flex-grow: 0;
+  border: none;
+  padding-left: 0;
+}
+.details .list-detail div:first-of-type {
+  color: gray;
+}
+.details .list-detail div:first-of-type:last-of-type {
+  font-weight: bold;
+}
+
+.detail-status {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1rem;
+  width: 100%;
+  justify-content: end;
+}
+@media (min-width: 768px) {
+  .detail-status {
+    flex-direction: row;
+  }
+}
+.detail-status a {
+  padding: 10px 1rem;
+  width: 100%;
+  text-align: center;
+  border-radius: 5px;
+  color: #FDFDFD;
+  cursor: default;
+}
+@media (min-width: 768px) {
+  .detail-status a {
+    width: -moz-fit-content;
+    width: fit-content;
+  }
+}
+.detail-status a:first-child {
+  cursor: pointer;
+  background-color: #2E5B7A;
+}
+
+.popUp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.popUp .detail-pesanan-modal {
+  background-color: #FDFDFD;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 5px;
+}
+.popUp .detail-pesanan-modal .modal-head {
+  font-size: 1.2rem;
+}
+.popUp .detail-pesanan-modal .detail-harga {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid gainsboro;
+}
+.popUp .detail-pesanan-modal .rekening-miawoof {
+  text-align: center;
+  background-color: gainsboro;
+  border-radius: 4px;
+  padding: 1rem 0;
+}
+.popUp .detail-pesanan-modal .action-button {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.7rem;
+}
+.popUp .detail-pesanan-modal button {
+  padding: 0.8rem 0;
+  border-radius: 5px;
+  width: 100%;
+  background-color: #2E5B7A;
+  border: none;
+  color: #FDFDFD;
+  font-weight: bold;
+  cursor: pointer;
+}
+@media (min-width: 768px) {
+  .popUp .detail-pesanan-modal button {
+    align-self: center;
+  }
+}
+.popUp .detail-pesanan-modal button:last-of-type {
+  background-color: #DD332A;
+}

@@ -1,0 +1,62 @@
+$primary-color: #875749;
+$secondary-color: #2E5B7A;
+$white: #FDFDFD;
+$warning: #F2A500;
+$danger: #DD332A;
+$succes: #058751;
+$font1: "inria sans", sans-serif;
+$font2: "Irish Grover", serif;
+
+@mixin mediaScreen($size) {
+  @if $size == sm {
+    @media (min-width: 576px) {
+      @content;
+    }
+  }
+
+  @else if $size == md {
+    @media (min-width: 768px) {
+      @content;
+    }
+  }
+
+  @else if $size == lg {
+    @media (min-width: 992px) {
+      @content;
+    }
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+::placeholder {
+  color: white;
+  opacity: .3;
+}
+
+body {
+  font-family: $font1;
+  position: relative;
+  background-color: rgb(240, 240, 240);
+  overflow-x: hidden;
+}
+
+main {
+  padding: 20px;
+  font-size: .9rem;
+  @include mediaScreen(md) {
+    font-size: 1rem;
+  }
+}
+
+main > input {
+  font-size: .9rem;
+}
+
+

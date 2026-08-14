@@ -1,0 +1,86 @@
+@import '../main';
+
+main section {
+    background-color: $white;
+    padding: 1rem;
+}
+.produk-detail {
+    display: flex;
+    flex-direction: column;
+    @include mediaScreen(md) {
+        flex-direction: row;
+    }
+    gap: 2rem;
+    border-radius: 7px 7px 0 0;
+    // border: 1px solid red;
+
+    .product-img {
+        width: 200px;
+        height: 300px;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        // border: 1px solid black;
+        font-size: 1.3rem;
+
+        .qtty-btn {
+            border: 2px solid $primary-color;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+            padding: 0 10px;
+            border-radius: 10px;
+            span {
+                text-align: center;
+                width: 2rem;
+                // border: 2px solid red;
+            }
+
+            img {
+                width: 1rem;
+                cursor: pointer;
+            }
+        }
+
+        button {
+            padding: 12px 0;
+            border-radius: 7px;
+            border: none;
+            min-width: 100%;
+            background-color: $secondary-color;
+            color: $white;
+            cursor: pointer;
+        }
+    }
+}
+
+.produk-info {
+    border-radius: 0 0 7px 7px;
+    .produk-info-head {
+        background-color: $primary-color;
+        color: $white;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-around;
+        padding: 1rem 0;
+        text-transform: capitalize;
+    }
+
+    .detail-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 1rem;
+
+        .detail {
+            border-right: 2px solid gray;
+            margin-right: 1rem;
+        }
+    }
+}
