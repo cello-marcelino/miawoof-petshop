@@ -16,7 +16,7 @@
         <div class="container">
             <!-- Header Title -->
             <div class="text-center mb-5">
-                <span class="badge bg-primary text-white rounded-pill px-3 py-2 fw-bold mb-2">✂️ Salon & Spa Khusus Kucing & Anjing</span>
+                <span class="badge bg-primary text-white border border-1 border-dark px-3 py-2 fw-bold mb-2">Salon & Perawatan Higienis</span>
                 <h2 class="fw-bold text-dark">Layanan Grooming Profesional MiaWoof</h2>
                 <p class="text-muted mx-auto" style="max-width: 650px;">
                     Perawatan higienis menyeluruh dengan shampo anti kutu & jamur, air hangat bersuhu stabil, serta ditangani oleh perawat hewan berpengalaman.
@@ -29,26 +29,34 @@
             </div>
 
             <!-- Facility Highlights Banner -->
-            <div class="card-modern p-4 bg-white border rounded-4 mt-5">
-                <h5 class="fw-bold text-dark mb-3 text-center">Mengapa Memilih Grooming di MiaWoof? 🌟</h5>
+            <div class="card-modern p-4 bg-white mt-5">
+                <h5 class="fw-bold text-dark mb-4 text-center">Standar Keunggulan Fasilitas MiaWoof</h5>
                 <div class="row g-4 text-center">
                     <div class="col-md-3 col-6">
-                        <div class="fs-1 mb-2">🛁</div>
+                        <div class="p-3 border border-2 border-dark rounded-2 bg-light mb-2 d-inline-block">
+                            <img src="/images/icons/paw.svg" alt="Air Hangat" width="24" height="24">
+                        </div>
                         <h6 class="fw-bold text-dark mb-1">Air Hangat Steril</h6>
                         <p class="text-muted small mb-0">Mandi nyaman tanpa membuat anabul stres.</p>
                     </div>
                     <div class="col-md-3 col-6">
-                        <div class="fs-1 mb-2">🌿</div>
+                        <div class="p-3 border border-2 border-dark rounded-2 bg-light mb-2 d-inline-block">
+                            <img src="/images/icons/scissors.svg" alt="Shampo" width="24" height="24">
+                        </div>
                         <h6 class="fw-bold text-dark mb-1">Shampo Organik</h6>
-                        <p class="text-muted small mb-0">Formula alami lembut untuk kulit & bulu sensitif.</p>
+                        <p class="text-muted small mb-0">Formula lembut untuk kulit & bulu sensitif.</p>
                     </div>
                     <div class="col-md-3 col-6">
-                        <div class="fs-1 mb-2">✂️</div>
+                        <div class="p-3 border border-2 border-dark rounded-2 bg-light mb-2 d-inline-block">
+                            <img src="/images/icons/user.svg" alt="Groomer" width="24" height="24">
+                        </div>
                         <h6 class="fw-bold text-dark mb-1">Groomer Ahli</h6>
                         <p class="text-muted small mb-0">Penanganan penuh kasih sayang dan terlatih.</p>
                     </div>
                     <div class="col-md-3 col-6">
-                        <div class="fs-1 mb-2">🛡️</div>
+                        <div class="p-3 border border-2 border-dark rounded-2 bg-light mb-2 d-inline-block">
+                            <img src="/images/icons/clock.svg" alt="Higienis" width="24" height="24">
+                        </div>
                         <h6 class="fw-bold text-dark mb-1">Ruangan Higienis</h6>
                         <p class="text-muted small mb-0">Disinfeksi menyeluruh setiap selesai treatment.</p>
                     </div>
@@ -60,13 +68,13 @@
     <!-- Booking Modal -->
     <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3">
-                    <h5 class="modal-title fw-bold">Reservasi Jadwal Grooming ✂️</h5>
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold">Reservasi Jadwal Grooming</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="p-3 bg-light rounded-3 mb-4">
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
                         <h6 class="fw-bold text-dark mb-1" id="modalPaketName">Paket Grooming</h6>
                         <div class="text-primary fw-bold fs-5" id="modalPaketPrice">Rp 0</div>
                         <div class="text-muted small mt-1" id="modalPaketKet">Rincian perawatan...</div>
@@ -104,7 +112,8 @@
 
     <div id="footer-root"></div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
@@ -184,11 +193,11 @@
                 if (data.success && data.data.length > 0) {
                     grid.innerHTML = data.data.map(p => `
                         <div class="col-lg-6">
-                            <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between border-top border-4 ${p.nama_paket.toLowerCase().includes('premium') ? 'border-primary' : 'border-secondary'}">
+                            <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between">
                                 <div>
                                     <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <span class="badge ${p.jenis_hewan === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize fw-bold px-3 py-1">
-                                            ${p.jenis_hewan === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                            ${p.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'}
                                         </span>
                                         <div class="fw-bold text-primary fs-4">${formatRupiah(p.harga)}</div>
                                     </div>
@@ -196,7 +205,8 @@
                                     <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
                                 </div>
                                 <button class="btn btn-primary-custom w-100 justify-content-center py-2" onclick='openBookingModal(${JSON.stringify(p)})'>
-                                    ✂️ Reservasi Jadwal Ini
+                                    <img src="/images/icons/calendar.svg" alt="Reservasi" width="14" height="14" style="filter: brightness(0) invert(1);">
+                                    <span>Reservasi Jadwal Ini</span>
                                 </button>
                             </div>
                         </div>

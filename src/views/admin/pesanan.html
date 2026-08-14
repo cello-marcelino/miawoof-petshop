@@ -16,7 +16,7 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Kelola Pesanan Pelanggan 🛒</h5>
+                    <h5 class="fw-bold text-dark mb-0">Kelola Pesanan Pelanggan</h5>
                     <small class="text-muted">Pantau transaksi dan perbarui status proses pengiriman belanja.</small>
                 </div>
             </header>
@@ -48,7 +48,8 @@
         </main>
     </div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
@@ -109,7 +110,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm" onchange="updateStatus(${o.id_pesanan}, this.value)" style="width: 170px;">
+                                    <select class="form-select form-select-custom form-select-sm" onchange="updateStatus(${o.id_pesanan}, this.value)" style="width: 180px;">
                                         <option value="menunggu pembayaran" ${o.status === 'menunggu pembayaran' ? 'selected' : ''}>Menunggu Pembayaran</option>
                                         <option value="diproses" ${o.status === 'diproses' ? 'selected' : ''}>Diproses</option>
                                         <option value="selesai" ${o.status === 'selesai' ? 'selected' : ''}>Selesai</option>

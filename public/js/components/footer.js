@@ -1,67 +1,76 @@
 /**
- * Reusable Footer Component
+ * Clean Neo-Brutalist Customer Footer Component (SVG Icons)
  */
-function renderFooter() {
-    return `
-    <footer class="bg-white border-top mt-auto py-5">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="font-brand text-primary" style="font-size: 2rem;">MiaWoof</span>
-                        <span class="badge bg-light text-dark rounded-pill border px-2 py-1">Petshop & Spa</span>
-                    </div>
-                    <p class="text-muted small mb-3">
-                        Pusat perawatan dan penyedia kebutuhan nutrisi hewan peliharaan terbaik. Kami mengutamakan kenyamanan, kebersihan, dan kesehatan anabul kesayangan Anda.
-                    </p>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-light text-dark border p-2">📍 Jakarta, Indonesia</span>
-                        <span class="badge bg-light text-dark border p-2">🕒 Buka: 09:00 - 20:00</span>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="fw-bold mb-3 text-dark">Layanan Kami</h6>
-                    <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
-                        <li><a href="/produk?kategori=kucing" class="text-decoration-none text-muted">Makanan Kucing</a></li>
-                        <li><a href="/produk?kategori=anjing" class="text-decoration-none text-muted">Makanan Anjing</a></li>
-                        <li><a href="/grooming" class="text-decoration-none text-muted">Grooming Reguler</a></li>
-                        <li><a href="/grooming" class="text-decoration-none text-muted">Grooming Spa Medicated</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="fw-bold mb-3 text-dark">Bantuan & Akun</h6>
-                    <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
-                        <li><a href="/riwayat-pesanan" class="text-decoration-none text-muted">Status Pesanan</a></li>
-                        <li><a href="/riwayat-booking" class="text-decoration-none text-muted">Jadwal Booking</a></li>
-                        <li><a href="/profil" class="text-decoration-none text-muted">Profil Saya</a></li>
-                        <li><a href="/login" class="text-decoration-none text-muted">Masuk Petugas / Admin</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <h6 class="fw-bold mb-3 text-dark">Kontak Petshop</h6>
-                    <div class="card p-3 border-0 bg-light rounded-3 small">
-                        <div class="fw-semibold text-dark mb-1">Customer Care MiaWoof:</div>
-                        <div class="text-muted mb-2">WhatsApp: +62 812-3456-7890</div>
-                        <div class="text-muted">Email: halo@miawoof.com</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-top mt-4 pt-4 d-flex flex-column flex-md-row align-items-center justify-content-between text-muted small">
-                <div>&copy; ${new Date().getFullYear()} MiaWoof Petshop CMS. Refactored Native Architecture.</div>
-                <div class="fw-semibold text-primary">Dibuat dengan ❤️ untuk Pecinta Hewan</div>
-            </div>
-        </div>
-    </footer>
-    `;
-}
-
 function initFooter() {
-    const root = document.getElementById('footer-root');
-    if (root) {
-        root.innerHTML = renderFooter();
-    }
+    const footerRoot = document.getElementById('footer-root');
+    if (!footerRoot) return;
+
+    footerRoot.innerHTML = `
+        <footer class="bg-white border-top border-2 border-dark pt-5 pb-4 mt-auto">
+            <div class="container">
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="40" height="40" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                            <span class="font-brand fs-4 text-primary fw-bold">MiaWoof Petshop</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            Pusat perbelanjaan nutrisi anabul premium dan layanan perawatan salon grooming profesional berlisensi untuk kucing dan anjing kesayangan Anda.
+                        </p>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-primary text-white border border-1 border-dark px-3 py-1 fw-bold">Kualitas Premium</span>
+                            <span class="badge bg-white text-dark border border-1 border-dark px-3 py-1 fw-bold">Grooming Berlisensi</span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6">
+                        <h6 class="fw-bold text-dark mb-3 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Navigasi</h6>
+                        <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                            <li><a href="/" class="text-muted text-decoration-none fw-semibold hover-primary">&rarr; Beranda</a></li>
+                            <li><a href="/produk" class="text-muted text-decoration-none fw-semibold hover-primary">&rarr; Katalog Produk</a></li>
+                            <li><a href="/grooming" class="text-muted text-decoration-none fw-semibold hover-primary">&rarr; Salon Grooming</a></li>
+                            <li><a href="/riwayat-pesanan" class="text-muted text-decoration-none fw-semibold hover-primary">&rarr; Riwayat Pesanan</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="fw-bold text-dark mb-3 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Layanan Grooming</h6>
+                        <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                            <li class="text-muted fw-semibold">Spa Medicated Anti-Kutu</li>
+                            <li class="text-muted fw-semibold">Treatment Jamur & Scabies</li>
+                            <li class="text-muted fw-semibold">Styling & Haircut Anabul</li>
+                            <li class="text-muted fw-semibold">Pembersihan Karang Gigi</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="fw-bold text-dark mb-3 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Kontak & Lokasi</h6>
+                        <div class="d-flex flex-column gap-2 small text-muted">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="/images/icons/map-pin.svg" alt="Lokasi" width="16" height="16">
+                                <span>Ruko Pet Center No. 1, Jakarta Selatan</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="/images/icons/phone.svg" alt="Phone" width="16" height="16">
+                                <span>+62 812-3456-7890</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="/images/icons/clock.svg" alt="Jam Operasional" width="16" height="16">
+                                <span>Buka Setiap Hari: 08.00 - 20.00 WIB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-top border-1 border-dark d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-center text-md-start">
+                    <small class="text-muted fw-semibold">
+                        &copy; 2026 <strong>MiaWoof Petshop System</strong>. Seluruh Hak Cipta Dilindungi.
+                    </small>
+                    <small class="text-muted">
+                        Modern Native Node.js &bull; Neo-Brutalism UI Architecture
+                    </small>
+                </div>
+            </div>
+        </footer>
+    `;
 }

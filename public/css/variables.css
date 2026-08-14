@@ -1,68 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* ================= Brand & Accent Tokens ================= */
-  --primary: #875749;                 /* Terracotta Brown (Legacy Heritage) */
-  --primary-hover: #764c40;           /* Deep Chestnut */
-  --primary-active: #623d33;          /* Dark Roast */
-  --primary-light: #f5ece9;           /* Soft Terracotta Tint */
-  --primary-subtle: #ebdcd7;          /* Muted Blush */
-  --primary-focus: rgba(135, 87, 73, 0.25);
+  /* ================= Neo-Brutalism Theme Palette ================= */
+  --primary: #875749;                 /* Heritage Terracotta Brown */
+  --primary-hover: #704437;           /* Deep Chestnut */
+  --primary-light: #f7ede8;           /* Soft Terracotta Cream */
+  --primary-accent: #d48b70;          /* Warm Clay */
 
-  --secondary: #d99b82;               /* Warm Clay Accent */
-  --secondary-light: #fdf5f2;         /* Warm Ivory Cream */
+  --border-dark: #231f20;             /* Solid Crisp Brutalist Outline */
 
-  /* ================= Neutral Palette ================= */
-  --bg-body: #f8f9fa;                 /* Crisp light background */
-  --bg-surface: #ffffff;              /* Elevated surface */
-  --bg-surface-secondary: #f4f5f7;    /* Secondary card / input fill */
+  /* ================= Body & Surfaces ================= */
+  --bg-body: #fbf9f7;                 /* Warm Linen / Off-White */
+  --bg-surface: #ffffff;              /* Elevated Card Surface */
+  --bg-surface-subtle: #f3efe9;       /* Input & Table Header Surface */
 
-  --text-main: #2d2422;               /* Deep Espresso Charcoal */
-  --text-secondary: #5e524f;          /* Neutral Subtitle Text */
-  --text-muted: #8c7f7b;              /* Low-contrast Caption */
-  --text-inverse: #ffffff;            /* White on Dark */
+  --text-main: #231f20;               /* Solid Pitch Dark */
+  --text-muted: #6b5e5a;              /* Warm Neutral Muted */
+  --text-light: #ffffff;
 
-  --border-subtle: #e9ecef;           /* Card & Container Borders */
-  --border-strong: #d0d5dd;           /* Form Field Outlines */
+  /* ================= Harmonious Pet Categories (Anti-Clash) ================= */
+  --cat-bg: #fceee6;                  /* Peach Terracotta Tint */
+  --cat-text: #5e2e20;
+  --dog-bg: #ebf0e4;                  /* Soft Sage Olive Tint */
+  --dog-text: #354228;
 
-  /* ================= Status & Semantics ================= */
-  --color-success: #198754;
-  --color-success-bg: #d1e7dd;
-  --color-success-text: #0f5132;
+  /* ================= Harmonious Semantic Feedback ================= */
+  --status-success-bg: #e1f2e8;
+  --status-success-text: #1a4d2e;
 
-  --color-warning: #d97706;
-  --color-warning-bg: #fef3c7;
-  --color-warning-text: #92400e;
+  --status-pending-bg: #fef3d6;
+  --status-pending-text: #784d09;
 
-  --color-danger: #dc3545;
-  --color-danger-bg: #f8d7da;
-  --color-danger-text: #842029;
+  --status-danger-bg: #fde4e4;
+  --status-danger-text: #7a1f1d;
 
-  --color-info: #0dcaf0;
-  --color-info-bg: #cff4fc;
-  --color-info-text: #055160;
+  --status-info-bg: #e2f0fb;
+  --status-info-text: #174266;
 
   /* ================= Typography Tokens ================= */
   --font-brand: 'Irish Grover', cursive, serif;
   --font-body: 'Inria Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* ================= Elevation & Shadows ================= */
-  --shadow-xs: 0 1px 2px rgba(45, 36, 34, 0.05);
-  --shadow-sm: 0 2px 6px rgba(135, 87, 73, 0.06);
-  --shadow-md: 0 4px 16px rgba(135, 87, 73, 0.08);
-  --shadow-lg: 0 10px 30px rgba(135, 87, 73, 0.12);
-  --shadow-xl: 0 20px 45px rgba(135, 87, 73, 0.15);
+  /* ================= Neo-Brutalism Shadows & Borders ================= */
+  --border-brutal: 2px solid var(--border-dark);
+  --border-brutal-sm: 1.5px solid var(--border-dark);
+  --shadow-brutal-sm: 2px 2px 0px var(--border-dark);
+  --shadow-brutal-md: 4px 4px 0px var(--border-dark);
+  --shadow-brutal-lg: 6px 6px 0px var(--border-dark);
 
-  /* ================= Border Radius ================= */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-pill: 9999px;
 
-  /* ================= Layout & Transitions ================= */
+  /* ================= Layout Tokens ================= */
   --sidebar-width: 260px;
   --topbar-height: 72px;
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease-out;
 }

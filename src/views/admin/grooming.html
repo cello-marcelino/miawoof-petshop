@@ -16,12 +16,13 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Manajemen Jadwal Grooming ✂️</h5>
+                    <h5 class="fw-bold text-dark mb-0">Manajemen Jadwal Grooming</h5>
                     <small class="text-muted">Kelola reservasi jadwal salon anabul dan master paket perawatan.</small>
                 </div>
                 <div>
                     <button class="btn btn-outline-custom btn-sm" onclick="openPaketModal()">
-                        ⚙️ Kelola Master Paket
+                        <img src="/images/icons/scissors.svg" alt="Paket" width="14" height="14">
+                        <span>Kelola Master Paket</span>
                     </button>
                 </div>
             </header>
@@ -56,31 +57,31 @@
     <!-- Paket Grooming Manager Modal -->
     <div class="modal fade" id="paketModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3">
-                    <h5 class="modal-title fw-bold">Master Paket Grooming ✂️</h5>
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold">Master Paket Grooming</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <!-- Add Paket Form -->
-                    <form id="addPaketForm" class="p-3 bg-light rounded-3 mb-4">
-                        <h6 class="fw-bold text-dark mb-3">+ Tambah Paket Baru</h6>
+                    <form id="addPaketForm" class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
+                        <h6 class="fw-bold text-dark mb-3">Tambah Paket Baru</h6>
                         <div class="row g-2 mb-2">
                             <div class="col-md-5">
-                                <input type="text" id="paketNama" class="form-control form-control-sm" placeholder="Nama Paket (e.g. Spa Medicated)" required>
+                                <input type="text" id="paketNama" class="form-control form-control-custom form-control-sm" placeholder="Nama Paket (e.g. Spa Medicated)" required>
                             </div>
                             <div class="col-md-4">
-                                <select id="paketJenis" class="form-select form-select-sm" required>
+                                <select id="paketJenis" class="form-select form-select-custom form-select-sm" required>
                                     <option value="kucing">Kucing</option>
                                     <option value="anjing">Anjing</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" id="paketHarga" class="form-control form-control-sm" placeholder="Tarif (Rp)" min="1000" required>
+                                <input type="number" id="paketHarga" class="form-control form-control-custom form-control-sm" placeholder="Tarif (Rp)" min="1000" required>
                             </div>
                         </div>
-                        <div class="mb-2">
-                            <input type="text" id="paketKet" class="form-control form-control-sm" placeholder="Rincian perlakuan (e.g. Mandi air hangat, potong kuku, styling)" required>
+                        <div class="mb-3">
+                            <input type="text" id="paketKet" class="form-control form-control-custom form-control-sm" placeholder="Rincian perlakuan (e.g. Mandi air hangat, potong kuku, styling)" required>
                         </div>
                         <button type="submit" class="btn btn-primary-custom btn-sm w-100 justify-content-center py-1">Simpan Paket</button>
                     </form>
@@ -99,7 +100,8 @@
         </div>
     </div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
@@ -177,7 +179,7 @@
                                 <td class="fw-semibold text-dark">${b.no_hp || '-'}</td>
                                 <td>
                                     <div class="fw-bold text-dark">${b.nama_paket}</div>
-                                    <span class="badge ${b.jenis_hewan === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.7rem;">
+                                    <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize" style="font-size: 0.7rem;">
                                         ${b.jenis_hewan}
                                     </span>
                                 </td>
@@ -189,7 +191,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm" onchange="updateBookingStatus(${b.id_booking}, this.value)" style="width: 175px;">
+                                    <select class="form-select form-select-custom form-select-sm" onchange="updateBookingStatus(${b.id_booking}, this.value)" style="width: 180px;">
                                         <option value="menunggu konfirmasi" ${b.status === 'menunggu konfirmasi' ? 'selected' : ''}>Menunggu Konfirmasi</option>
                                         <option value="dikonfirmasi" ${b.status === 'dikonfirmasi' ? 'selected' : ''}>Dikonfirmasi</option>
                                         <option value="selesai" ${b.status === 'selesai' ? 'selected' : ''}>Selesai</option>
@@ -245,7 +247,9 @@
                             </td>
                             <td class="fw-bold text-primary">${formatRupiah(p.harga)}</td>
                             <td class="text-end">
-                                <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="deletePaket(${p.id_paket})">Hapus</button>
+                                <button class="btn btn-danger-custom btn-sm py-0 px-2" onclick="deletePaket(${p.id_paket})">
+                                    <img src="/images/icons/trash.svg" alt="Hapus" width="12" height="12">
+                                </button>
                             </td>
                         </tr>
                     `).join('');

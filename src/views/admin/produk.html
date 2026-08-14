@@ -16,12 +16,13 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Manajemen Produk & Stok 📦</h5>
+                    <h5 class="fw-bold text-dark mb-0">Manajemen Produk & Stok</h5>
                     <small class="text-muted">Tambah, perbarui, dan kontrol inventori produk petshop.</small>
                 </div>
                 <div>
                     <button class="btn btn-primary-custom btn-sm" onclick="openAddModal()">
-                        + Tambah Produk Baru
+                        <img src="/images/icons/plus.svg" alt="Tambah" width="14" height="14" style="filter: brightness(0) invert(1);">
+                        <span>Tambah Produk Baru</span>
                     </button>
                 </div>
             </header>
@@ -33,7 +34,9 @@
                         <div class="col-md-5">
                             <div class="input-group">
                                 <input type="text" id="adminSearchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
-                                <button class="btn btn-primary-custom px-3" id="adminSearchBtn">Cari</button>
+                                <button class="btn btn-primary-custom px-3" id="adminSearchBtn">
+                                    <img src="/images/icons/search.svg" alt="Cari" width="16" height="16" style="filter: brightness(0) invert(1);">
+                                </button>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -75,8 +78,8 @@
     <!-- Add/Edit Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
                     <h5 class="modal-title fw-bold" id="productModalTitle">Tambah Produk Baru</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -115,7 +118,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label-custom">Unggah Foto Produk (JPG/PNG)</label>
+                            <label class="form-label-custom">Unggah Foto Produk (JPG/PNG/WEBP)</label>
                             <input type="file" id="prodImage" class="form-control form-control-custom" accept="image/jpeg,image/png,image/webp">
                         </div>
 
@@ -128,7 +131,8 @@
         </div>
     </div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
@@ -226,11 +230,11 @@
                         <tr>
                             <td class="fw-bold">#${p.id_produk}</td>
                             <td>
-                                <img src="/uploads/${p.gambar || 'dummy_product.jpg'}" alt="${p.nama}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: #fafafa;" onerror="this.src='/images/placeholders/default_product.png'">
+                                <img src="/uploads/${p.gambar || 'default_product.png'}" alt="${p.nama}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: #fafafa; border: 1px solid var(--border-dark);" onerror="this.src='/images/placeholders/default_product.png'">
                             </td>
                             <td class="fw-bold text-dark">${p.nama}</td>
                             <td>
-                                <span class="badge ${p.kategori === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
+                                <span class="${p.kategori === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
                                     ${p.kategori}
                                 </span>
                             </td>
@@ -239,8 +243,12 @@
                             <td class="text-muted small">${p.tgl_expired || '-'}</td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary" onclick='openEditModal(${JSON.stringify(p)})'>Edit</button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id_produk})">Hapus</button>
+                                    <button class="btn btn-sm btn-outline-custom p-1 px-2" onclick='openEditModal(${JSON.stringify(p)})' title="Edit">
+                                        <img src="/images/icons/edit.svg" alt="Edit" width="14" height="14">
+                                    </button>
+                                    <button class="btn btn-sm btn-danger-custom p-1 px-2" onclick="deleteProduct(${p.id_produk})" title="Hapus">
+                                        <img src="/images/icons/trash.svg" alt="Hapus" width="14" height="14">
+                                    </button>
                                 </div>
                             </td>
                         </tr>

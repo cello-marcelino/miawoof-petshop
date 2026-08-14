@@ -17,7 +17,7 @@
             <!-- Header Title -->
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
                 <div>
-                    <h2 class="fw-bold text-dark mb-1">Katalog Produk Peliharaan 🛍️</h2>
+                    <h2 class="fw-bold text-dark mb-1">Katalog Produk Peliharaan</h2>
                     <p class="text-muted small mb-0">Temukan nutrisi sehat dan perlengkapan higienis terbaik untuk kucing & anjing.</p>
                 </div>
 
@@ -25,7 +25,9 @@
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <div class="input-group" style="max-width: 320px;">
                         <input type="text" id="searchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
-                        <button class="btn btn-primary-custom px-3" id="searchBtn">🔍</button>
+                        <button class="btn btn-primary-custom px-3" id="searchBtn">
+                            <img src="/images/icons/search.svg" alt="Cari" width="16" height="16" style="filter: brightness(0) invert(1);">
+                        </button>
                     </div>
                 </div>
             </div>
@@ -33,8 +35,8 @@
             <!-- Filter Category Tabs -->
             <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
                 <button class="btn btn-primary-custom btn-sm rounded-pill px-4 category-filter active" data-category="all">Semua Produk</button>
-                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="kucing">🐱 Khusus Kucing</button>
-                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="anjing">🐶 Khusus Anjing</button>
+                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="kucing">Khusus Kucing</button>
+                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="anjing">Khusus Anjing</button>
             </div>
 
             <!-- Products Grid -->
@@ -47,14 +49,14 @@
     <!-- Checkout Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3">
-                    <h5 class="modal-title fw-bold">Konfirmasi Pemesanan Produk 🛒</h5>
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold">Konfirmasi Pemesanan Produk</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="d-flex gap-3 align-items-center mb-4 p-3 bg-light rounded-3">
-                        <div class="product-img-wrapper" style="width: 70px; height: 70px; border-radius: 8px;">
+                    <div class="d-flex gap-3 align-items-center mb-4 p-3 bg-light rounded-2 border border-1 border-dark">
+                        <div class="product-img-wrapper" style="width: 70px; height: 70px; border-radius: 6px;">
                             <img id="modalProductImg" src="" alt="Product" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         </div>
                         <div>
@@ -71,7 +73,7 @@
                             <input type="number" id="orderQuantity" class="form-control form-control-custom" value="1" min="1" required>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-4">
+                        <div class="p-3 bg-light rounded-2 border border-1 border-dark d-flex justify-content-between align-items-center mb-4">
                             <span class="text-muted fw-semibold">Total Pembayaran:</span>
                             <span class="fw-bold text-primary fs-5" id="orderTotal">Rp 0</span>
                         </div>
@@ -87,7 +89,8 @@
 
     <div id="footer-root"></div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
@@ -222,19 +225,20 @@
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <div class="card-product">
                                 <div class="product-img-wrapper">
-                                    <img src="/uploads/${p.gambar || 'dummy_product.jpg'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
+                                    <img src="/uploads/${p.gambar || 'default_product.png'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
                                 </div>
                                 <div class="p-3 d-flex flex-column flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <span class="badge ${p.kategori === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
-                                            ${p.kategori === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        <span class="${p.kategori === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                            ${p.kategori === 'kucing' ? 'Kucing' : 'Anjing'}
                                         </span>
                                         <span class="text-muted small ${p.stock <= 5 ? 'text-danger fw-bold' : ''}">Stok: ${p.stock}</span>
                                     </div>
                                     <h6 class="fw-bold text-dark mb-1 text-truncate" title="${p.nama}">${p.nama}</h6>
-                                    <div class="fw-bold text-primary mb-3" style="font-size: 1.15rem;">${formatRupiah(p.harga)}</div>
+                                    <div class="fw-bold text-primary mb-3 fs-5">${formatRupiah(p.harga)}</div>
                                     <button class="btn btn-primary-custom btn-sm w-100 justify-content-center mt-auto" onclick='openCheckoutModal(${JSON.stringify(p)})' ${p.stock <= 0 ? 'disabled' : ''}>
-                                        ${p.stock > 0 ? '🛒 Beli Sekarang' : 'Stok Habis'}
+                                        <img src="/images/icons/cart.svg" alt="Beli" width="14" height="14" style="filter: brightness(0) invert(1);">
+                                        <span>${p.stock > 0 ? 'Beli Sekarang' : 'Stok Habis'}</span>
                                     </button>
                                 </div>
                             </div>
@@ -254,7 +258,7 @@
             document.getElementById('modalProductName').innerText = product.nama;
             document.getElementById('modalProductPrice').innerText = formatRupiah(product.harga);
             document.getElementById('modalProductStock').innerText = `Sisa Stok Tersedia: ${product.stock} unit`;
-            document.getElementById('modalProductImg').src = `/uploads/${product.gambar || 'dummy_product.jpg'}`;
+            document.getElementById('modalProductImg').src = `/uploads/${product.gambar || 'default_product.png'}`;
             document.getElementById('orderQuantity').value = 1;
             document.getElementById('orderQuantity').max = product.stock;
             document.getElementById('orderTotal').innerText = formatRupiah(product.harga);

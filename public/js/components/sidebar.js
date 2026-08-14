@@ -1,70 +1,75 @@
 /**
- * Reusable Admin Sidebar Component
- * @param {string} activeMenu - The active menu item ('dashboard', 'produk', 'pesanan', 'grooming', 'users', 'profil')
- * @param {object} user - Admin user object
+ * Clean Neo-Brutalist Admin Sidebar Component (SVG Icons)
  */
-function renderAdminSidebar(activeMenu = 'dashboard', user = null) {
-    const adminName = user ? user.full_name : 'Administrator';
+function initSidebar(activeMenu = 'dashboard', user = null) {
+    const sidebarRoot = document.getElementById('sidebar-root');
+    if (!sidebarRoot) return;
 
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard Analitik', href: '/admin/dashboard', icon: '📊' },
-        { id: 'produk', label: 'Kelola Produk', href: '/admin/produk', icon: '📦' },
-        { id: 'pesanan', label: 'Kelola Pesanan', href: '/admin/pesanan', icon: '🛒' },
-        { id: 'grooming', label: 'Jadwal Grooming', href: '/admin/grooming', icon: '✂️' },
-        { id: 'users', label: 'Data Pengguna', href: '/admin/users', icon: '👥' },
-        { id: 'profil', label: 'Profil Saya', href: '/admin/profil', icon: '👤' }
+        { key: 'dashboard', label: 'Dashboard', url: '/admin/dashboard', icon: '/images/icons/dashboard.svg' },
+        { key: 'produk', label: 'Kelola Produk', url: '/admin/produk', icon: '/images/icons/cart.svg' },
+        { key: 'pesanan', label: 'Kelola Pesanan', url: '/admin/pesanan', icon: '/images/icons/package.svg' },
+        { key: 'grooming', label: 'Jadwal Grooming', url: '/admin/grooming', icon: '/images/icons/scissors.svg' },
+        { key: 'users', label: 'Data Pengguna', url: '/admin/users', icon: '/images/icons/user.svg' },
+        { key: 'profil', label: 'Pengaturan Profil', url: '/admin/profil', icon: '/images/icons/user.svg' }
     ];
 
-    const navLinksHtml = menuItems.map(item => {
-        const isActive = activeMenu === item.id;
-        return `
-            <a href="${item.href}" class="d-flex align-items-center gap-3 px-3 py-3 rounded text-decoration-none fw-semibold mb-1 transition-all ${isActive ? 'bg-primary text-white shadow-sm' : 'text-dark hover-bg-light'}" style="font-size: 0.95rem;">
-                <span style="font-size: 1.2rem;">${item.icon}</span>
+    const menuLinksHtml = menuItems.map(item => `
+        <li class="nav-item mb-1">
+            <a href="${item.url}" class="nav-link d-flex align-items-center gap-2 px-3 py-2 fw-bold rounded-2 text-decoration-none transition ${activeMenu === item.key ? 'bg-primary text-white border border-2 border-dark shadow-sm' : 'text-dark hover-bg-subtle'}">
+                <img src="${item.icon}" alt="${item.label}" width="16" height="16" style="${activeMenu === item.key ? 'filter: brightness(0) invert(1);' : ''}">
                 <span>${item.label}</span>
             </a>
-        `;
-    }).join('');
+        </li>
+    `).join('');
 
-    return `
-    <div class="admin-sidebar p-3 d-flex flex-column justify-content-between">
-        <div>
-            <!-- Brand Header -->
-            <div class="d-flex align-items-center gap-2 px-3 py-3 border-bottom mb-3">
-                <span class="font-brand text-primary" style="font-size: 1.8rem;">MiaWoof</span>
-                <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size: 0.65rem; font-weight: 700;">ADMIN</span>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="d-flex flex-column">
-                ${navLinksHtml}
-            </nav>
-        </div>
-
-        <!-- Footer / User Info -->
-        <div class="border-top pt-3">
-            <div class="d-flex align-items-center justify-content-between px-2">
-                <div class="d-flex align-items-center gap-2 overflow-hidden">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px; font-weight: bold;">
-                        ${adminName.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="overflow-hidden">
-                        <div class="fw-bold text-dark text-truncate" style="font-size: 0.85rem;">${adminName}</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Super Admin</div>
+    sidebarRoot.innerHTML = `
+        <aside class="admin-sidebar p-3 d-flex flex-column justify-content-between">
+            <div>
+                <!-- Brand Header -->
+                <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom border-2 border-dark">
+                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="36" height="36" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                    <div>
+                        <h6 class="font-brand fs-5 text-primary mb-0 fw-bold">MiaWoof</h6>
+                        <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Admin Control</small>
                     </div>
                 </div>
-                <a href="/logout" class="btn btn-outline-danger btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" title="Logout" style="width: 32px; height: 32px;">
-                    🚪
-                </a>
+
+                <!-- Nav Items -->
+                <ul class="nav flex-column">
+                    ${menuLinksHtml}
+                </ul>
             </div>
-        </div>
-    </div>
+
+            <!-- Footer User Section -->
+            <div class="pt-3 border-top border-2 border-dark">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold border border-1 border-dark" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            ${(user && user.full_name ? user.full_name.charAt(0) : 'A').toUpperCase()}
+                        </div>
+                        <div style="line-height: 1.2;">
+                            <div class="fw-bold text-dark text-truncate" style="max-width: 120px; font-size: 0.85rem;">${user ? user.full_name : 'Admin'}</div>
+                            <span class="badge bg-danger rounded-pill py-0 px-2" style="font-size: 0.6rem;">Admin</span>
+                        </div>
+                    </div>
+                    <button onclick="handleLogout()" class="btn btn-outline-danger btn-sm p-1 border-2 border-dark" title="Keluar">
+                        <img src="/images/icons/logout.svg" alt="Logout" width="14" height="14">
+                    </button>
+                </div>
+            </div>
+        </aside>
     `;
 }
 
-// Auto injection helper
-function initSidebar(activeMenu = 'dashboard', user = null) {
-    const root = document.getElementById('sidebar-root');
-    if (root) {
-        root.innerHTML = renderAdminSidebar(activeMenu, user);
+async function handleLogout() {
+    try {
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = '/login?msg=Anda+telah+berhasil+keluar&status=info';
+        }
+    } catch (e) {
+        window.location.href = '/login';
     }
 }

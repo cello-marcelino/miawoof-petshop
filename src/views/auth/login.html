@@ -14,24 +14,24 @@
         <div class="auth-card">
             <!-- Brand Logo -->
             <div class="text-center mb-4">
-                <a href="/" class="text-decoration-none">
-                    <span class="font-brand text-primary" style="font-size: 2.8rem;">MiaWoof</span>
+                <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2">
+                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="48" height="48" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                    <span class="font-brand fs-2 text-primary fw-bold">MiaWoof</span>
                 </a>
-                <div class="text-muted fw-semibold" style="font-size: 0.95rem;">Sistem Manajemen & Layanan Petshop</div>
+                <h4 class="fw-bold text-dark mb-1">Selamat Datang Kembali</h4>
+                <p class="text-muted small mb-0">Masuk ke akun Anda untuk belanja & booking grooming.</p>
             </div>
 
-            <h4 class="fw-bold text-dark mb-1">Selamat Datang! 🐾</h4>
-            <p class="text-muted small mb-4">Silakan masuk menggunakan akun terdaftar Anda.</p>
-
+            <!-- Login Form -->
             <form id="loginForm">
                 <div class="mb-3">
                     <label class="form-label-custom">Username</label>
-                    <input type="text" id="username" class="form-control form-control-custom" placeholder="Masukkan username" required autofocus>
+                    <input type="text" id="username" class="form-control form-control-custom" placeholder="Masukkan username Anda" required autofocus>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label-custom">Password</label>
-                    <input type="password" id="password" class="form-control form-control-custom" placeholder="••••••••" required>
+                    <input type="password" id="password" class="form-control form-control-custom" placeholder="Masukkan kata sandi" required>
                 </div>
 
                 <button type="submit" id="loginBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 mb-3">
@@ -39,26 +39,46 @@
                 </button>
             </form>
 
-            <div class="text-center border-top pt-3 text-muted small">
-                Belum punya akun? <a href="/register" class="fw-bold text-primary">Daftar Sekarang</a>
+            <!-- Quick Demo Credentials Box -->
+            <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="small fw-bold text-dark">Akun Demo Cepat:</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-custom btn-sm flex-fill" onclick="fillCredentials('admin', 'admin123')">
+                        Admin Demo
+                    </button>
+                    <button type="button" class="btn btn-outline-custom btn-sm flex-fill" onclick="fillCredentials('budi_santoso', 'customer123')">
+                        Customer Demo
+                    </button>
+                </div>
             </div>
 
-            <!-- Demo Helper Info Box -->
-            <div class="mt-4 p-3 bg-light rounded-3 border small">
-                <div class="fw-bold text-dark mb-1">💡 Akun Pengujian (Demo):</div>
-                <div class="text-muted"><strong>Admin:</strong> <code>admin</code> | <code>admin123</code></div>
-                <div class="text-muted"><strong>Customer:</strong> <code>budi_santoso</code> | <code>customer123</code></div>
+            <div class="text-center">
+                <p class="small text-muted mb-0">
+                    Belum memiliki akun? <a href="/register" class="fw-bold text-primary text-decoration-none">Daftar Sekarang &rarr;</a>
+                </p>
+                <div class="mt-3">
+                    <a href="/" class="small text-muted text-decoration-none">&larr; Kembali ke Beranda</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="/js/utils/formatters.js"></script>`n    <script src="/js/app.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/app.js"></script>
     <script>
+        function fillCredentials(u, p) {
+            document.getElementById('username').value = u;
+            document.getElementById('password').value = p;
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('loginBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span>Memproses...</span>';
+            btn.innerHTML = '<span>Memproses Masuk...</span>';
 
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
@@ -72,12 +92,12 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    showToast(data.message, 'success');
+                    showToast(data.message || 'Login berhasil!', 'success');
                     setTimeout(() => {
-                        window.location.href = data.redirect;
-                    }, 800);
+                        window.location.href = data.redirectUrl || '/';
+                    }, 600);
                 } else {
-                    showToast(data.message || 'Login gagal.', 'danger');
+                    showToast(data.message || 'Username atau password salah.', 'danger');
                     btn.disabled = false;
                     btn.innerHTML = '<span>Masuk ke Akun</span>';
                 }

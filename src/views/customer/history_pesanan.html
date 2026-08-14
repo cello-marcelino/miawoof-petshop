@@ -16,10 +16,13 @@
         <div class="container">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
-                    <h3 class="fw-bold text-dark mb-1">Riwayat Pesanan Belanja 🛒</h3>
+                    <h3 class="fw-bold text-dark mb-1">Riwayat Pesanan Belanja</h3>
                     <p class="text-muted small mb-0">Pantau status pengiriman dan transaksi belanja kebutuhan anabul Anda.</p>
                 </div>
-                <a href="/produk" class="btn btn-primary-custom btn-sm">+ Belanja Produk Lagi</a>
+                <a href="/produk" class="btn btn-primary-custom btn-sm">
+                    <img src="/images/icons/plus.svg" alt="Tambah" width="14" height="14" style="filter: brightness(0) invert(1);">
+                    <span>Belanja Produk Lagi</span>
+                </a>
             </div>
 
             <!-- Orders Table Container -->
@@ -50,7 +53,8 @@
 
     <div id="footer-root"></div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
@@ -86,7 +90,7 @@
                                 <td class="fw-bold text-dark">#ORD-${o.id_pesanan}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
-                                        <img src="/uploads/${o.gambar || 'dummy_product.jpg'}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #fafafa;" onerror="this.src='/images/placeholders/default_product.png'">
+                                        <img src="/uploads/${o.gambar || 'default_product.png'}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #fafafa; border: 1px solid var(--border-dark);" onerror="this.src='/images/placeholders/default_product.png'">
                                         <div>
                                             <div class="fw-bold text-dark">${o.nama_produk}</div>
                                             <div class="text-muted small">Kategori: ${o.kategori}</div>
@@ -103,7 +107,7 @@
                                 </td>
                                 <td>
                                     ${o.status === 'menunggu pembayaran' ? `
-                                        <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="cancelOrder(${o.id_pesanan})" style="font-size: 0.8rem;">
+                                        <button class="btn btn-danger-custom btn-sm" onclick="cancelOrder(${o.id_pesanan})">
                                             Batalkan
                                         </button>
                                     ` : '-'}

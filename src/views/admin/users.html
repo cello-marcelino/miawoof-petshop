@@ -16,7 +16,7 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Manajemen Pengguna Terdaftar 👥</h5>
+                    <h5 class="fw-bold text-dark mb-0">Manajemen Pengguna Terdaftar</h5>
                     <small class="text-muted">Daftar akun customer yang terdaftar pada sistem MiaWoof Petshop.</small>
                 </div>
             </header>
@@ -48,7 +48,8 @@
         </main>
     </div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
@@ -86,7 +87,7 @@
                             <td class="fw-bold text-dark">${u.full_name}</td>
                             <td class="text-muted"><code>${u.username}</code></td>
                             <td>
-                                <span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-primary'} rounded-pill text-uppercase" style="font-size: 0.7rem;">
+                                <span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-primary'} text-white border border-1 border-dark rounded-pill text-uppercase" style="font-size: 0.7rem;">
                                     ${u.role}
                                 </span>
                             </td>
@@ -95,8 +96,11 @@
                             <td class="text-muted small" style="max-width: 250px;">${u.alamat || '-'}</td>
                             <td>
                                 ${u.role !== 'admin' ? `
-                                    <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="deleteUser(${u.id})">Hapus</button>
-                                ` : '<span class="text-muted small">Protected</span>'}
+                                    <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="deleteUser(${u.id})">
+                                        <img src="/images/icons/trash.svg" alt="Hapus" width="12" height="12">
+                                        <span>Hapus</span>
+                                    </button>
+                                ` : '<span class="text-muted small fw-bold">Protected</span>'}
                             </td>
                         </tr>
                     `).join('');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiaWoof Petshop - Nutrisi & Perawatan Terbaik Anabul</title>
+    <title>MiaWoof Petshop - Nutrisi & Perawatan Anabul Terpercaya</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -14,125 +14,178 @@
 
     <main class="customer-main pt-4">
         <div class="container">
-            <!-- Hero Banner -->
-            <div class="hero-banner d-flex flex-column flex-md-row align-items-center justify-content-between">
-                <div>
-                    <span class="badge bg-white text-primary fw-bold px-3 py-2 rounded-pill mb-3">🐾 Petshop & Grooming Terpercaya</span>
-                    <h1>Nutrisi Berkualitas & Spa Mewah untuk Anabul Kesayangan</h1>
-                    <p>Temukan makanan premium, perlengkapan higienis, serta reservasi jadwal grooming profesional untuk kucing dan anjing Anda.</p>
-                    <div class="d-flex flex-wrap gap-3 mt-4">
-                        <a href="/produk" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-primary shadow">Belanja Produk</a>
-                        <a href="/grooming" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">Reservasi Grooming</a>
+            <!-- 1. Promo Ads Carousel Slider -->
+            <div id="promoCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel" data-bs-interval="4500">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/images/banners/petAds1.jpg" class="d-block w-100" alt="Promo Diskon Nutrisi Makanan Anabul">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/banners/petAds2.jpg" class="d-block w-100" alt="Paket Grooming Anti Kutu & Jamur">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/banners/petAds3.jpg" class="d-block w-100" alt="Snack & Treats Hewan Peliharaan">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/banners/petAds4.jpg" class="d-block w-100" alt="Peralatan & Aksesoris Higienis">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Sebelumnya</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Selanjutnya</span>
+                </button>
+            </div>
+
+            <!-- 2. Pet Categories Section -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">Kategori Hewan Peliharaan</h3>
+                        <p class="text-muted small mb-0">Pilih kebutuhan spesifik sesuai anabul kesayangan Anda.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <a href="/produk?kategori=kucing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--cat-bg); border-color: var(--border-dark);">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="/images/placeholders/cat-head.png" alt="Kucing" width="60" height="60" class="border border-2 border-dark rounded-circle bg-white p-2">
+                                <div>
+                                    <h4 class="fw-bold text-dark mb-1">Khusus Kucing</h4>
+                                    <p class="text-muted small mb-0">Dry food, wet pouch, snack creamy, & shampo bulu halus.</p>
+                                </div>
+                            </div>
+                            <span class="btn btn-primary-custom btn-sm">&rarr;</span>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="/produk?kategori=anjing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--dog-bg); border-color: var(--border-dark);">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="/images/placeholders/dog-head.png" alt="Anjing" width="60" height="60" class="border border-2 border-dark rounded-circle bg-white p-2">
+                                <div>
+                                    <h4 class="fw-bold text-dark mb-1">Khusus Anjing</h4>
+                                    <p class="text-muted small mb-0">Nutrisi protein tinggi, biskuit kunyah, & wet wipes higienis.</p>
+                                </div>
+                            </div>
+                            <span class="btn btn-primary-custom btn-sm">&rarr;</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Category Highlights -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-6">
-                    <div class="card-modern p-4 d-flex align-items-center justify-content-between border-0 shadow-sm" style="background: linear-gradient(135deg, #fff3eb 0%, #fff 100%);">
-                        <div>
-                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mb-2 fw-bold">🐱 Dunia Kucing</span>
-                            <h4 class="fw-bold text-dark">Kebutuhan Lengkap Si Kucing</h4>
-                            <p class="text-muted small mb-3">Makanan basah/kering, vitamin bulu, pasir wangi & mainan seru.</p>
-                            <a href="/produk?kategori=kucing" class="btn btn-primary-custom btn-sm">Lihat Produk Kucing &rarr;</a>
+            <!-- 3. Featured Products Grid -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">Katalog Produk Pilihan</h3>
+                        <p class="text-muted small mb-0">Nutrisi sehat dan perawatan berkualitas terlaris minggu ini.</p>
+                    </div>
+                    <a href="/produk" class="btn btn-outline-custom btn-sm">
+                        <span>Lihat Semua Katalog</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+
+                <div class="row g-4" id="homeProductsGrid">
+                    <div class="col-12 text-center py-5 text-muted">Memuat data produk...</div>
+                </div>
+            </div>
+
+            <!-- 4. Grooming Promo Banner -->
+            <div class="card-modern p-4 p-md-5 mb-4" style="background-color: var(--primary-light);">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <span class="badge bg-white text-dark border border-1 border-dark px-3 py-1 fw-bold mb-3">Salon & Grooming Higienis</span>
+                        <h3 class="fw-bold text-dark mb-2">Manjakan Anabul Anda dengan Treatment Spa</h3>
+                        <p class="text-muted mb-4" style="max-width: 600px;">
+                            Groomer berpengalaman kami siap memberikan perawatan pembersihan menyeluruh, shampo anti kutu, pembersihan telinga & karang gigi dengan peralatan steril.
+                        </p>
+                        <a href="/grooming" class="btn btn-primary-custom">
+                            <img src="/images/icons/scissors.svg" alt="Grooming" width="16" height="16" style="filter: brightness(0) invert(1);">
+                            <span>Reservasi Jadwal Sekarang</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="bg-white p-4 border border-2 border-dark rounded-3 shadow-sm d-inline-block">
+                            <div class="font-brand fs-1 text-primary fw-bold">100% Aman</div>
+                            <div class="fw-bold text-dark small">Terapis Sayang Hewan</div>
                         </div>
-                        <div style="font-size: 4rem;">🐱</div>
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="card-modern p-4 d-flex align-items-center justify-content-between border-0 shadow-sm" style="background: linear-gradient(135deg, #eef7ff 0%, #fff 100%);">
-                        <div>
-                            <span class="badge bg-info text-dark rounded-pill px-3 py-1 mb-2 fw-bold">🐶 Dunia Anjing</span>
-                            <h4 class="fw-bold text-dark">Perlengkapan Anjing Sehat</h4>
-                            <p class="text-muted small mb-3">Dry food protein tinggi, camilan sehat & shampo anti kutu.</p>
-                            <a href="/produk?kategori=anjing" class="btn btn-primary-custom btn-sm">Lihat Produk Anjing &rarr;</a>
-                        </div>
-                        <div style="font-size: 4rem;">🐶</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Featured Products -->
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <div>
-                    <h3 class="fw-bold text-dark mb-1">Produk Pilihan Terlaris ⭐</h3>
-                    <p class="text-muted small mb-0">Rekomendasi makanan dan perawatan terbaik pilihan pelanggan MiaWoof.</p>
-                </div>
-                <a href="/produk" class="btn btn-outline-custom btn-sm">Lihat Semua Katalog &rarr;</a>
-            </div>
-
-            <div class="row g-4 mb-5" id="featuredProductsContainer">
-                <div class="col-12 text-center py-4 text-muted">Memuat produk pilihan...</div>
-            </div>
-
-            <!-- Grooming Callout -->
-            <div class="card-modern p-5 bg-white border border-2 border-primary rounded-4 text-center my-5 shadow-sm">
-                <span class="badge bg-primary text-white rounded-pill px-3 py-2 mb-3 fw-bold">✂️ Salon & Spa Khusus Anabul</span>
-                <h2 class="fw-bold text-dark mb-2">Jadwalkan Perawatan Grooming Tanpa Antre</h2>
-                <p class="text-muted mx-auto mb-4" style="max-width: 600px;">
-                    Dikerjakan oleh groomer bersertifikat dengan fasilitas steril, air hangat, serta shampo organik beraroma lembut.
-                </p>
-                <a href="/grooming" class="btn btn-primary-custom px-4 py-2">Pilih Paket Grooming Sekarang</a>
             </div>
         </div>
     </main>
 
     <div id="footer-root"></div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Fetch Session
-            let user = null;
+            let currentUser = null;
             try {
                 const sessionRes = await fetch('/api/auth/session');
                 const sessionData = await sessionRes.json();
-                if (sessionData.authenticated) user = sessionData.user;
+                if (sessionData.authenticated) currentUser = sessionData.user;
             } catch (e) {}
 
-            initNavbar('home', user);
+            initNavbar('home', currentUser);
             initFooter();
+            loadFeaturedProducts();
+        });
 
-            // 2. Fetch Featured Products
+        async function loadFeaturedProducts() {
+            const grid = document.getElementById('homeProductsGrid');
             try {
                 const res = await fetch('/api/products');
                 const result = await res.json();
-                const container = document.getElementById('featuredProductsContainer');
 
                 if (result.success && result.data.length > 0) {
                     const featured = result.data.slice(0, 4);
-                    container.innerHTML = featured.map(p => `
-                        <div class="col-lg-3 col-md-6">
+                    grid.innerHTML = featured.map(p => `
+                        <div class="col-xl-3 col-lg-4 col-md-6">
                             <div class="card-product">
                                 <div class="product-img-wrapper">
-                                    <img src="/uploads/${p.gambar || 'dummy_product.jpg'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
+                                    <img src="/uploads/${p.gambar || 'whiskas_tuna.webp'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
                                 </div>
                                 <div class="p-3 d-flex flex-column flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <span class="badge ${p.kategori === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
-                                            ${p.kategori === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        <span class="${p.kategori === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                            ${p.kategori === 'kucing' ? 'Kucing' : 'Anjing'}
                                         </span>
-                                        <span class="text-muted small">Stok: ${p.stock}</span>
+                                        <span class="text-muted small ${p.stock <= 5 ? 'text-danger fw-bold' : ''}">Stok: ${p.stock}</span>
                                     </div>
-                                    <h6 class="fw-bold text-dark mb-2 text-truncate" title="${p.nama}">${p.nama}</h6>
-                                    <div class="fw-bold text-primary mb-3" style="font-size: 1.1rem;">${formatRupiah(p.harga)}</div>
-                                    <a href="/produk" class="btn btn-outline-custom btn-sm w-100 justify-content-center mt-auto">Beli Produk</a>
+                                    <h6 class="fw-bold text-dark mb-1 text-truncate" title="${p.nama}">${p.nama}</h6>
+                                    <div class="fw-bold text-primary mb-3 fs-5">${formatRupiah(p.harga)}</div>
+                                    <a href="/produk" class="btn btn-outline-custom btn-sm w-100 justify-content-center mt-auto">
+                                        <img src="/images/icons/cart.svg" alt="Beli" width="14" height="14">
+                                        <span>Beli Sekarang</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    container.innerHTML = '<div class="col-12 text-center text-muted">Belum ada produk terdaftar.</div>';
+                    grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada produk pilihan.</div>';
                 }
-            } catch (e) {
-                document.getElementById('featuredProductsContainer').innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat produk pilihan.</div>';
+            } catch (err) {
+                grid.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat produk.</div>';
             }
-        });
+        }
     </script>
 </body>
 </html>

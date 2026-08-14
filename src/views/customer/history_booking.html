@@ -16,10 +16,13 @@
         <div class="container">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
-                    <h3 class="fw-bold text-dark mb-1">Jadwal Booking Grooming Saya ✂️</h3>
+                    <h3 class="fw-bold text-dark mb-1">Jadwal Booking Grooming Saya</h3>
                     <p class="text-muted small mb-0">Pantau status konfirmasi dan jadwal kedatangan salon anabul Anda.</p>
                 </div>
-                <a href="/grooming" class="btn btn-primary-custom btn-sm">+ Booking Jadwal Baru</a>
+                <a href="/grooming" class="btn btn-primary-custom btn-sm">
+                    <img src="/images/icons/plus.svg" alt="Booking" width="14" height="14" style="filter: brightness(0) invert(1);">
+                    <span>Booking Jadwal Baru</span>
+                </a>
             </div>
 
             <!-- Bookings Table Container -->
@@ -51,7 +54,8 @@
 
     <div id="footer-root"></div>
 
-    <script src="/js/vendor/bootstrap.bundle.min.js"></script>`n    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
@@ -89,8 +93,8 @@
                                     <div class="text-muted small" style="max-width: 250px;">${b.keterangan_grooming}</div>
                                 </td>
                                 <td>
-                                    <span class="badge ${b.jenis_hewan === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
-                                        ${b.jenis_hewan === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                    <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                        ${b.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'}
                                     </span>
                                 </td>
                                 <td class="fw-semibold text-dark">${formatTanggalIndo(b.tgl_booking)}</td>
@@ -103,7 +107,7 @@
                                 </td>
                                 <td>
                                     ${b.status === 'menunggu konfirmasi' ? `
-                                        <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="cancelBooking(${b.id_booking})" style="font-size: 0.8rem;">
+                                        <button class="btn btn-danger-custom btn-sm" onclick="cancelBooking(${b.id_booking})">
                                             Batalkan
                                         </button>
                                     ` : '-'}
