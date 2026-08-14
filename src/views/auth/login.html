@@ -11,13 +11,17 @@
 </head>
 <body>
     <div class="auth-container">
-        <div class="auth-card">
+        <div class="auth-card" style="border-top: 5px solid var(--accent-yellow) !important;">
             <!-- Brand Logo -->
             <div class="text-center mb-4">
                 <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2">
                     <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="48" height="48" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
                     <span class="font-brand fs-2 text-primary fw-bold">MiaWoof</span>
+                    <span class="badge bg-yellow text-dark border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.65rem;">PETSHOP</span>
                 </a>
+                <div>
+                    <span class="badge-accent-yellow mb-2">Portal Akses Masuk</span>
+                </div>
                 <h4 class="fw-bold text-dark mb-1">Selamat Datang Kembali</h4>
                 <p class="text-muted small mb-0">Masuk ke akun Anda untuk belanja & booking grooming.</p>
             </div>
@@ -34,7 +38,7 @@
                     <input type="password" id="password" class="form-control form-control-custom" placeholder="Masukkan kata sandi" required>
                 </div>
 
-                <button type="submit" id="loginBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 mb-3">
+                <button type="submit" id="loginBtn" class="btn btn-yellow-custom w-100 justify-content-center py-2 mb-3">
                     <span>Masuk ke Akun</span>
                 </button>
             </form>
@@ -43,6 +47,7 @@
             <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="small fw-bold text-dark">Akun Demo Cepat:</span>
+                    <span class="badge bg-yellow text-dark border border-1 border-dark rounded-pill py-0 px-2" style="font-size: 0.65rem;">Auto-Fill</span>
                 </div>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-custom btn-sm flex-fill" onclick="fillCredentials('admin', 'admin123')">

@@ -7,12 +7,13 @@
   --primary-light: #f7ede8;           /* Soft Terracotta Cream */
   --primary-accent: #d48b70;          /* Warm Clay */
 
-  /* ================= Warm Mustard Gold Accent (No Blue) ================= */
+  /* ================= Vibrant Mustard Yellow Accents (No Blue) ================= */
   --accent-yellow: #f5ba38;           /* Vibrant Mustard Gold */
-  --accent-yellow-light: #fef4d8;     /* Soft Pastel Butter Cream */
-  --accent-yellow-dark: #825807;      /* Deep Amber Brown */
+  --accent-yellow-hover: #e5a720;
+  --accent-yellow-light: #fef5da;     /* Soft Butter Cream */
+  --accent-yellow-dark: #6e4804;      /* Deep Rich Gold Brown */
 
-  --border-dark: #231f20;             /* Solid Crisp Brutalist Outline */
+  --border-dark: #231f20;             /* Solid Pitch Dark Outline */
 
   /* ================= Body & Surfaces ================= */
   --bg-body: #fbf9f7;                 /* Warm Linen / Off-White */
@@ -23,7 +24,7 @@
   --text-muted: #6b5e5a;              /* Warm Neutral Muted */
   --text-light: #ffffff;
 
-  /* ================= Harmonious Pet Categories (Warm Earth & Yellow) ================= */
+  /* ================= Harmonious Pet Categories ================= */
   --cat-bg: #fceee6;                  /* Peach Terracotta Tint */
   --cat-text: #5e2e20;
   --cat-border: #875749;
@@ -32,7 +33,7 @@
   --dog-text: #6e4d05;
   --dog-border: #d49b1e;
 
-  /* ================= Harmonious Semantic Feedback (No Blue) ================= */
+  /* ================= Harmonious Semantic Feedback (Zero Blue) ================= */
   --status-success-bg: #e1f2e8;
   --status-success-text: #1a4d2e;
   --status-success-border: #2e7d32;

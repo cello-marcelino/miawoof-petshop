@@ -11,14 +11,18 @@
 </head>
 <body>
     <div class="auth-container">
-        <div class="auth-card" style="max-width: 520px;">
+        <div class="auth-card" style="max-width: 520px; border-top: 5px solid var(--accent-yellow) !important;">
             <!-- Brand Logo -->
             <div class="text-center mb-4">
                 <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2">
                     <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="48" height="48" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
                     <span class="font-brand fs-2 text-primary fw-bold">MiaWoof</span>
+                    <span class="badge bg-yellow text-dark border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.65rem;">PETSHOP</span>
                 </a>
-                <h4 class="fw-bold text-dark mb-1">Registrasi Akun Customer</h4>
+                <div>
+                    <span class="badge-accent-yellow mb-2">Registrasi Pengguna Baru</span>
+                </div>
+                <h4 class="fw-bold text-dark mb-1">Daftar Akun Customer</h4>
                 <p class="text-muted small mb-0">Bergabunglah untuk memesan produk dan layanan salon anabul.</p>
             </div>
 
@@ -62,7 +66,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="regBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 mb-3">
+                <button type="submit" id="regBtn" class="btn btn-yellow-custom w-100 justify-content-center py-2 mb-3">
                     <span>Daftar Sekarang</span>
                 </button>
             </form>
