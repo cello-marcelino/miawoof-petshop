@@ -48,7 +48,7 @@ function initFooter() {
                         <div class="d-flex flex-column gap-2 small text-light mt-2">
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-yellow text-dark p-1 rounded-circle border border-1 border-dark">&bull;</span>
-                                <span class="fw-semibold">Ruko Pet Center No. 1, Jakarta</span>
+                                <span class="fw-semibold">Ruko Pet Center No. 1, Batam</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-yellow text-dark p-1 rounded-circle border border-1 border-dark">&bull;</span>
@@ -62,7 +62,27 @@ function initFooter() {
                     </div>
                 </div>
 
-                <div class="pt-3 border-top border-1 border-secondary d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-center text-md-start">
+                <!-- PBL Attribution & Student Info -->
+                <div class="pt-3 border-top border-1 border-secondary mb-3 d-flex flex-column flex-lg-row align-items-center justify-content-between gap-3 text-center text-lg-start">
+                    <div style="font-size: 0.8rem; line-height: 1.6;" class="text-light">
+                        <div class="fw-bold mb-1 d-flex align-items-center justify-content-center justify-content-lg-start gap-2 flex-wrap">
+                            <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem; letter-spacing: 0.4px;">PROJECT PBL</span>
+                            <span class="opacity-90">Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di <strong>Politeknik Negeri Batam</strong> oleh:</span>
+                        </div>
+                        <div class="text-light opacity-85">
+                            <strong>3312411001</strong> &mdash; Dea Asnuari &nbsp;&bull;&nbsp; 
+                            <strong>3312411004</strong> &mdash; Hamdan Azmi &nbsp;&bull;&nbsp; 
+                            <strong>3312411008</strong> &mdash; Christian Marcelino Sinaga &nbsp;&bull;&nbsp; 
+                            <strong>3312411031</strong> &mdash; Fatra Syahreza
+                        </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-1 fw-bold" style="box-shadow: 2px 2px 0px #000000; font-size: 0.75rem;">Politeknik Negeri Batam</span>
+                    </div>
+                </div>
+
+                <!-- Copyright & Badges -->
+                <div class="pt-2 border-top border-1 border-secondary d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-center text-md-start">
                     <small class="text-light opacity-75 fw-bold">
                         &copy; 2026 <strong>MiaWoof Petshop System</strong>. Seluruh Hak Cipta Dilindungi.
                     </small>
