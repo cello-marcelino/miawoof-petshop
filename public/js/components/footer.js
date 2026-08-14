@@ -1,25 +1,25 @@
 /**
- * Rich Royal Blue & Sunny Yellow Neo-Brutalist Customer Footer Component
+ * 3-Color Neo-Brutalist Customer Footer Component
  */
 function initFooter() {
     const footerRoot = document.getElementById('footer-root');
     if (!footerRoot) return;
 
     footerRoot.innerHTML = `
-        <footer class="border-top border-2 border-dark pt-5 pb-4 mt-auto text-white" style="background-color: var(--accent-blue-dark) !important;">
+        <footer class="pt-5 pb-4 mt-auto text-white" style="background-color: var(--primary-dark) !important; border-top: 3px solid #000000 !important;">
             <div class="container">
                 <div class="row g-4 mb-4">
                     <div class="col-lg-4 col-md-6">
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="44" height="44" class="rounded-2 border border-2 border-white" onerror="this.src='/images/icons/paw.svg'">
-                            <span class="font-brand fs-3 text-warning fw-bold">MiaWoof Petshop</span>
+                        <div class="d-inline-flex align-items-center gap-2 mb-3 bg-white p-2 rounded-2 border border-2 border-dark" style="box-shadow: 3px 3px 0px #000000;">
+                            <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="36" height="36" class="rounded-1 border border-1 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                            <span class="font-brand fs-4 text-dark fw-bold">MiaWoof Petshop</span>
                         </div>
                         <p class="text-light small mb-3 opacity-90">
                             Pusat perbelanjaan nutrisi anabul premium dan layanan perawatan salon grooming profesional berlisensi untuk kucing dan anjing kesayangan Anda.
                         </p>
                         <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge bg-yellow text-dark border border-1 border-dark px-3 py-1 fw-bold">Nutrisi Pilihan</span>
-                            <span class="badge bg-white text-dark border border-1 border-dark px-3 py-1 fw-bold">Grooming Berlisensi</span>
+                            <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-1 fw-bold" style="box-shadow: 2px 2px 0px #000000;">Nutrisi Pilihan</span>
+                            <span class="badge bg-white text-dark border border-2 border-dark px-3 py-1 fw-bold" style="box-shadow: 2px 2px 0px #000000;">Grooming Berlisensi</span>
                         </div>
                     </div>
 
@@ -47,15 +47,15 @@ function initFooter() {
                         <div class="footer-title-badge">Kontak & Lokasi</div>
                         <div class="d-flex flex-column gap-2 small text-light mt-2">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-warning text-dark p-1 rounded-circle">&bull;</span>
+                                <span class="badge bg-yellow text-dark p-1 rounded-circle border border-1 border-dark">&bull;</span>
                                 <span class="fw-semibold">Ruko Pet Center No. 1, Jakarta</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-warning text-dark p-1 rounded-circle">&bull;</span>
+                                <span class="badge bg-yellow text-dark p-1 rounded-circle border border-1 border-dark">&bull;</span>
                                 <span class="fw-semibold">+62 812-3456-7890</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-warning text-dark p-1 rounded-circle">&bull;</span>
+                                <span class="badge bg-yellow text-dark p-1 rounded-circle border border-1 border-dark">&bull;</span>
                                 <span class="fw-semibold">Buka Setiap Hari: 08.00 - 20.00</span>
                             </div>
                         </div>
@@ -67,8 +67,8 @@ function initFooter() {
                         &copy; 2026 <strong>MiaWoof Petshop System</strong>. Seluruh Hak Cipta Dilindungi.
                     </small>
                     <div>
-                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 small fw-bold">Native Node.js</span>
-                        <span class="badge bg-white text-dark border border-1 border-dark px-2 py-1 small fw-bold">Neo-Brutalism</span>
+                        <span class="badge bg-yellow text-dark border border-2 border-dark px-2 py-1 small fw-bold" style="box-shadow: 2px 2px 0px #000000;">Native Node.js</span>
+                        <span class="badge bg-white text-dark border border-2 border-dark px-2 py-1 small fw-bold" style="box-shadow: 2px 2px 0px #000000;">Neo-Brutalism UI</span>
                     </div>
                 </div>
             </div>

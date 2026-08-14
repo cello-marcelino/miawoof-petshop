@@ -18,8 +18,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-main);
-  font-weight: 700;
-  letter-spacing: -0.2px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .font-brand {
@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: var(--primary);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 a:hover {
@@ -69,7 +69,7 @@ a:hover {
   border: var(--border-brutal) !important;
   color: #ffffff !important;
   box-shadow: var(--shadow-brutal-sm) !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
 }
 
 .btn-primary:hover, .btn-primary:focus {
@@ -95,18 +95,18 @@ a:hover {
 
 /* ================= Custom Scrollbars ================= */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--bg-body);
-  border-left: 1px solid var(--border-dark);
+  border-left: 2px solid var(--border-dark);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--accent-yellow);
-  border: 1px solid var(--border-dark);
+  border: 2px solid var(--border-dark);
 }
 
 /* ================= Layout Structure ================= */
@@ -170,7 +170,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   background-color: var(--bg-body);
-  background-image: radial-gradient(var(--border-dark) 1px, transparent 1px);
+  background-image: radial-gradient(var(--border-dark) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
   padding: 2rem;
 }
@@ -181,6 +181,6 @@ a:hover {
   background: #ffffff;
   border: var(--border-brutal);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-brutal-lg);
+  box-shadow: var(--shadow-brutal-xl);
   padding: 2.5rem;
 }
