@@ -37,7 +37,7 @@ a:hover {
   color: var(--primary-hover);
 }
 
-/* ================= Strict Bootstrap Blue Overrides (Zero Blue Allowed) ================= */
+/* ================= Color Utility Overrides ================= */
 .text-primary, a.text-primary, .link-primary {
   color: var(--primary) !important;
 }
@@ -54,6 +54,14 @@ a:hover {
 .bg-yellow {
   background-color: var(--accent-yellow) !important;
   color: var(--text-main) !important;
+}
+
+.bg-light-blue {
+  background-color: var(--primary-light) !important;
+}
+
+.bg-light-yellow {
+  background-color: var(--accent-yellow-light) !important;
 }
 
 .btn-primary {

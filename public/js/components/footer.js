@@ -1,5 +1,5 @@
 /**
- * Clean Neo-Brutalist Customer Footer Component (Yellow & Terracotta Accent)
+ * Clean Neo-Brutalist Customer Footer Component (Off-White, Blue & Yellow Palette)
  */
 function initFooter() {
     const footerRoot = document.getElementById('footer-root');
@@ -18,7 +18,7 @@ function initFooter() {
                             Pusat perbelanjaan nutrisi anabul premium dan layanan perawatan salon grooming profesional berlisensi untuk kucing dan anjing kesayangan Anda.
                         </p>
                         <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge bg-yellow text-dark border border-1 border-dark px-3 py-1 fw-bold">Nutrisi Premium</span>
+                            <span class="badge bg-yellow text-dark border border-1 border-dark px-3 py-1 fw-bold">Nutrisi Pilihan</span>
                             <span class="badge bg-primary text-white border border-1 border-dark px-3 py-1 fw-bold">Grooming Berlisensi</span>
                         </div>
                     </div>
@@ -68,7 +68,7 @@ function initFooter() {
                     </small>
                     <div>
                         <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 small fw-bold">Native Node.js</span>
-                        <span class="badge bg-white text-dark border border-1 border-dark px-2 py-1 small fw-bold">Neo-Brutalism</span>
+                        <span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 small fw-bold">Neo-Brutalism</span>
                     </div>
                 </div>
             </div>

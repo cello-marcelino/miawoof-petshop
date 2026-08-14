@@ -1,54 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* ================= Neo-Brutalism Theme Palette ================= */
-  --primary: #875749;                 /* Heritage Terracotta Brown */
-  --primary-hover: #704437;           /* Deep Chestnut */
-  --primary-light: #f7ede8;           /* Soft Terracotta Cream */
-  --primary-accent: #d48b70;          /* Warm Clay */
+  /* ================= Neo-Brutalism Off-White, Blue & Yellow Palette ================= */
+  --primary: #2563eb;                 /* Vibrant Royal Blue */
+  --primary-hover: #1d4ed8;           /* Deep Cobalt Blue */
+  --primary-light: #eff6ff;           /* Soft Ice Blue Tint */
+  --primary-text: #1e40af;
 
-  /* ================= Vibrant Mustard Yellow Accents (No Blue) ================= */
-  --accent-yellow: #f5ba38;           /* Vibrant Mustard Gold */
-  --accent-yellow-hover: #e5a720;
-  --accent-yellow-light: #fef5da;     /* Soft Butter Cream */
-  --accent-yellow-dark: #6e4804;      /* Deep Rich Gold Brown */
+  /* ================= Vibrant Sunny Yellow Accent ================= */
+  --accent-yellow: #ffd12f;           /* Vibrant Punchy Yellow */
+  --accent-yellow-hover: #f5c018;
+  --accent-yellow-light: #fef9c3;     /* Soft Pastel Butter Tint */
+  --accent-yellow-dark: #78350f;      /* Deep Golden Brown */
 
-  --border-dark: #231f20;             /* Solid Pitch Dark Outline */
+  --border-dark: #18181b;             /* Crisp Solid Pitch Dark Outline */
 
-  /* ================= Body & Surfaces ================= */
-  --bg-body: #fbf9f7;                 /* Warm Linen / Off-White */
+  /* ================= Dominant Off-White & Surfaces ================= */
+  --bg-body: #f8f9fc;                 /* Clean Off-White / Crisp Neutral */
   --bg-surface: #ffffff;              /* Elevated Card Surface */
-  --bg-surface-subtle: #f4efe8;       /* Input & Table Header Surface */
+  --bg-surface-subtle: #f1f3f9;       /* Input & Table Header Surface */
 
-  --text-main: #231f20;               /* Solid Pitch Dark */
-  --text-muted: #6b5e5a;              /* Warm Neutral Muted */
+  --text-main: #18181b;               /* Solid Pitch Dark */
+  --text-muted: #52525b;              /* Clean Charcoal Muted */
   --text-light: #ffffff;
 
-  /* ================= Harmonious Pet Categories ================= */
-  --cat-bg: #fceee6;                  /* Peach Terracotta Tint */
-  --cat-text: #5e2e20;
-  --cat-border: #875749;
+  /* ================= Pet Categories (Yellow & Blue Contrast) ================= */
+  --cat-bg: #fef9c3;                  /* Sunny Yellow Tint */
+  --cat-text: #854d0e;
+  --cat-border: #eab308;
 
-  --dog-bg: #fef2cd;                  /* Warm Honey Yellow Tint */
-  --dog-text: #6e4d05;
-  --dog-border: #d49b1e;
+  --dog-bg: #dbeafe;                  /* Ice Blue Tint */
+  --dog-text: #1e40af;
+  --dog-border: #3b82f6;
 
-  /* ================= Harmonious Semantic Feedback (Zero Blue) ================= */
-  --status-success-bg: #e1f2e8;
-  --status-success-text: #1a4d2e;
-  --status-success-border: #2e7d32;
+  /* ================= Semantic Feedback Badges ================= */
+  --status-success-bg: #dcfce7;
+  --status-success-text: #166534;
+  --status-success-border: #22c55e;
 
-  --status-pending-bg: #fff3cd;
-  --status-pending-text: #784d09;
-  --status-pending-border: #f5ba38;
+  --status-pending-bg: #fef9c3;
+  --status-pending-text: #854d0e;
+  --status-pending-border: #eab308;
 
-  --status-info-bg: #fef7de;          /* Warm Yellow Process */
-  --status-info-text: #705300;
-  --status-info-border: #e0a800;
+  --status-info-bg: #dbeafe;
+  --status-info-text: #1e40af;
+  --status-info-border: #3b82f6;
 
-  --status-danger-bg: #fde4e4;
-  --status-danger-text: #7a1f1d;
-  --status-danger-border: #c62828;
+  --status-danger-bg: #fee2e2;
+  --status-danger-text: #991b1b;
+  --status-danger-border: #ef4444;
 
   /* ================= Typography Tokens ================= */
   --font-brand: 'Irish Grover', cursive, serif;

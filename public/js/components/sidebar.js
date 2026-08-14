@@ -1,17 +1,17 @@
 /**
- * Clean Neo-Brutalist Admin Sidebar Component (Yellow & Terracotta Accent)
+ * Clean Neo-Brutalist Admin Sidebar Component (Off-White, Blue & Yellow Palette)
  */
 function initSidebar(activeMenu = 'dashboard', user = null) {
     const sidebarRoot = document.getElementById('sidebar-root');
     if (!sidebarRoot) return;
 
     const menuItems = [
-        { key: 'dashboard', label: 'Dashboard', url: '/admin/dashboard', icon: '/images/icons/dashboard.svg', iconActive: '/images/icons/dashboard.svg' },
-        { key: 'produk', label: 'Kelola Produk', url: '/admin/produk', icon: '/images/icons/cart.svg', iconActive: '/images/icons/cart.svg' },
-        { key: 'pesanan', label: 'Kelola Pesanan', url: '/admin/pesanan', icon: '/images/icons/package.svg', iconActive: '/images/icons/package.svg' },
-        { key: 'grooming', label: 'Jadwal Grooming', url: '/admin/grooming', icon: '/images/icons/scissors.svg', iconActive: '/images/icons/scissors.svg' },
-        { key: 'users', label: 'Data Pengguna', url: '/admin/users', icon: '/images/icons/user.svg', iconActive: '/images/icons/user.svg' },
-        { key: 'profil', label: 'Pengaturan Profil', url: '/admin/profil', icon: '/images/icons/user.svg', iconActive: '/images/icons/user.svg' }
+        { key: 'dashboard', label: 'Dashboard', url: '/admin/dashboard', icon: '/images/icons/dashboard.svg' },
+        { key: 'produk', label: 'Kelola Produk', url: '/admin/produk', icon: '/images/icons/cart.svg' },
+        { key: 'pesanan', label: 'Kelola Pesanan', url: '/admin/pesanan', icon: '/images/icons/package.svg' },
+        { key: 'grooming', label: 'Jadwal Grooming', url: '/admin/grooming', icon: '/images/icons/scissors.svg' },
+        { key: 'users', label: 'Data Pengguna', url: '/admin/users', icon: '/images/icons/user.svg' },
+        { key: 'profil', label: 'Pengaturan Profil', url: '/admin/profil', icon: '/images/icons/user.svg' }
     ];
 
     const menuLinksHtml = menuItems.map(item => {

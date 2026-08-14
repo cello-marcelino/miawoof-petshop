@@ -1,4 +1,4 @@
-/* ================= Neo-Brutalism Component Library (Yellow & Terracotta Accent) ================= */
+/* ================= Neo-Brutalism Component Library (Off-White, Blue & Yellow Palette) ================= */
 
 /* ================= 1. Tactile Buttons ================= */
 .btn-primary-custom {
@@ -115,7 +115,7 @@
   letter-spacing: 0.3px;
 }
 
-.badge-accent-terracotta {
+.badge-accent-blue {
   background-color: var(--primary);
   color: #ffffff;
   border: var(--border-brutal-sm);
@@ -220,7 +220,7 @@
   box-shadow: var(--shadow-brutal-sm);
 }
 
-.stat-icon-primary {
+.stat-icon-blue {
   background-color: var(--primary-light);
 }
 
@@ -270,10 +270,10 @@
 }
 
 .table-custom tbody tr:hover {
-  background-color: #faf7f2;
+  background-color: #f8fafc;
 }
 
-/* ================= 6. Badges & Tags (Harmonious & Non-Clashing) ================= */
+/* ================= 6. Badges & Tags (Yellow & Blue Balance) ================= */
 .badge-pet-cat {
   background-color: var(--cat-bg);
   color: var(--cat-text);
@@ -356,7 +356,7 @@
 }
 
 .form-control-custom:focus, .form-select-custom:focus {
-  border-color: var(--accent-yellow);
+  border-color: var(--primary);
   outline: none;
   box-shadow: var(--shadow-brutal-md);
   transform: translate(-1px, -1px);

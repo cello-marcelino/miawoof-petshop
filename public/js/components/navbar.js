@@ -1,5 +1,5 @@
 /**
- * Clean Neo-Brutalist Customer Navbar Component (Yellow & Terracotta Accent)
+ * Clean Neo-Brutalist Customer Navbar Component (Off-White, Blue & Yellow Palette)
  */
 function initNavbar(activePage = 'home', user = null) {
     const navbarRoot = document.getElementById('navbar-root');
