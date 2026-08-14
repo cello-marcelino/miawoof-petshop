@@ -52,21 +52,21 @@ db.serialize(() => {
     paketStmt.finalize();
     console.log('✅ 4 Paket Grooming Master Data berhasil diinjeksi.');
 
-    // 4. Insert Produk
+    // 4. Insert Produk dengan Gambar Asli dari Legacy
     const prodStmt = db.prepare(`INSERT INTO produk (nama, kategori, stock, harga, gambar, tgl_expired) VALUES (?, ?, ?, ?, ?, ?)`);
     const produks = [
-        ['Whiskas Tuna Adult 1.2kg', 'kucing', 35, 68000, 'whiskas_tuna.jpg', '2026-12-31'],
-        ['Royal Canin Kitten 2kg', 'kucing', 20, 245000, 'royal_canin_kitten.jpg', '2026-10-15'],
-        ['Me-O Creamy Treats Salmon (4x15g)', 'kucing', 50, 25000, 'meo_treats.jpg', '2026-11-20'],
-        ['Pedigree Beef & Veg 3kg', 'anjing', 18, 115000, 'pedigree_beef.jpg', '2026-09-30'],
-        ['Pro Plan Puppy Medium Chicken 2.5kg', 'anjing', 15, 290000, 'proplan_puppy.jpg', '2027-01-10'],
-        ['JerHigh Bacon Dog Treats 70g', 'anjing', 40, 22000, 'jerhigh_bacon.jpg', '2026-08-25'],
-        ['MiaWoof Organic Cat Shampoo 250ml', 'kucing', 30, 48000, 'cat_shampoo.jpg', '2027-05-01'],
-        ['MiaWoof Odorless Pet Wipes 80pcs', 'anjing', 60, 18000, 'pet_wipes.jpg', '2027-06-15']
+        ['Whiskas Tuna Adult 1.2kg', 'kucing', 35, 68000, 'whiskas_tuna.webp', '2026-12-31'],
+        ['Royal Canin Kitten Mother & Baby 2kg', 'kucing', 20, 245000, 'royal_canin_kitten.jpg', '2026-10-15'],
+        ['Royal Canin Adult Wet Pouch 85g', 'kucing', 50, 25000, 'royal_canin_pouch.jpg', '2026-11-20'],
+        ['Pedigree Beef & Vegetables 3kg', 'anjing', 18, 115000, 'dog_food_pedigree.jpg', '2026-09-30'],
+        ['Pro Plan Puppy Medium Chicken 2.5kg', 'anjing', 15, 290000, 'dog_food_proplan.jpg', '2027-01-10'],
+        ['JerHigh Bacon Dog Treats 70g', 'anjing', 40, 22000, 'jerhigh_treats.jpg', '2026-08-25'],
+        ['MiaWoof Organic Pet Shampoo 250ml', 'kucing', 30, 48000, 'cat_shampoo.jpg', '2027-05-01'],
+        ['Adult Cat Premium Food 1.5kg', 'kucing', 25, 85000, 'adult_cat_food.jpg', '2027-06-15']
     ];
     produks.forEach(p => prodStmt.run(p[0], p[1], p[2], p[3], p[4], p[5]));
     prodStmt.finalize();
-    console.log('✅ 8 Produk Makanan & Perlengkapan berhasil diinjeksi.');
+    console.log('✅ 8 Produk Makanan & Perlengkapan berhasil diinjeksi dengan gambar terhubung.');
 
     // 5. Insert Dummy Orders (Pesanan)
     const orderStmt = db.prepare(`INSERT INTO pesanan (id_produk, id_pembeli, jumlah, total, status) VALUES (?, ?, ?, ?, ?)`);
@@ -87,6 +87,6 @@ db.serialize(() => {
     bookStmt.finalize();
     console.log('✅ 4 Jadwal Reservasi Grooming Dummy berhasil dibuat.');
 
-    console.log('🎉 Seeding MiaWoof Petshop Berhasil Sepenuhnya!');
+    console.log('🎉 Seeding MiaWoof Petshop Selesai Sepenuhnya!');
     setTimeout(() => process.exit(0), 400);
 });

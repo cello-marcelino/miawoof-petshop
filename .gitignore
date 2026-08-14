@@ -10,10 +10,17 @@ yarn-error.log*
 # Database
 database/*.db
 
-# Uploaded Files
+# Uploaded Files (Track default demo media, ignore dynamic uploads)
 public/uploads/*
+!public/uploads/whiskas_tuna.webp
+!public/uploads/royal_canin_kitten.jpg
+!public/uploads/royal_canin_pouch.jpg
+!public/uploads/dog_food_pedigree.jpg
+!public/uploads/dog_food_proplan.jpg
+!public/uploads/jerhigh_treats.jpg
+!public/uploads/cat_shampoo.jpg
+!public/uploads/adult_cat_food.jpg
 !public/uploads/dummy_product.jpg
-!public/uploads/dummy_receipt.jpg
 
 # OS generated files
 .DS_Store
