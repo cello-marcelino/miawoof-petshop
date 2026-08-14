@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Brand Logo -->
+            <div class="text-center mb-4">
+                <a href="/" class="text-decoration-none">
+                    <span class="font-brand text-primary" style="font-size: 2.8rem;">MiaWoof</span>
+                </a>
+                <div class="text-muted fw-semibold" style="font-size: 0.95rem;">Sistem Manajemen & Layanan Petshop</div>
+            </div>
+
+            <h4 class="fw-bold text-dark mb-1">Selamat Datang! 🐾</h4>
+            <p class="text-muted small mb-4">Silakan masuk menggunakan akun terdaftar Anda.</p>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label-custom">Username</label>
+                    <input type="text" id="username" class="form-control form-control-custom" placeholder="Masukkan username" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Password</label>
+                    <input type="password" id="password" class="form-control form-control-custom" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 mb-3">
+                    <span>Masuk ke Akun</span>
+                </button>
+            </form>
+
+            <div class="text-center border-top pt-3 text-muted small">
+                Belum punya akun? <a href="/register" class="fw-bold text-primary">Daftar Sekarang</a>
+            </div>
+
+            <!-- Demo Helper Info Box -->
+            <div class="mt-4 p-3 bg-light rounded-3 border small">
+                <div class="fw-bold text-dark mb-1">💡 Akun Pengujian (Demo):</div>
+                <div class="text-muted"><strong>Admin:</strong> <code>admin</code> | <code>admin123</code></div>
+                <div class="text-muted"><strong>Customer:</strong> <code>budi_santoso</code> | <code>customer123</code></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Memproses...</span>';
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 800);
+                } else {
+                    showToast(data.message || 'Login gagal.', 'danger');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Masuk ke Akun</span>';
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Masuk ke Akun</span>';
+            }
+        });
+    </script>
+</body>
+</html>

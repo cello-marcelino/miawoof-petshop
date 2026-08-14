@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paket Grooming & Spa - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="customer-main pt-4">
+        <div class="container">
+            <!-- Header Title -->
+            <div class="text-center mb-5">
+                <span class="badge bg-primary text-white rounded-pill px-3 py-2 fw-bold mb-2">✂️ Salon & Spa Khusus Kucing & Anjing</span>
+                <h2 class="fw-bold text-dark">Layanan Grooming Profesional MiaWoof</h2>
+                <p class="text-muted mx-auto" style="max-width: 650px;">
+                    Perawatan higienis menyeluruh dengan shampo anti kutu & jamur, air hangat bersuhu stabil, serta ditangani oleh perawat hewan berpengalaman.
+                </p>
+            </div>
+
+            <!-- Packages Grid -->
+            <div class="row g-4 mb-5" id="packagesGrid">
+                <div class="col-12 text-center py-5 text-muted">Memuat daftar paket grooming...</div>
+            </div>
+
+            <!-- Facility Highlights Banner -->
+            <div class="card-modern p-4 bg-white border rounded-4 mt-5">
+                <h5 class="fw-bold text-dark mb-3 text-center">Mengapa Memilih Grooming di MiaWoof? 🌟</h5>
+                <div class="row g-4 text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="fs-1 mb-2">🛁</div>
+                        <h6 class="fw-bold text-dark mb-1">Air Hangat Steril</h6>
+                        <p class="text-muted small mb-0">Mandi nyaman tanpa membuat anabul stres.</p>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="fs-1 mb-2">🌿</div>
+                        <h6 class="fw-bold text-dark mb-1">Shampo Organik</h6>
+                        <p class="text-muted small mb-0">Formula alami lembut untuk kulit & bulu sensitif.</p>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="fs-1 mb-2">✂️</div>
+                        <h6 class="fw-bold text-dark mb-1">Groomer Ahli</h6>
+                        <p class="text-muted small mb-0">Penanganan penuh kasih sayang dan terlatih.</p>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="fs-1 mb-2">🛡️</div>
+                        <h6 class="fw-bold text-dark mb-1">Ruangan Higienis</h6>
+                        <p class="text-muted small mb-0">Disinfeksi menyeluruh setiap selesai treatment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3">
+                    <h5 class="modal-title fw-bold">Reservasi Jadwal Grooming ✂️</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="p-3 bg-light rounded-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-1" id="modalPaketName">Paket Grooming</h6>
+                        <div class="text-primary fw-bold fs-5" id="modalPaketPrice">Rp 0</div>
+                        <div class="text-muted small mt-1" id="modalPaketKet">Rincian perawatan...</div>
+                    </div>
+
+                    <form id="bookingForm">
+                        <input type="hidden" id="modalPaketId">
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Pilih Tanggal Booking *</label>
+                            <input type="date" id="tgl_booking" class="form-control form-control-custom" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label-custom">Pilih Slot Waktu Kedatangan *</label>
+                            <select id="waktu" class="form-select form-select-custom" required>
+                                <option value="">-- Pilih Jam --</option>
+                                <option value="09:00">09:00 WIB (Pagi)</option>
+                                <option value="10:30">10:30 WIB (Pagi)</option>
+                                <option value="13:00">13:00 WIB (Siang)</option>
+                                <option value="14:30">14:30 WIB (Siang)</option>
+                                <option value="16:00">16:00 WIB (Sore)</option>
+                                <option value="17:30">17:30 WIB (Sore)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="submitBookingBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                            <span>Konfirmasi Reservasi</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-root"></div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        let currentUser = null;
+        let bookingModal = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+
+            // Check Session
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated) currentUser = sessionData.user;
+            } catch (e) {}
+
+            initNavbar('grooming', currentUser);
+            initFooter();
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tgl_booking').min = today;
+            document.getElementById('tgl_booking').value = today;
+
+            loadPakets();
+
+            // Handle Booking Submit
+            document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    window.location.href = '/login?msg=Silakan+masuk+terlebih+dahulu+untuk+booking+grooming&status=warning';
+                    return;
+                }
+
+                const btn = document.getElementById('submitBookingBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Memproses Reservasi...</span>';
+
+                const id_paket = document.getElementById('modalPaketId').value;
+                const tgl_booking = document.getElementById('tgl_booking').value;
+                const waktu = document.getElementById('waktu').value;
+
+                try {
+                    const res = await fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_paket, tgl_booking, waktu })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        bookingModal.hide();
+                        showToast('Reservasi grooming berhasil diajukan!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/riwayat-booking?msg=Jadwal+reservasi+berhasil+dibuat!&status=success';
+                        }, 800);
+                    } else {
+                        showToast(data.message || 'Gagal mengajukan booking.', 'danger');
+                        btn.disabled = false;
+                        btn.innerHTML = '<span>Konfirmasi Reservasi</span>';
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Konfirmasi Reservasi</span>';
+                }
+            });
+        });
+
+        async function loadPakets() {
+            const grid = document.getElementById('packagesGrid');
+            try {
+                const res = await fetch('/api/pakets');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    grid.innerHTML = data.data.map(p => `
+                        <div class="col-lg-6">
+                            <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between border-top border-4 ${p.nama_paket.toLowerCase().includes('premium') ? 'border-primary' : 'border-secondary'}">
+                                <div>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <span class="badge ${p.jenis_hewan === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize fw-bold px-3 py-1">
+                                            ${p.jenis_hewan === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        </span>
+                                        <div class="fw-bold text-primary fs-4">${formatRupiah(p.harga)}</div>
+                                    </div>
+                                    <h4 class="fw-bold text-dark mb-2">${p.nama_paket}</h4>
+                                    <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
+                                </div>
+                                <button class="btn btn-primary-custom w-100 justify-content-center py-2" onclick='openBookingModal(${JSON.stringify(p)})'>
+                                    ✂️ Reservasi Jadwal Ini
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<div class="col-12 text-center text-muted">Belum ada paket grooming yang tersedia.</div>';
+                }
+            } catch (err) {
+                grid.innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat paket grooming.</div>';
+            }
+        }
+
+        function openBookingModal(paket) {
+            document.getElementById('modalPaketId').value = paket.id_paket;
+            document.getElementById('modalPaketName').innerText = `${paket.nama_paket} (${paket.jenis_hewan.toUpperCase()})`;
+            document.getElementById('modalPaketPrice').innerText = formatRupiah(paket.harga);
+            document.getElementById('modalPaketKet').innerText = `Rincian: ${paket.keterangan_grooming}`;
+            bookingModal.show();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Produk - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="customer-main pt-4">
+        <div class="container">
+            <!-- Header Title -->
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Katalog Produk Peliharaan 🛍️</h2>
+                    <p class="text-muted small mb-0">Temukan nutrisi sehat dan perlengkapan higienis terbaik untuk kucing & anjing.</p>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <div class="input-group" style="max-width: 320px;">
+                        <input type="text" id="searchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
+                        <button class="btn btn-primary-custom px-3" id="searchBtn">🔍</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Category Tabs -->
+            <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
+                <button class="btn btn-primary-custom btn-sm rounded-pill px-4 category-filter active" data-category="all">Semua Produk</button>
+                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="kucing">🐱 Khusus Kucing</button>
+                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="anjing">🐶 Khusus Anjing</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row g-4" id="productsGrid">
+                <div class="col-12 text-center py-5 text-muted">Memuat katalog produk...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3">
+                    <h5 class="modal-title fw-bold">Konfirmasi Pemesanan Produk 🛒</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex gap-3 align-items-center mb-4 p-3 bg-light rounded-3">
+                        <div class="product-img-wrapper" style="width: 70px; height: 70px; border-radius: 8px;">
+                            <img id="modalProductImg" src="" alt="Product" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1" id="modalProductName">Nama Produk</h6>
+                            <div class="text-primary fw-bold" id="modalProductPrice">Rp 0</div>
+                            <div class="text-muted small" id="modalProductStock">Sisa Stok: 0</div>
+                        </div>
+                    </div>
+
+                    <form id="orderForm">
+                        <input type="hidden" id="modalProductId">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Jumlah Pesanan (Unit)</label>
+                            <input type="number" id="orderQuantity" class="form-control form-control-custom" value="1" min="1" required>
+                        </div>
+
+                        <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-4">
+                            <span class="text-muted fw-semibold">Total Pembayaran:</span>
+                            <span class="fw-bold text-primary fs-5" id="orderTotal">Rp 0</span>
+                        </div>
+
+                        <button type="submit" id="submitOrderBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                            <span>Konfirmasi & Buat Pesanan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-root"></div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        let currentUser = null;
+        let selectedProduct = null;
+        let checkoutModal = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+
+            // Check Session
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated) currentUser = sessionData.user;
+            } catch (e) {}
+
+            initNavbar('produk', currentUser);
+            initFooter();
+
+            // Load Initial Products
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialCategory = urlParams.get('kategori') || 'all';
+            
+            // Set active category tab
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                if (btn.dataset.category === initialCategory) {
+                    btn.classList.remove('btn-outline-custom');
+                    btn.classList.add('btn-primary-custom', 'active');
+                } else {
+                    btn.classList.remove('btn-primary-custom', 'active');
+                    btn.classList.add('btn-outline-custom');
+                }
+            });
+
+            loadProducts(initialCategory === 'all' ? null : initialCategory);
+
+            // Category Filter Events
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-filter').forEach(b => {
+                        b.classList.remove('btn-primary-custom', 'active');
+                        b.classList.add('btn-outline-custom');
+                    });
+                    btn.classList.remove('btn-outline-custom');
+                    btn.classList.add('btn-primary-custom', 'active');
+
+                    const category = btn.dataset.category === 'all' ? null : btn.dataset.category;
+                    loadProducts(category, document.getElementById('searchInput').value);
+                });
+            });
+
+            // Search Filter Events
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                const activeCatBtn = document.querySelector('.category-filter.active');
+                const category = activeCatBtn && activeCatBtn.dataset.category !== 'all' ? activeCatBtn.dataset.category : null;
+                loadProducts(category, document.getElementById('searchInput').value);
+            });
+
+            document.getElementById('searchInput').addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            });
+
+            // Quantity Change Event in Modal
+            document.getElementById('orderQuantity').addEventListener('input', (e) => {
+                if (selectedProduct) {
+                    const qty = parseInt(e.target.value, 10) || 1;
+                    const total = selectedProduct.harga * qty;
+                    document.getElementById('orderTotal').innerText = formatRupiah(total);
+                }
+            });
+
+            // Handle Order Submit
+            document.getElementById('orderForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    window.location.href = '/login?msg=Silakan+masuk+terlebih+dahulu+untuk+memesan&status=warning';
+                    return;
+                }
+
+                const btn = document.getElementById('submitOrderBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Memproses Pesanan...</span>';
+
+                const id_produk = document.getElementById('modalProductId').value;
+                const jumlah = parseInt(document.getElementById('orderQuantity').value, 10);
+
+                try {
+                    const res = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_produk, jumlah })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        checkoutModal.hide();
+                        showToast('Pesanan berhasil dibuat!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/riwayat-pesanan?msg=Pesanan+berhasil+dibuat!&status=success';
+                        }, 800);
+                    } else {
+                        showToast(data.message || 'Gagal membuat pesanan.', 'danger');
+                        btn.disabled = false;
+                        btn.innerHTML = '<span>Konfirmasi & Buat Pesanan</span>';
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Konfirmasi & Buat Pesanan</span>';
+                }
+            });
+        });
+
+        async function loadProducts(kategori = null, search = null) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Memuat data produk...</div>';
+
+            try {
+                let url = '/api/products?';
+                if (kategori) url += `kategori=${kategori}&`;
+                if (search) url += `search=${encodeURIComponent(search)}&`;
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    grid.innerHTML = data.data.map(p => `
+                        <div class="col-xl-3 col-lg-4 col-md-6">
+                            <div class="card-product">
+                                <div class="product-img-wrapper">
+                                    <img src="/uploads/${p.gambar || 'dummy_product.jpg'}" alt="${p.nama}" onerror="this.src='/assets/images/pet-food_16779323.png'">
+                                </div>
+                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="badge ${p.kategori === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
+                                            ${p.kategori === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        </span>
+                                        <span class="text-muted small ${p.stock <= 5 ? 'text-danger fw-bold' : ''}">Stok: ${p.stock}</span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-1 text-truncate" title="${p.nama}">${p.nama}</h6>
+                                    <div class="fw-bold text-primary mb-3" style="font-size: 1.15rem;">${formatRupiah(p.harga)}</div>
+                                    <button class="btn btn-primary-custom btn-sm w-100 justify-content-center mt-auto" onclick='openCheckoutModal(${JSON.stringify(p)})' ${p.stock <= 0 ? 'disabled' : ''}>
+                                        ${p.stock > 0 ? '🛒 Beli Sekarang' : 'Stok Habis'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada produk yang sesuai dengan pencarian Anda.</div>';
+                }
+            } catch (err) {
+                grid.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat produk.</div>';
+            }
+        }
+
+        function openCheckoutModal(product) {
+            selectedProduct = product;
+            document.getElementById('modalProductId').value = product.id_produk;
+            document.getElementById('modalProductName').innerText = product.nama;
+            document.getElementById('modalProductPrice').innerText = formatRupiah(product.harga);
+            document.getElementById('modalProductStock').innerText = `Sisa Stok Tersedia: ${product.stock} unit`;
+            document.getElementById('modalProductImg').src = `/uploads/${product.gambar || 'dummy_product.jpg'}`;
+            document.getElementById('orderQuantity').value = 1;
+            document.getElementById('orderQuantity').max = product.stock;
+            document.getElementById('orderTotal').innerText = formatRupiah(product.harga);
+
+            checkoutModal.show();
+        }
+    </script>
+</body>
+</html>

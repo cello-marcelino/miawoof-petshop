@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Pengguna - Admin MiaWoof</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div id="sidebar-root"></div>
+
+        <main class="admin-main-content">
+            <header class="admin-topbar">
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Manajemen Pengguna Terdaftar 👥</h5>
+                    <small class="text-muted">Daftar akun customer yang terdaftar pada sistem MiaWoof Petshop.</small>
+                </div>
+            </header>
+
+            <div class="admin-content-body">
+                <!-- Users Table Container -->
+                <div class="table-custom-container">
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                    <th>No. HP</th>
+                                    <th>Alamat</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTable">
+                                <tr><td colspan="8" class="text-center py-5 text-muted">Memuat data pengguna...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/sidebar.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check Session
+            let user = null;
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated && sessionData.user.role === 'admin') {
+                    user = sessionData.user;
+                } else {
+                    window.location.href = '/login';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = '/login';
+                return;
+            }
+
+            initSidebar('users', user);
+            loadAdminUsers();
+        });
+
+        async function loadAdminUsers() {
+            const tbody = document.getElementById('adminUsersTable');
+            try {
+                const res = await fetch('/api/users');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(u => `
+                        <tr>
+                            <td class="fw-bold">#${u.id}</td>
+                            <td class="fw-bold text-dark">${u.full_name}</td>
+                            <td class="text-muted"><code>${u.username}</code></td>
+                            <td>
+                                <span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-primary'} rounded-pill text-uppercase" style="font-size: 0.7rem;">
+                                    ${u.role}
+                                </span>
+                            </td>
+                            <td>${u.email || '-'}</td>
+                            <td>${u.no_hp || '-'}</td>
+                            <td class="text-muted small" style="max-width: 250px;">${u.alamat || '-'}</td>
+                            <td>
+                                ${u.role !== 'admin' ? `
+                                    <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="deleteUser(${u.id})">Hapus</button>
+                                ` : '<span class="text-muted small">Protected</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada data customer.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat data pengguna.</td></tr>';
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Hapus pengguna ini? Tindakan ini akan menghapus semua riwayat pesanan yang bersangkutan.')) return;
+            try {
+                const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminUsers();
+                } else {
+                    showToast(data.message || 'Gagal menghapus pengguna.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

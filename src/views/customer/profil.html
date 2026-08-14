@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Akun - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="customer-main pt-4">
+        <div class="container" style="max-width: 800px;">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark mb-1">Pengaturan Profil Akun 👤</h3>
+                <p class="text-muted small mb-0">Kelola informasi kontak dan kata sandi akun Anda.</p>
+            </div>
+
+            <div class="card-modern p-4">
+                <form id="profileForm">
+                    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-3" style="width: 64px; height: 64px;" id="avatarInitial">
+                            U
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1" id="profileHeaderName">Nama Lengkap</h5>
+                            <span class="badge bg-primary text-white rounded-pill px-3 py-1 text-uppercase" id="profileHeaderRole">Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Username</label>
+                            <input type="text" id="profUsername" class="form-control form-control-custom bg-light" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Nama Lengkap *</label>
+                            <input type="text" id="profFullName" class="form-control form-control-custom" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Email</label>
+                            <input type="email" id="profEmail" class="form-control form-control-custom" placeholder="email@contoh.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">No. WhatsApp / HP</label>
+                            <input type="tel" id="profPhone" class="form-control form-control-custom" placeholder="08123456789">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Alamat Pengiriman</label>
+                        <textarea id="profAddress" class="form-control form-control-custom" rows="3" placeholder="Alamat lengkap rumah"></textarea>
+                    </div>
+
+                    <div class="border-top pt-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-3">Ganti Kata Sandi (Opsional)</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Password Baru</label>
+                                <input type="password" id="profPassword" class="form-control form-control-custom" placeholder="Kosongkan jika tidak ingin diubah">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Konfirmasi Password Baru</label>
+                                <input type="password" id="profConfirmPassword" class="form-control form-control-custom" placeholder="Konfirmasi password baru">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" id="saveProfBtn" class="btn btn-primary-custom px-4 py-2">
+                            <span>Simpan Perubahan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated) {
+                    currentUser = sessionData.user;
+                    initNavbar('profil', currentUser);
+                    initFooter();
+                    populateForm(currentUser);
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (e) {
+                window.location.href = '/login';
+            }
+
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('saveProfBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Menyimpan...</span>';
+
+                const full_name = document.getElementById('profFullName').value.trim();
+                const email = document.getElementById('profEmail').value.trim();
+                const no_hp = document.getElementById('profPhone').value.trim();
+                const alamat = document.getElementById('profAddress').value.trim();
+                const password = document.getElementById('profPassword').value;
+                const confirm_password = document.getElementById('profConfirmPassword').value;
+
+                if (password && password !== confirm_password) {
+                    showToast('Konfirmasi password baru tidak cocok!', 'danger');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Simpan Perubahan</span>';
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/api/auth/profile', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ full_name, email, no_hp, alamat, password, confirm_password })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        document.getElementById('profPassword').value = '';
+                        document.getElementById('profConfirmPassword').value = '';
+                        populateForm(data.user);
+                    } else {
+                        showToast(data.message || 'Gagal memperbarui profil.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Simpan Perubahan</span>';
+                }
+            });
+        });
+
+        function populateForm(user) {
+            document.getElementById('profUsername').value = user.username || '';
+            document.getElementById('profFullName').value = user.full_name || '';
+            document.getElementById('profEmail').value = user.email || '';
+            document.getElementById('profPhone').value = user.no_hp || '';
+            document.getElementById('profAddress').value = user.alamat || '';
+            
+            document.getElementById('avatarInitial').innerText = (user.full_name || 'U').charAt(0).toUpperCase();
+            document.getElementById('profileHeaderName').innerText = user.full_name || 'Customer';
+            document.getElementById('profileHeaderRole').innerText = user.role || 'customer';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Jadwal Grooming - Admin MiaWoof</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div id="sidebar-root"></div>
+
+        <main class="admin-main-content">
+            <header class="admin-topbar">
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Manajemen Jadwal Grooming ✂️</h5>
+                    <small class="text-muted">Kelola reservasi jadwal salon anabul dan master paket perawatan.</small>
+                </div>
+                <div>
+                    <button class="btn btn-outline-custom btn-sm" onclick="openPaketModal()">
+                        ⚙️ Kelola Master Paket
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-content-body">
+                <!-- Bookings Table Container -->
+                <div class="table-custom-container">
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>No. Booking</th>
+                                    <th>Pelanggan</th>
+                                    <th>Kontak</th>
+                                    <th>Paket Grooming</th>
+                                    <th>Tanggal Booking</th>
+                                    <th>Jam</th>
+                                    <th>Status</th>
+                                    <th>Ubah Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBookingsTable">
+                                <tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Paket Grooming Manager Modal -->
+    <div class="modal fade" id="paketModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3">
+                    <h5 class="modal-title fw-bold">Master Paket Grooming ✂️</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Add Paket Form -->
+                    <form id="addPaketForm" class="p-3 bg-light rounded-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-3">+ Tambah Paket Baru</h6>
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-5">
+                                <input type="text" id="paketNama" class="form-control form-control-sm" placeholder="Nama Paket (e.g. Spa Medicated)" required>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="paketJenis" class="form-select form-select-sm" required>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="anjing">Anjing</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" id="paketHarga" class="form-control form-control-sm" placeholder="Tarif (Rp)" min="1000" required>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" id="paketKet" class="form-control form-control-sm" placeholder="Rincian perlakuan (e.g. Mandi air hangat, potong kuku, styling)" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom btn-sm w-100 justify-content-center py-1">Simpan Paket</button>
+                    </form>
+
+                    <!-- Existing Pakets List -->
+                    <h6 class="fw-bold text-dark mb-2">Daftar Paket Aktif</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <tbody id="paketListBody">
+                                <tr><td class="text-muted">Memuat paket...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/sidebar.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        let paketModal = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            paketModal = new bootstrap.Modal(document.getElementById('paketModal'));
+
+            // Check Session
+            let user = null;
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated && sessionData.user.role === 'admin') {
+                    user = sessionData.user;
+                } else {
+                    window.location.href = '/login';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = '/login';
+                return;
+            }
+
+            initSidebar('grooming', user);
+            loadAdminBookings();
+
+            // Add Paket Event
+            document.getElementById('addPaketForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nama_paket = document.getElementById('paketNama').value;
+                const jenis_hewan = document.getElementById('paketJenis').value;
+                const harga = document.getElementById('paketHarga').value;
+                const keterangan_grooming = document.getElementById('paketKet').value;
+
+                try {
+                    const res = await fetch('/api/pakets', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nama_paket, jenis_hewan, harga, keterangan_grooming })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        document.getElementById('addPaketForm').reset();
+                        loadPaketsList();
+                    } else {
+                        showToast(data.message || 'Gagal membuat paket.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                }
+            });
+        });
+
+        async function loadAdminBookings() {
+            const tbody = document.getElementById('adminBookingsTable');
+            try {
+                const res = await fetch('/api/bookings');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(b => {
+                        let badgeClass = 'badge-status-pending';
+                        if (b.status === 'dikonfirmasi' || b.status === 'selesai') badgeClass = 'badge-status-success';
+                        else if (b.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+
+                        return `
+                            <tr>
+                                <td class="fw-bold text-dark">#BKG-${b.id_booking}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">${b.customer_name}</div>
+                                    <div class="text-muted small">${b.email || '-'}</div>
+                                </td>
+                                <td class="fw-semibold text-dark">${b.no_hp || '-'}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">${b.nama_paket}</div>
+                                    <span class="badge ${b.jenis_hewan === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.7rem;">
+                                        ${b.jenis_hewan}
+                                    </span>
+                                </td>
+                                <td class="fw-semibold text-dark">${formatTanggalIndo(b.tgl_booking)}</td>
+                                <td class="fw-bold text-primary">${b.waktu} WIB</td>
+                                <td>
+                                    <span class="badge-status ${badgeClass} text-capitalize">
+                                        ● ${b.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" onchange="updateBookingStatus(${b.id_booking}, this.value)" style="width: 175px;">
+                                        <option value="menunggu konfirmasi" ${b.status === 'menunggu konfirmasi' ? 'selected' : ''}>Menunggu Konfirmasi</option>
+                                        <option value="dikonfirmasi" ${b.status === 'dikonfirmasi' ? 'selected' : ''}>Dikonfirmasi</option>
+                                        <option value="selesai" ${b.status === 'selesai' ? 'selected' : ''}>Selesai</option>
+                                        <option value="dibatalkan" ${b.status === 'dibatalkan' ? 'selected' : ''}>Dibatalkan</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada jadwal booking masuk.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat jadwal booking.</td></tr>';
+            }
+        }
+
+        async function updateBookingStatus(id_booking, status) {
+            try {
+                const res = await fetch(`/api/bookings/${id_booking}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminBookings();
+                } else {
+                    showToast(data.message || 'Gagal mengubah status.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        function openPaketModal() {
+            loadPaketsList();
+            paketModal.show();
+        }
+
+        async function loadPaketsList() {
+            const tbody = document.getElementById('paketListBody');
+            try {
+                const res = await fetch('/api/pakets');
+                const data = await res.json();
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(p => `
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">${p.nama_paket} (${p.jenis_hewan})</div>
+                                <div class="text-muted small">${p.keterangan_grooming}</div>
+                            </td>
+                            <td class="fw-bold text-primary">${formatRupiah(p.harga)}</td>
+                            <td class="text-end">
+                                <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="deletePaket(${p.id_paket})">Hapus</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-muted small">Belum ada paket.</td></tr>';
+                }
+            } catch (e) {}
+        }
+
+        async function deletePaket(id) {
+            if (!confirm('Hapus paket grooming ini?')) return;
+            try {
+                const res = await fetch(`/api/pakets/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadPaketsList();
+                }
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>

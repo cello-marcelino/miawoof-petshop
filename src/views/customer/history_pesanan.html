@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Pesanan Saya - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="customer-main pt-4">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">Riwayat Pesanan Belanja 🛒</h3>
+                    <p class="text-muted small mb-0">Pantau status pengiriman dan transaksi belanja kebutuhan anabul Anda.</p>
+                </div>
+                <a href="/produk" class="btn btn-primary-custom btn-sm">+ Belanja Produk Lagi</a>
+            </div>
+
+            <!-- Orders Table Container -->
+            <div class="table-custom-container">
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>No. Order</th>
+                                <th>Produk</th>
+                                <th>Jumlah</th>
+                                <th>Total Bayar</th>
+                                <th>Tanggal Pesan</th>
+                                <th>Status Pesanan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">Memuat riwayat pesanan...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            let currentUser = null;
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated) currentUser = sessionData.user;
+            } catch (e) {}
+
+            initNavbar('pesanan', currentUser);
+            initFooter();
+            loadMyOrders();
+        });
+
+        async function loadMyOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+            try {
+                const res = await fetch('/api/orders');
+                const result = await res.json();
+
+                if (result.success && result.data.length > 0) {
+                    tbody.innerHTML = result.data.map(o => {
+                        let badgeClass = 'badge-status-pending';
+                        if (o.status === 'selesai') badgeClass = 'badge-status-success';
+                        else if (o.status === 'diproses') badgeClass = 'badge-status-info';
+                        else if (o.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+
+                        return `
+                            <tr>
+                                <td class="fw-bold text-dark">#ORD-${o.id_pesanan}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="/uploads/${o.gambar || 'dummy_product.jpg'}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #fafafa;" onerror="this.src='/assets/images/pet-food_16779323.png'">
+                                        <div>
+                                            <div class="fw-bold text-dark">${o.nama_produk}</div>
+                                            <div class="text-muted small">Kategori: ${o.kategori}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="fw-semibold">${o.jumlah} unit</td>
+                                <td class="fw-bold text-primary">${formatRupiah(o.total)}</td>
+                                <td class="text-muted small">${formatTanggalIndo(o.tgl_pesanan)}</td>
+                                <td>
+                                    <span class="badge-status ${badgeClass} text-capitalize">
+                                        ● ${o.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    ${o.status === 'menunggu pembayaran' ? `
+                                        <button class="btn btn-outline-danger btn-sm py-1 px-2" onclick="cancelOrder(${o.id_pesanan})" style="font-size: 0.8rem;">
+                                            Batalkan
+                                        </button>
+                                    ` : '-'}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">Anda belum memiliki riwayat pesanan belanja.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-danger">Gagal memuat data pesanan.</td></tr>';
+            }
+        }
+
+        async function cancelOrder(id_pesanan) {
+            if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok produk akan otomatis dikembalikan.')) return;
+
+            try {
+                const res = await fetch(`/api/orders/${id_pesanan}/cancel`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadMyOrders();
+                } else {
+                    showToast(data.message || 'Gagal membatalkan pesanan.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

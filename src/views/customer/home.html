@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiaWoof Petshop - Nutrisi & Perawatan Terbaik Anabul</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="customer-main pt-4">
+        <div class="container">
+            <!-- Hero Banner -->
+            <div class="hero-banner d-flex flex-column flex-md-row align-items-center justify-content-between">
+                <div>
+                    <span class="badge bg-white text-primary fw-bold px-3 py-2 rounded-pill mb-3">🐾 Petshop & Grooming Terpercaya</span>
+                    <h1>Nutrisi Berkualitas & Spa Mewah untuk Anabul Kesayangan</h1>
+                    <p>Temukan makanan premium, perlengkapan higienis, serta reservasi jadwal grooming profesional untuk kucing dan anjing Anda.</p>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <a href="/produk" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-primary shadow">Belanja Produk</a>
+                        <a href="/grooming" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">Reservasi Grooming</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Highlights -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="card-modern p-4 d-flex align-items-center justify-content-between border-0 shadow-sm" style="background: linear-gradient(135deg, #fff3eb 0%, #fff 100%);">
+                        <div>
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mb-2 fw-bold">🐱 Dunia Kucing</span>
+                            <h4 class="fw-bold text-dark">Kebutuhan Lengkap Si Kucing</h4>
+                            <p class="text-muted small mb-3">Makanan basah/kering, vitamin bulu, pasir wangi & mainan seru.</p>
+                            <a href="/produk?kategori=kucing" class="btn btn-primary-custom btn-sm">Lihat Produk Kucing &rarr;</a>
+                        </div>
+                        <div style="font-size: 4rem;">🐱</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-modern p-4 d-flex align-items-center justify-content-between border-0 shadow-sm" style="background: linear-gradient(135deg, #eef7ff 0%, #fff 100%);">
+                        <div>
+                            <span class="badge bg-info text-dark rounded-pill px-3 py-1 mb-2 fw-bold">🐶 Dunia Anjing</span>
+                            <h4 class="fw-bold text-dark">Perlengkapan Anjing Sehat</h4>
+                            <p class="text-muted small mb-3">Dry food protein tinggi, camilan sehat & shampo anti kutu.</p>
+                            <a href="/produk?kategori=anjing" class="btn btn-primary-custom btn-sm">Lihat Produk Anjing &rarr;</a>
+                        </div>
+                        <div style="font-size: 4rem;">🐶</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">Produk Pilihan Terlaris ⭐</h3>
+                    <p class="text-muted small mb-0">Rekomendasi makanan dan perawatan terbaik pilihan pelanggan MiaWoof.</p>
+                </div>
+                <a href="/produk" class="btn btn-outline-custom btn-sm">Lihat Semua Katalog &rarr;</a>
+            </div>
+
+            <div class="row g-4 mb-5" id="featuredProductsContainer">
+                <div class="col-12 text-center py-4 text-muted">Memuat produk pilihan...</div>
+            </div>
+
+            <!-- Grooming Callout -->
+            <div class="card-modern p-5 bg-white border border-2 border-primary rounded-4 text-center my-5 shadow-sm">
+                <span class="badge bg-primary text-white rounded-pill px-3 py-2 mb-3 fw-bold">✂️ Salon & Spa Khusus Anabul</span>
+                <h2 class="fw-bold text-dark mb-2">Jadwalkan Perawatan Grooming Tanpa Antre</h2>
+                <p class="text-muted mx-auto mb-4" style="max-width: 600px;">
+                    Dikerjakan oleh groomer bersertifikat dengan fasilitas steril, air hangat, serta shampo organik beraroma lembut.
+                </p>
+                <a href="/grooming" class="btn btn-primary-custom px-4 py-2">Pilih Paket Grooming Sekarang</a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/footer.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Fetch Session
+            let user = null;
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated) user = sessionData.user;
+            } catch (e) {}
+
+            initNavbar('home', user);
+            initFooter();
+
+            // 2. Fetch Featured Products
+            try {
+                const res = await fetch('/api/products');
+                const result = await res.json();
+                const container = document.getElementById('featuredProductsContainer');
+
+                if (result.success && result.data.length > 0) {
+                    const featured = result.data.slice(0, 4);
+                    container.innerHTML = featured.map(p => `
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card-product">
+                                <div class="product-img-wrapper">
+                                    <img src="/uploads/${p.gambar || 'dummy_product.jpg'}" alt="${p.nama}" onerror="this.src='/assets/images/pet-food_16779323.png'">
+                                </div>
+                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="badge ${p.kategori === 'kucing' ? 'bg-warning text-dark' : 'bg-info text-dark'} rounded-pill text-capitalize" style="font-size: 0.75rem;">
+                                            ${p.kategori === 'kucing' ? '🐱 Kucing' : '🐶 Anjing'}
+                                        </span>
+                                        <span class="text-muted small">Stok: ${p.stock}</span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2 text-truncate" title="${p.nama}">${p.nama}</h6>
+                                    <div class="fw-bold text-primary mb-3" style="font-size: 1.1rem;">${formatRupiah(p.harga)}</div>
+                                    <a href="/produk" class="btn btn-outline-custom btn-sm w-100 justify-content-center mt-auto">Beli Produk</a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="col-12 text-center text-muted">Belum ada produk terdaftar.</div>';
+                }
+            } catch (e) {
+                document.getElementById('featuredProductsContainer').innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat produk pilihan.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

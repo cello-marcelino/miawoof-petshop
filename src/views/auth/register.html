@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - MiaWoof Petshop</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div class="auth-container py-5">
+        <div class="auth-card" style="max-width: 520px;">
+            <!-- Brand Logo -->
+            <div class="text-center mb-3">
+                <a href="/" class="text-decoration-none">
+                    <span class="font-brand text-primary" style="font-size: 2.6rem;">MiaWoof</span>
+                </a>
+            </div>
+
+            <h4 class="fw-bold text-dark mb-1">Daftar Akun Baru 🐾</h4>
+            <p class="text-muted small mb-4">Bergabung bersama ribuan pemilik hewan peliharaan lainnya.</p>
+
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label class="form-label-custom">Nama Lengkap *</label>
+                    <input type="text" id="full_name" class="form-control form-control-custom" placeholder="Contoh: Budi Santoso" required>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Username *</label>
+                        <input type="text" id="username" class="form-control form-control-custom" placeholder="budi123" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">No. WhatsApp / HP</label>
+                        <input type="tel" id="no_hp" class="form-control form-control-custom" placeholder="08123456789">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Email</label>
+                    <input type="email" id="email" class="form-control form-control-custom" placeholder="budi@example.com">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Alamat Domisili</label>
+                    <textarea id="alamat" class="form-control form-control-custom" rows="2" placeholder="Jl. Mawar No. 12, Jakarta"></textarea>
+                </div>
+
+                <div class="row g-2 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Password (Min. 6 Karakter) *</label>
+                        <input type="password" id="password" class="form-control form-control-custom" placeholder="••••••••" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Konfirmasi Password *</label>
+                        <input type="password" id="confirm_password" class="form-control form-control-custom" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="regBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 mb-3">
+                    <span>Daftar Sekarang</span>
+                </button>
+            </form>
+
+            <div class="text-center border-top pt-3 text-muted small">
+                Sudah memiliki akun? <a href="/login" class="fw-bold text-primary">Masuk di sini</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('regBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Mendaftarkan...</span>';
+
+            const full_name = document.getElementById('full_name').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const no_hp = document.getElementById('no_hp').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const alamat = document.getElementById('alamat').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password').value;
+
+            if (password !== confirm_password) {
+                showToast('Konfirmasi password tidak cocok!', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Daftar Sekarang</span>';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name, username, no_hp, email, alamat, password, confirm_password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showToast(data.message || 'Registrasi gagal.', 'danger');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Daftar Sekarang</span>';
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Daftar Sekarang</span>';
+            }
+        });
+    </script>
+</body>
+</html>
