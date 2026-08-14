@@ -7,35 +7,47 @@
   --primary-light: #f7ede8;           /* Soft Terracotta Cream */
   --primary-accent: #d48b70;          /* Warm Clay */
 
+  /* ================= Warm Mustard Gold Accent (No Blue) ================= */
+  --accent-yellow: #f5ba38;           /* Vibrant Mustard Gold */
+  --accent-yellow-light: #fef4d8;     /* Soft Pastel Butter Cream */
+  --accent-yellow-dark: #825807;      /* Deep Amber Brown */
+
   --border-dark: #231f20;             /* Solid Crisp Brutalist Outline */
 
   /* ================= Body & Surfaces ================= */
   --bg-body: #fbf9f7;                 /* Warm Linen / Off-White */
   --bg-surface: #ffffff;              /* Elevated Card Surface */
-  --bg-surface-subtle: #f3efe9;       /* Input & Table Header Surface */
+  --bg-surface-subtle: #f4efe8;       /* Input & Table Header Surface */
 
   --text-main: #231f20;               /* Solid Pitch Dark */
   --text-muted: #6b5e5a;              /* Warm Neutral Muted */
   --text-light: #ffffff;
 
-  /* ================= Harmonious Pet Categories (Anti-Clash) ================= */
+  /* ================= Harmonious Pet Categories (Warm Earth & Yellow) ================= */
   --cat-bg: #fceee6;                  /* Peach Terracotta Tint */
   --cat-text: #5e2e20;
-  --dog-bg: #ebf0e4;                  /* Soft Sage Olive Tint */
-  --dog-text: #354228;
+  --cat-border: #875749;
 
-  /* ================= Harmonious Semantic Feedback ================= */
+  --dog-bg: #fef2cd;                  /* Warm Honey Yellow Tint */
+  --dog-text: #6e4d05;
+  --dog-border: #d49b1e;
+
+  /* ================= Harmonious Semantic Feedback (No Blue) ================= */
   --status-success-bg: #e1f2e8;
   --status-success-text: #1a4d2e;
+  --status-success-border: #2e7d32;
 
-  --status-pending-bg: #fef3d6;
+  --status-pending-bg: #fff3cd;
   --status-pending-text: #784d09;
+  --status-pending-border: #f5ba38;
+
+  --status-info-bg: #fef7de;          /* Warm Yellow Process */
+  --status-info-text: #705300;
+  --status-info-border: #e0a800;
 
   --status-danger-bg: #fde4e4;
   --status-danger-text: #7a1f1d;
-
-  --status-info-bg: #e2f0fb;
-  --status-info-text: #174266;
+  --status-danger-border: #c62828;
 
   /* ================= Typography Tokens ================= */
   --font-brand: 'Irish Grover', cursive, serif;

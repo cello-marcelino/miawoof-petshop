@@ -14,8 +14,8 @@
 
     <main class="customer-main pt-4">
         <div class="container">
-            <!-- 1. Promo Ads Carousel Slider -->
-            <div id="promoCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel" data-bs-interval="4500">
+            <!-- 1. 1200x300 Promo Banner Carousel Slider -->
+            <div id="promoCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel" data-bs-interval="4000">
                 <div class="carousel-indicators">
                     <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                     <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -24,16 +24,16 @@
                 </div>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="/images/banners/petAds1.jpg" class="d-block w-100" alt="Promo Diskon Nutrisi Makanan Anabul">
+                        <img src="/images/banners/slide1.png" class="d-block w-100" alt="Promo Diskon Nutrisi Makanan Anabul" onerror="this.src='/images/placeholders/default_product.png'">
                     </div>
                     <div class="carousel-item">
-                        <img src="/images/banners/petAds2.jpg" class="d-block w-100" alt="Paket Grooming Anti Kutu & Jamur">
+                        <img src="/images/banners/slide2.png" class="d-block w-100" alt="Paket Grooming Anti Kutu & Jamur" onerror="this.src='/images/placeholders/default_product.png'">
                     </div>
                     <div class="carousel-item">
-                        <img src="/images/banners/petAds3.jpg" class="d-block w-100" alt="Snack & Treats Hewan Peliharaan">
+                        <img src="/images/banners/slide3.png" class="d-block w-100" alt="Snack & Treats Hewan Peliharaan" onerror="this.src='/images/placeholders/default_product.png'">
                     </div>
                     <div class="carousel-item">
-                        <img src="/images/banners/petAds4.jpg" class="d-block w-100" alt="Peralatan & Aksesoris Higienis">
+                        <img src="/images/banners/slide4.png" class="d-block w-100" alt="Peralatan & Aksesoris Higienis" onerror="this.src='/images/placeholders/default_product.png'">
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
@@ -46,7 +46,7 @@
                 </button>
             </div>
 
-            <!-- 2. Pet Categories Section -->
+            <!-- 2. Pet Categories Section (Warm Peach & Mustard Yellow) -->
             <div class="mb-5">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div>
@@ -57,7 +57,7 @@
 
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <a href="/produk?kategori=kucing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--cat-bg); border-color: var(--border-dark);">
+                        <a href="/produk?kategori=kucing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--cat-bg); border-color: var(--cat-border);">
                             <div class="d-flex align-items-center gap-3">
                                 <img src="/images/placeholders/cat-head.png" alt="Kucing" width="60" height="60" class="border border-2 border-dark rounded-circle bg-white p-2">
                                 <div>
@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <a href="/produk?kategori=anjing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--dog-bg); border-color: var(--border-dark);">
+                        <a href="/produk?kategori=anjing" class="card-modern d-flex align-items-center justify-content-between p-4 text-decoration-none" style="background-color: var(--dog-bg); border-color: var(--dog-border);">
                             <div class="d-flex align-items-center gap-3">
                                 <img src="/images/placeholders/dog-head.png" alt="Anjing" width="60" height="60" class="border border-2 border-dark rounded-circle bg-white p-2">
                                 <div>
@@ -78,7 +78,7 @@
                                     <p class="text-muted small mb-0">Nutrisi protein tinggi, biskuit kunyah, & wet wipes higienis.</p>
                                 </div>
                             </div>
-                            <span class="btn btn-primary-custom btn-sm">&rarr;</span>
+                            <span class="btn btn-yellow-custom btn-sm">&rarr;</span>
                         </a>
                     </div>
                 </div>
@@ -106,13 +106,13 @@
             <div class="card-modern p-4 p-md-5 mb-4" style="background-color: var(--primary-light);">
                 <div class="row align-items-center g-4">
                     <div class="col-lg-8">
-                        <span class="badge bg-white text-dark border border-1 border-dark px-3 py-1 fw-bold mb-3">Salon & Grooming Higienis</span>
+                        <span class="badge bg-white text-dark border border-2 border-dark px-3 py-1 fw-bold mb-3">Salon & Grooming Higienis</span>
                         <h3 class="fw-bold text-dark mb-2">Manjakan Anabul Anda dengan Treatment Spa</h3>
                         <p class="text-muted mb-4" style="max-width: 600px;">
                             Groomer berpengalaman kami siap memberikan perawatan pembersihan menyeluruh, shampo anti kutu, pembersihan telinga & karang gigi dengan peralatan steril.
                         </p>
                         <a href="/grooming" class="btn btn-primary-custom">
-                            <img src="/images/icons/scissors.svg" alt="Grooming" width="16" height="16" style="filter: brightness(0) invert(1);">
+                            <img src="/images/icons/scissors-white.svg" alt="Grooming" width="16" height="16">
                             <span>Reservasi Jadwal Sekarang</span>
                         </a>
                     </div>
@@ -160,7 +160,7 @@
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <div class="card-product">
                                 <div class="product-img-wrapper">
-                                    <img src="/uploads/${p.gambar || 'whiskas_tuna.webp'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
+                                    <img src="/uploads/${p.gambar || 'default_product.png'}" alt="${p.nama}" onerror="this.src='/images/placeholders/default_product.png'">
                                 </div>
                                 <div class="p-3 d-flex flex-column flex-grow-1">
                                     <div class="d-flex align-items-center justify-content-between mb-2">

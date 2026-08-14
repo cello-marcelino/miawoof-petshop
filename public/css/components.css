@@ -1,4 +1,4 @@
-/* ================= Neo-Brutalism Component Library ================= */
+/* ================= Neo-Brutalism Component Library (Yellow & Terracotta Accent) ================= */
 
 /* ================= 1. Tactile Buttons ================= */
 .btn-primary-custom {
@@ -28,6 +28,32 @@
   box-shadow: 0px 0px 0px var(--border-dark);
 }
 
+.btn-yellow-custom {
+  background-color: var(--accent-yellow);
+  border: var(--border-brutal);
+  color: var(--text-main);
+  font-weight: 700;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-brutal-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-yellow-custom:hover {
+  background-color: #f7ca5e;
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-md);
+}
+
+.btn-yellow-custom:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--border-dark);
+}
+
 .btn-outline-custom {
   background-color: #ffffff;
   border: var(--border-brutal);
@@ -44,8 +70,8 @@
 }
 
 .btn-outline-custom:hover {
-  background-color: var(--primary-light);
-  color: var(--primary);
+  background-color: var(--accent-yellow-light);
+  color: var(--text-main);
   transform: translate(-2px, -2px);
   box-shadow: var(--shadow-brutal-md);
 }
@@ -151,17 +177,18 @@
 
 .stat-icon-primary {
   background-color: var(--primary-light);
-  color: var(--primary);
+}
+
+.stat-icon-yellow {
+  background-color: var(--accent-yellow-light);
 }
 
 .stat-icon-success {
   background-color: var(--status-success-bg);
-  color: var(--status-success-text);
 }
 
 .stat-icon-warning {
   background-color: var(--status-pending-bg);
-  color: var(--status-pending-text);
 }
 
 /* ================= 4. Tables ================= */
@@ -201,11 +228,11 @@
   background-color: #faf7f2;
 }
 
-/* ================= 5. Badges & Tags (Harmonious & Contrast) ================= */
+/* ================= 5. Badges & Tags (Harmonious & Non-Clashing) ================= */
 .badge-pet-cat {
   background-color: var(--cat-bg);
   color: var(--cat-text);
-  border: 1.5px solid var(--cat-text);
+  border: 1.5px solid var(--cat-border);
   font-weight: 700;
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-pill);
@@ -218,7 +245,7 @@
 .badge-pet-dog {
   background-color: var(--dog-bg);
   color: var(--dog-text);
-  border: 1.5px solid var(--dog-text);
+  border: 1.5px solid var(--dog-border);
   font-weight: 700;
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-pill);
@@ -243,21 +270,25 @@
 .badge-status-pending {
   background-color: var(--status-pending-bg);
   color: var(--status-pending-text);
+  border-color: var(--status-pending-border);
 }
 
 .badge-status-success {
   background-color: var(--status-success-bg);
   color: var(--status-success-text);
+  border-color: var(--status-success-border);
 }
 
 .badge-status-danger {
   background-color: var(--status-danger-bg);
   color: var(--status-danger-text);
+  border-color: var(--status-danger-border);
 }
 
 .badge-status-info {
   background-color: var(--status-info-bg);
   color: var(--status-info-text);
+  border-color: var(--status-info-border);
 }
 
 /* ================= 6. Form Controls ================= */
@@ -286,7 +317,7 @@
   transform: translate(-1px, -1px);
 }
 
-/* ================= 7. Promotion Slider (Brutalist Banner) ================= */
+/* ================= 7. 1200x300 Promotion Carousel ================= */
 .promo-slider-container {
   border: var(--border-brutal);
   border-radius: var(--radius-lg);
@@ -294,19 +325,29 @@
   overflow: hidden;
   background-color: #ffffff;
   margin-bottom: 3rem;
+  aspect-ratio: 1200 / 300;
+  max-height: 320px;
+}
+
+.promo-slider-container .carousel-inner {
+  height: 100%;
+}
+
+.promo-slider-container .carousel-item {
+  height: 100%;
 }
 
 .promo-slider-container .carousel-item img {
-  height: 380px;
-  object-fit: cover;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .promo-slider-container .carousel-control-prev-icon,
 .promo-slider-container .carousel-control-next-icon {
   background-color: var(--border-dark);
   border-radius: 50%;
-  padding: 18px;
+  padding: 16px;
   background-size: 55%;
 }
 
@@ -315,6 +356,10 @@
   height: 12px;
   border-radius: 50%;
   background-color: var(--border-dark);
-  border: 1px solid #ffffff;
+  border: 1.5px solid #ffffff;
   margin: 0 4px;
+}
+
+.promo-slider-container .carousel-indicators button.active {
+  background-color: var(--accent-yellow);
 }
