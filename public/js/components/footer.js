@@ -11,8 +11,8 @@ function initFooter() {
                 <div class="row g-4 mb-4">
                     <div class="col-lg-4 col-md-6">
                         <div class="d-inline-flex align-items-center gap-2 mb-3 bg-white p-2 rounded-2 border border-2 border-dark" style="box-shadow: 3px 3px 0px #000000;">
-                            <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="36" height="36" class="rounded-1 border border-1 border-dark" onerror="this.src='/images/icons/paw.svg'">
-                            <span class="font-brand fs-4 text-dark fw-bold">MiaWoof Petshop</span>
+                            <img src="/images/branding/logo.jpg" alt="MiaWoof Petshop Logo" width="36" height="36" class="rounded-1 border border-1 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                            <span class="brand-title fs-4 text-dark fw-bold">MiaWoof Petshop</span>
                         </div>
                         <p class="text-light small mb-3 opacity-90">
                             Pusat perbelanjaan nutrisi anabul premium dan layanan perawatan salon grooming profesional berlisensi untuk kucing dan anjing kesayangan Anda.

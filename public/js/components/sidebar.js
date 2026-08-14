@@ -1,5 +1,5 @@
 /**
- * Clean Neo-Brutalist Admin Sidebar Component (Royal Blue Header & Yellow Accents)
+ * Clean Neo-Brutalist Admin Sidebar Component (3-Color Master System)
  */
 function initSidebar(activeMenu = 'dashboard', user = null) {
     const sidebarRoot = document.getElementById('sidebar-root');
@@ -29,12 +29,12 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
     sidebarRoot.innerHTML = `
         <aside class="admin-sidebar p-3 d-flex flex-column justify-content-between">
             <div>
-                <!-- Brand Header (Royal Blue Neo-Brutalist Box with Yellow Badge) -->
+                <!-- Brand Header Box with Unified Logo and Brand Title -->
                 <div class="d-flex align-items-center gap-2 p-2 mb-3 bg-primary border border-2 border-dark rounded-2 shadow-sm">
-                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="38" height="38" class="rounded-2 border border-2 border-white" onerror="this.src='/images/icons/paw.svg'">
+                    <img src="/images/branding/logo.jpg" alt="MiaWoof Petshop Logo" width="36" height="36" class="rounded-1 border border-1 border-white" onerror="this.src='/images/icons/paw.svg'">
                     <div>
-                        <h6 class="font-brand fs-5 text-white mb-0 fw-bold">MiaWoof</h6>
-                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.62rem; letter-spacing: 0.5px;">ADMIN PANEL</span>
+                        <div class="brand-title fs-5 text-white fw-bold">MiaWoof Petshop</div>
+                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold d-block mt-1" style="font-size: 0.62rem; width: fit-content;">ADMIN PANEL</span>
                     </div>
                 </div>
 
@@ -67,12 +67,13 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
 
 async function handleLogout() {
     try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        const res = await fetch('/api/auth/logout', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
         const data = await res.json();
-        if (data.success) {
-            window.location.href = '/login?msg=Anda+telah+berhasil+keluar&status=info';
-        }
+        window.location.href = data.redirectUrl || '/login?msg=Anda+telah+berhasil+keluar&status=info';
     } catch (e) {
-        window.location.href = '/login';
+        window.location.href = '/logout';
     }
 }

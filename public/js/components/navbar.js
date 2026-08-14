@@ -58,9 +58,8 @@ function initNavbar(activePage = 'home', user = null) {
                 <div class="header-container py-2">
                     <!-- 1. Left: Brand Logo Card -->
                     <a class="brand-wrapper" href="/">
-                        <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="34" height="34" class="rounded-1 border border-1 border-dark" onerror="this.src='/images/icons/paw.svg'">
-                        <span class="brand-title">MiaWoof</span>
-                        <span class="brand-badge">PETSHOP</span>
+                        <img src="/images/branding/logo.jpg" alt="MiaWoof Petshop Logo" width="34" height="34" class="rounded-1 border border-1 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                        <span class="brand-title">MiaWoof Petshop</span>
                     </a>
 
                     <!-- 2. Center: Navigation Menu Links -->
@@ -97,12 +96,13 @@ function initNavbar(activePage = 'home', user = null) {
 
 async function handleLogout() {
     try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        const res = await fetch('/api/auth/logout', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
         const data = await res.json();
-        if (data.success) {
-            window.location.href = '/login?msg=Anda+telah+berhasil+keluar&status=info';
-        }
+        window.location.href = data.redirectUrl || '/login?msg=Anda+telah+berhasil+keluar&status=info';
     } catch (e) {
-        window.location.href = '/login';
+        window.location.href = '/logout';
     }
 }
