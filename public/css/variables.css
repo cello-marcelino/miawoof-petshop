@@ -1,40 +1,68 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* Brand Heritage Colors */
-  --primary: #875749;
-  --primary-hover: #764c40;
-  --primary-light: #f5ece9;
+  /* ================= Brand & Accent Tokens ================= */
+  --primary: #875749;                 /* Terracotta Brown (Legacy Heritage) */
+  --primary-hover: #764c40;           /* Deep Chestnut */
+  --primary-active: #623d33;          /* Dark Roast */
+  --primary-light: #f5ece9;           /* Soft Terracotta Tint */
+  --primary-subtle: #ebdcd7;          /* Muted Blush */
   --primary-focus: rgba(135, 87, 73, 0.25);
-  --primary-border: #a76f5e;
 
-  /* Surfaces & Backgrounds */
-  --bg-main: #f8f9fa;
-  --bg-card: #ffffff;
-  --bg-surface: #fdfdfd;
-  --border-subtle: #eaeaea;
+  --secondary: #d99b82;               /* Warm Clay Accent */
+  --secondary-light: #fdf5f2;         /* Warm Ivory Cream */
 
-  /* Typography */
+  /* ================= Neutral Palette ================= */
+  --bg-body: #f8f9fa;                 /* Crisp light background */
+  --bg-surface: #ffffff;              /* Elevated surface */
+  --bg-surface-secondary: #f4f5f7;    /* Secondary card / input fill */
+
+  --text-main: #2d2422;               /* Deep Espresso Charcoal */
+  --text-secondary: #5e524f;          /* Neutral Subtitle Text */
+  --text-muted: #8c7f7b;              /* Low-contrast Caption */
+  --text-inverse: #ffffff;            /* White on Dark */
+
+  --border-subtle: #e9ecef;           /* Card & Container Borders */
+  --border-strong: #d0d5dd;           /* Form Field Outlines */
+
+  /* ================= Status & Semantics ================= */
+  --color-success: #198754;
+  --color-success-bg: #d1e7dd;
+  --color-success-text: #0f5132;
+
+  --color-warning: #d97706;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
+
+  --color-danger: #dc3545;
+  --color-danger-bg: #f8d7da;
+  --color-danger-text: #842029;
+
+  --color-info: #0dcaf0;
+  --color-info-bg: #cff4fc;
+  --color-info-text: #055160;
+
+  /* ================= Typography Tokens ================= */
   --font-brand: 'Irish Grover', cursive, serif;
   --font-body: 'Inria Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Text Colors */
-  --text-main: #2d2422;
-  --text-muted: #756a66;
-  --text-light: #ffffff;
+  /* ================= Elevation & Shadows ================= */
+  --shadow-xs: 0 1px 2px rgba(45, 36, 34, 0.05);
+  --shadow-sm: 0 2px 6px rgba(135, 87, 73, 0.06);
+  --shadow-md: 0 4px 16px rgba(135, 87, 73, 0.08);
+  --shadow-lg: 0 10px 30px rgba(135, 87, 73, 0.12);
+  --shadow-xl: 0 20px 45px rgba(135, 87, 73, 0.15);
 
-  /* Semantic Feedback */
-  --status-success: #198754;
-  --status-warning: #ffc107;
-  --status-danger: #dc3545;
-  --status-info: #0dcaf0;
+  /* ================= Border Radius ================= */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
 
-  /* Elevation & Borders */
-  --shadow-sm: 0 2px 8px rgba(135, 87, 73, 0.05);
-  --shadow-md: 0 4px 18px rgba(135, 87, 73, 0.08);
-  --shadow-lg: 0 8px 30px rgba(135, 87, 73, 0.12);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-pill: 50px;
+  /* ================= Layout & Transitions ================= */
+  --sidebar-width: 260px;
+  --topbar-height: 72px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease-out;
 }
