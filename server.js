@@ -63,7 +63,7 @@ const server = http.createServer(async (req, res) => {
     const queryParams = new URLSearchParams(parsedUrl.search);
 
     // ================= 1. Static Asset Serving =================
-    if (pathname.startsWith('/css/') || pathname.startsWith('/js/') || pathname.startsWith('/assets/') || pathname.startsWith('/uploads/')) {
+    if (pathname.startsWith('/css/') || pathname.startsWith('/js/') || pathname.startsWith('/images/') || pathname.startsWith('/uploads/')) {
         const filePath = path.join(PUBLIC_DIR, pathname);
         const ext = path.extname(filePath).toLowerCase();
 
