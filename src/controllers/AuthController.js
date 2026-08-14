@@ -48,7 +48,21 @@ class AuthController {
     static async handleLogout(req, res) {
         SessionManager.destroySession(req);
         SessionManager.clearSessionCookie(res);
-        res.writeHead(302, { 'Location': '/login?msg=Anda+telah+berhasil+logout&status=info' });
+
+        const isJson = req.headers['content-type'] === 'application/json' || 
+                       (req.headers.accept && req.headers.accept.includes('application/json')) ||
+                       req.url.startsWith('/api/');
+
+        if (isJson) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ 
+                success: true, 
+                message: 'Anda telah berhasil keluar.', 
+                redirectUrl: '/login?msg=Anda+telah+berhasil+keluar&status=info' 
+            }));
+        }
+
+        res.writeHead(302, { 'Location': '/login?msg=Anda+telah+berhasil+keluar&status=info' });
         res.end();
     }
 

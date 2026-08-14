@@ -89,6 +89,9 @@ const server = http.createServer(async (req, res) => {
             const body = await parseJsonBody(req);
             return AuthController.handleRegister(req, res, body);
         }
+        if ((pathname === '/api/auth/logout' || pathname === '/logout')) {
+            return AuthController.handleLogout(req, res);
+        }
         if (pathname === '/api/auth/session' && method === 'GET') {
             return AuthController.handleGetSession(req, res);
         }
