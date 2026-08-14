@@ -1,5 +1,5 @@
 /**
- * Clean Neo-Brutalist Admin Sidebar Component (Yellow Header & Blue Accents)
+ * Clean Neo-Brutalist Admin Sidebar Component (Royal Blue Header & Yellow Accents)
  */
 function initSidebar(activeMenu = 'dashboard', user = null) {
     const sidebarRoot = document.getElementById('sidebar-root');
@@ -29,12 +29,12 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
     sidebarRoot.innerHTML = `
         <aside class="admin-sidebar p-3 d-flex flex-column justify-content-between">
             <div>
-                <!-- Brand Header (Sunny Yellow Neo-Brutalist Box) -->
-                <div class="d-flex align-items-center gap-2 p-2 mb-3 bg-yellow border border-2 border-dark rounded-2 shadow-sm">
-                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="38" height="38" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                <!-- Brand Header (Royal Blue Neo-Brutalist Box with Yellow Badge) -->
+                <div class="d-flex align-items-center gap-2 p-2 mb-3 bg-primary border border-2 border-dark rounded-2 shadow-sm">
+                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="38" height="38" class="rounded-2 border border-2 border-white" onerror="this.src='/images/icons/paw.svg'">
                     <div>
-                        <h6 class="font-brand fs-5 text-dark mb-0 fw-bold">MiaWoof</h6>
-                        <span class="badge bg-blue text-white border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.62rem; letter-spacing: 0.5px;">ADMIN PANEL</span>
+                        <h6 class="font-brand fs-5 text-white mb-0 fw-bold">MiaWoof</h6>
+                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.62rem; letter-spacing: 0.5px;">ADMIN PANEL</span>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
                         </div>
                         <div style="line-height: 1.2;">
                             <div class="fw-bold text-dark text-truncate" style="max-width: 120px; font-size: 0.85rem;">${user ? user.full_name : 'Admin'}</div>
-                            <span class="badge bg-blue text-white border border-1 border-dark rounded-pill py-0 px-2" style="font-size: 0.6rem;">Admin</span>
+                            <span class="badge bg-primary text-white border border-1 border-dark rounded-pill py-0 px-2" style="font-size: 0.6rem;">Admin</span>
                         </div>
                     </div>
                     <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm p-1 border-2 border-dark" title="Keluar">

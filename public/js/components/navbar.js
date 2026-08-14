@@ -1,20 +1,20 @@
 /**
- * Vibrant Yellow Neo-Brutalist Customer Navbar Component
+ * Royal Blue Header with Sunny Yellow Accent Navbar Component
  */
 function initNavbar(activePage = 'home', user = null) {
     const navbarRoot = document.getElementById('navbar-root');
     if (!navbarRoot) return;
 
     const navItems = [
-        { key: 'home', label: 'Beranda', url: '/', icon: '/images/icons/paw.svg' },
-        { key: 'produk', label: 'Katalog Produk', url: '/produk', icon: '/images/icons/cart.svg' },
-        { key: 'grooming', label: 'Salon & Grooming', url: '/grooming', icon: '/images/icons/scissors.svg' }
+        { key: 'home', label: 'Beranda', url: '/', icon: '/images/icons/paw.svg', iconActive: '/images/icons/paw.svg', iconWhite: '/images/icons/paw-white.svg' },
+        { key: 'produk', label: 'Katalog Produk', url: '/produk', icon: '/images/icons/cart.svg', iconActive: '/images/icons/cart.svg', iconWhite: '/images/icons/cart-white.svg' },
+        { key: 'grooming', label: 'Salon & Grooming', url: '/grooming', icon: '/images/icons/scissors.svg', iconActive: '/images/icons/scissors.svg', iconWhite: '/images/icons/scissors-white.svg' }
     ];
 
     if (user && user.role === 'customer') {
         navItems.push(
-            { key: 'pesanan', label: 'Pesanan Saya', url: '/riwayat-pesanan', icon: '/images/icons/package.svg' },
-            { key: 'booking', label: 'Jadwal Grooming', url: '/riwayat-booking', icon: '/images/icons/calendar.svg' }
+            { key: 'pesanan', label: 'Pesanan Saya', url: '/riwayat-pesanan', icon: '/images/icons/package.svg', iconActive: '/images/icons/package.svg', iconWhite: '/images/icons/package-white.svg' },
+            { key: 'booking', label: 'Jadwal Grooming', url: '/riwayat-booking', icon: '/images/icons/calendar.svg', iconActive: '/images/icons/calendar.svg', iconWhite: '/images/icons/calendar-white.svg' }
         );
     }
 
@@ -22,8 +22,8 @@ function initNavbar(activePage = 'home', user = null) {
         const isActive = activePage === item.key;
         return `
             <li class="nav-item">
-                <a class="nav-link px-3 py-2 fw-bold d-flex align-items-center gap-2 rounded-2 text-decoration-none ${isActive ? 'bg-white text-dark border border-2 border-dark shadow-sm' : 'text-dark hover-opacity'}" href="${item.url}" style="transition: all 0.15s ease;">
-                    <img src="${item.icon}" alt="${item.label}" width="16" height="16">
+                <a class="nav-link px-3 py-2 fw-bold d-flex align-items-center gap-2 rounded-2 text-decoration-none ${isActive ? 'bg-yellow text-dark border border-2 border-dark shadow-sm' : 'text-white opacity-90 hover-opacity'}" href="${item.url}" style="transition: all 0.15s ease;">
+                    <img src="${isActive ? item.iconActive : item.iconWhite}" alt="${item.label}" width="16" height="16">
                     <span>${item.label}</span>
                 </a>
             </li>
@@ -48,18 +48,18 @@ function initNavbar(activePage = 'home', user = null) {
         authSectionHtml = `
             <div class="d-flex align-items-center gap-2">
                 <a href="/login" class="btn btn-outline-custom btn-sm px-3 py-1">Masuk</a>
-                <a href="/register" class="btn btn-blue-custom btn-sm px-3 py-1">Daftar</a>
+                <a href="/register" class="btn btn-yellow-custom btn-sm px-3 py-1">Daftar</a>
             </div>
         `;
     }
 
     navbarRoot.innerHTML = `
-        <nav class="navbar navbar-expand-lg border-bottom border-2 border-dark sticky-top py-2" style="background-color: var(--primary) !important;">
+        <nav class="navbar navbar-expand-lg border-bottom border-2 border-dark sticky-top py-2" style="background-color: var(--primary) !important; border-top: 4px solid var(--accent-yellow) !important;">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" href="/">
                     <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="40" height="40" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
-                    <span class="font-brand fs-3 text-dark fw-bold" style="line-height: 1;">MiaWoof</span>
-                    <span class="badge bg-blue text-white border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.68rem; letter-spacing: 0.5px;">PETSHOP</span>
+                    <span class="font-brand fs-3 text-white fw-bold" style="line-height: 1;">MiaWoof</span>
+                    <span class="badge bg-yellow text-dark border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.68rem; letter-spacing: 0.5px;">PETSHOP</span>
                 </a>
 
                 <button class="navbar-toggler border-2 border-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">

@@ -1,36 +1,8 @@
-/* ================= Neo-Brutalism Component Library (Primary Yellow & Accent Blue) ================= */
+/* ================= Neo-Brutalism Component Library (Royal Blue Header & Yellow Accent) ================= */
 
 /* ================= 1. Tactile Buttons ================= */
-.btn-primary-custom, .btn-yellow-custom {
+.btn-primary-custom, .btn-blue-custom {
   background-color: var(--primary);
-  border: var(--border-brutal);
-  color: var(--text-main);
-  font-weight: 800;
-  padding: 0.65rem 1.4rem;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-brutal-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.15s ease;
-  cursor: pointer;
-}
-
-.btn-primary-custom:hover, .btn-primary-custom:focus,
-.btn-yellow-custom:hover, .btn-yellow-custom:focus {
-  background-color: var(--primary-hover);
-  color: var(--text-main);
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-brutal-md);
-}
-
-.btn-primary-custom:active, .btn-yellow-custom:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px var(--border-dark);
-}
-
-.btn-blue-custom, .btn-accent-custom {
-  background-color: var(--accent-blue);
   border: var(--border-brutal);
   color: #ffffff;
   font-weight: 700;
@@ -44,14 +16,42 @@
   cursor: pointer;
 }
 
+.btn-primary-custom:hover, .btn-primary-custom:focus,
 .btn-blue-custom:hover, .btn-blue-custom:focus {
-  background-color: var(--accent-blue-hover);
+  background-color: var(--primary-hover);
   color: #ffffff;
   transform: translate(-2px, -2px);
   box-shadow: var(--shadow-brutal-md);
 }
 
-.btn-blue-custom:active {
+.btn-primary-custom:active, .btn-blue-custom:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--border-dark);
+}
+
+.btn-yellow-custom, .btn-accent-custom {
+  background-color: var(--accent-yellow);
+  border: var(--border-brutal);
+  color: var(--text-main);
+  font-weight: 800;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-brutal-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-yellow-custom:hover, .btn-yellow-custom:focus {
+  background-color: var(--accent-yellow-hover);
+  color: var(--text-main);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-md);
+}
+
+.btn-yellow-custom:active {
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0px var(--border-dark);
 }
@@ -72,7 +72,7 @@
 }
 
 .btn-outline-custom:hover {
-  background-color: var(--primary-light);
+  background-color: var(--accent-yellow-light);
   color: var(--text-main);
   transform: translate(-2px, -2px);
   box-shadow: var(--shadow-brutal-md);
@@ -102,7 +102,7 @@
 
 /* ================= 2. Decorative Neo-Brutalist Accent Badges ================= */
 .badge-accent-yellow {
-  background-color: var(--primary);
+  background-color: var(--accent-yellow);
   color: var(--text-main);
   border: var(--border-brutal-sm);
   font-weight: 800;
@@ -117,7 +117,7 @@
 }
 
 .badge-accent-blue {
-  background-color: var(--accent-blue);
+  background-color: var(--primary);
   color: #ffffff;
   border: var(--border-brutal-sm);
   font-weight: 800;
@@ -132,7 +132,7 @@
 }
 
 .footer-title-badge {
-  background-color: var(--primary);
+  background-color: var(--accent-yellow);
   color: var(--text-main);
   border: var(--border-brutal-sm);
   font-weight: 800;
@@ -222,11 +222,11 @@
 }
 
 .stat-icon-yellow {
-  background-color: var(--primary);
+  background-color: var(--accent-yellow);
 }
 
 .stat-icon-blue {
-  background-color: var(--accent-blue-light);
+  background-color: var(--primary-light);
 }
 
 .stat-icon-success {
@@ -357,7 +357,7 @@
 }
 
 .form-control-custom:focus, .form-select-custom:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--primary);
   outline: none;
   box-shadow: var(--shadow-brutal-md);
   transform: translate(-1px, -1px);
@@ -407,5 +407,5 @@
 }
 
 .promo-slider-container .carousel-indicators button.active {
-  background-color: var(--primary);
+  background-color: var(--accent-yellow);
 }

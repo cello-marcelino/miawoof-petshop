@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* ================= Neo-Brutalism: Primary Yellow & Accent Blue Palette ================= */
-  --primary: #ffd12f;                 /* Vibrant Sunny Yellow (PRIMARY) */
-  --primary-hover: #eab308;           /* Deep Gold Yellow */
-  --primary-light: #fef9c3;           /* Soft Pastel Butter Cream */
-  --primary-dark: #78350f;            /* Amber Brown */
-  --primary-text: #18181b;            /* High Contrast Dark Text */
+  /* ================= Neo-Brutalism: Primary Royal Blue & Accent Sunny Yellow ================= */
+  --primary: #2563eb;                 /* Vibrant Royal Blue (HEADER & PRIMARY) */
+  --primary-hover: #1d4ed8;           /* Deep Cobalt Blue */
+  --primary-light: #dbeafe;           /* Soft Ice Blue Tint */
+  --primary-dark: #1e3a8a;            /* Deep Midnight Royal Blue */
+  --primary-text: #ffffff;            /* Crisp White on Blue */
 
-  /* ================= Royal Blue (ACCENT) ================= */
-  --accent-blue: #2563eb;             /* Vibrant Royal Cobalt Blue */
-  --accent-blue-hover: #1d4ed8;       /* Deep Navy Blue */
-  --accent-blue-light: #dbeafe;       /* Soft Sky Ice Blue */
-  --accent-blue-dark: #1e3a8a;        /* Deep Midnight Blue */
+  /* ================= Sunny Yellow (ACCENT & HIGHLIGHTS) ================= */
+  --accent-yellow: #ffd12f;           /* Vibrant Punchy Yellow */
+  --accent-yellow-hover: #eab308;     /* Warm Gold */
+  --accent-yellow-light: #fef9c3;     /* Soft Pastel Butter Tint */
+  --accent-yellow-dark: #78350f;      /* Deep Golden Brown */
 
   --border-dark: #18181b;             /* Crisp Solid Pitch Dark Outline */
 

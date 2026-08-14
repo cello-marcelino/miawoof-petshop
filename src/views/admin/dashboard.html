@@ -14,14 +14,14 @@
         <div id="sidebar-root"></div>
 
         <main class="admin-main-content">
-            <!-- Topbar (Vibrant Yellow Background) -->
+            <!-- Topbar (Royal Blue Background with Yellow Accent Date) -->
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Dashboard Analitik</h5>
-                    <small class="text-dark fw-semibold opacity-75">Ikhtisar performa penjualan produk dan reservasi grooming.</small>
+                    <h5 class="fw-bold text-white mb-0">Dashboard Analitik</h5>
+                    <small class="text-light opacity-90">Ikhtisar performa penjualan produk dan reservasi grooming.</small>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <span class="badge bg-white text-dark border border-2 border-dark px-3 py-2 fw-bold d-flex align-items-center gap-2" id="todayDateBadge">
+                    <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-2 fw-bold d-flex align-items-center gap-2" id="todayDateBadge">
                         <img src="/images/icons/calendar.svg" alt="Tanggal" width="14" height="14">
                         <span>Memuat...</span>
                     </span>
@@ -46,7 +46,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="stat-widget">
                             <div class="stat-icon stat-icon-blue">
-                                <img src="/images/icons/package.svg" alt="Orders" width="22" height="22">
+                                <img src="/images/icons/package-white.svg" alt="Orders" width="22" height="22">
                             </div>
                             <div>
                                 <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Total Pesanan</div>
@@ -72,7 +72,7 @@
                     <div class="col-xl-3 col-md-6">
                         <div class="stat-widget">
                             <div class="stat-icon stat-icon-blue">
-                                <img src="/images/icons/user.svg" alt="Users" width="22" height="22">
+                                <img src="/images/icons/user-white.svg" alt="Users" width="22" height="22">
                             </div>
                             <div>
                                 <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Total Customer</div>
@@ -195,7 +195,7 @@
                         <tr>
                             <td class="fw-bold text-dark">${o.customer_name}</td>
                             <td>${o.nama_produk} (${o.jumlah}x)</td>
-                            <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
+                            <td class="fw-bold text-primary">${formatRupiah(o.total)}</td>
                             <td>
                                 <span class="badge-status ${o.status === 'selesai' ? 'badge-status-success' : o.status === 'diproses' ? 'badge-status-info' : o.status === 'dibatalkan' ? 'badge-status-danger' : 'badge-status-pending'} text-capitalize" style="font-size: 0.75rem;">
                                     ${o.status}

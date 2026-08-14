@@ -28,53 +28,53 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--primary);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 a:hover {
-  color: var(--accent-blue-hover);
+  color: var(--primary-hover);
 }
 
 /* ================= Color Utility Classes ================= */
-.text-primary, .text-yellow {
-  color: var(--primary-dark) !important;
+.text-primary, a.text-primary, .text-blue, a.text-blue, .link-primary {
+  color: var(--primary) !important;
 }
 
-.text-blue, a.text-blue, .link-primary {
-  color: var(--accent-blue) !important;
+.text-yellow {
+  color: var(--accent-yellow-dark) !important;
 }
 
-.bg-primary, .bg-yellow {
+.bg-primary, .bg-blue {
   background-color: var(--primary) !important;
-  color: var(--text-main) !important;
-}
-
-.bg-blue, .bg-accent-blue {
-  background-color: var(--accent-blue) !important;
   color: #ffffff !important;
 }
 
+.bg-yellow, .bg-accent-yellow {
+  background-color: var(--accent-yellow) !important;
+  color: var(--text-main) !important;
+}
+
 .bg-light-blue {
-  background-color: var(--accent-blue-light) !important;
+  background-color: var(--primary-light) !important;
 }
 
 .bg-light-yellow {
-  background-color: var(--primary-light) !important;
+  background-color: var(--accent-yellow-light) !important;
 }
 
 .btn-primary {
   background-color: var(--primary) !important;
   border: var(--border-brutal) !important;
-  color: var(--text-main) !important;
+  color: #ffffff !important;
   box-shadow: var(--shadow-brutal-sm) !important;
   font-weight: 700 !important;
 }
 
 .btn-primary:hover, .btn-primary:focus {
   background-color: var(--primary-hover) !important;
-  color: var(--text-main) !important;
+  color: #ffffff !important;
   transform: translate(-2px, -2px) !important;
   box-shadow: var(--shadow-brutal-md) !important;
 }
@@ -105,7 +105,7 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
+  background: var(--accent-yellow);
   border: 1px solid var(--border-dark);
 }
 
@@ -149,6 +149,7 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 990;
+  color: #ffffff;
 }
 
 .admin-content-body {
