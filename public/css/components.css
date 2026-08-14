@@ -1,12 +1,130 @@
 /* ================= Neo-Brutalism Component Library (3-Color Master System) ================= */
 
-/* ================= 1. Tactile Neo-Brutalist Buttons ================= */
+/* ================= 1. Header Navbar Architecture ================= */
+.main-header {
+  background-color: var(--primary) !important;
+  border-top: 4px solid var(--accent-yellow) !important;
+  border-bottom: 2.5px solid #000000 !important;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.header-container {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  border-radius: 8px;
+  padding: 5px 12px;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.brand-wrapper:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.brand-title {
+  font-family: var(--font-brand);
+  font-size: 1.45rem;
+  color: #000000;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.brand-badge {
+  background-color: var(--accent-yellow);
+  color: #000000;
+  border: 1.5px solid #000000;
+  font-weight: 800;
+  font-size: 0.65rem;
+  letter-spacing: 0.6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.header-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.header-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 2px solid transparent;
+  color: #ffffff !important;
+  transition: all 0.12s ease;
+  height: 38px;
+}
+
+.header-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff !important;
+  border-color: #000000;
+  box-shadow: 2px 2px 0px #000000;
+  transform: translate(-1px, -1px);
+}
+
+.header-nav-link.active {
+  background-color: var(--accent-yellow) !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  box-shadow: 2.5px 2.5px 0px #000000 !important;
+}
+
+.header-user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  color: #000000 !important;
+  font-weight: 800;
+  font-size: 0.88rem;
+  border: 2px solid #000000;
+  box-shadow: 2.5px 2.5px 0px #000000;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  height: 38px;
+  text-decoration: none;
+  transition: all 0.1s ease;
+}
+
+.header-user-pill:hover {
+  background-color: var(--accent-yellow-light);
+  color: #000000 !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 3.5px 3.5px 0px #000000;
+}
+
+/* ================= 2. Tactile Neo-Brutalist Buttons ================= */
 .btn-primary-custom, .btn-blue-custom {
   background-color: var(--primary);
   border: var(--border-brutal);
   color: #ffffff;
   font-weight: 800;
-  padding: 0.65rem 1.4rem;
+  padding: 0.55rem 1.25rem;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-brutal-md);
   display: inline-flex;
@@ -15,6 +133,7 @@
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
   cursor: pointer;
   text-decoration: none;
+  height: 38px;
 }
 
 .btn-primary-custom:hover, .btn-primary-custom:focus,
@@ -35,7 +154,7 @@
   border: var(--border-brutal);
   color: var(--text-main);
   font-weight: 800;
-  padding: 0.65rem 1.4rem;
+  padding: 0.55rem 1.25rem;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-brutal-md);
   display: inline-flex;
@@ -44,6 +163,7 @@
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
   cursor: pointer;
   text-decoration: none;
+  height: 38px;
 }
 
 .btn-yellow-custom:hover, .btn-yellow-custom:focus {
@@ -63,7 +183,7 @@
   border: var(--border-brutal);
   color: var(--text-main);
   font-weight: 800;
-  padding: 0.65rem 1.4rem;
+  padding: 0.55rem 1.25rem;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-brutal-md);
   display: inline-flex;
@@ -72,6 +192,7 @@
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
   cursor: pointer;
   text-decoration: none;
+  height: 38px;
 }
 
 .btn-outline-custom:hover {
@@ -95,6 +216,7 @@
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-brutal-sm);
   transition: all 0.1s ease;
+  cursor: pointer;
 }
 
 .btn-danger-custom:hover {
@@ -103,7 +225,7 @@
   box-shadow: var(--shadow-brutal-md);
 }
 
-/* ================= 2. Decorative Neo-Brutalist Badges ================= */
+/* ================= 3. Decorative Badges ================= */
 .badge-accent-yellow {
   background-color: var(--accent-yellow);
   color: var(--text-main);
@@ -147,7 +269,7 @@
   margin-bottom: 0.85rem;
 }
 
-/* ================= 3. Neo-Brutalist Cards ================= */
+/* ================= 4. Cards ================= */
 .card-modern {
   background-color: #ffffff;
   border: var(--border-brutal);
@@ -201,7 +323,7 @@
   transform: scale(1.04);
 }
 
-/* ================= 4. Stat Widgets ================= */
+/* ================= 5. Stat Widgets ================= */
 .stat-widget {
   background: #ffffff;
   border: var(--border-brutal);
@@ -240,7 +362,7 @@
   background-color: var(--status-pending-bg);
 }
 
-/* ================= 5. Tables ================= */
+/* ================= 6. Tables ================= */
 .table-custom-container {
   background: #ffffff;
   border: var(--border-brutal);
@@ -277,7 +399,7 @@
   background-color: #f8fafc;
 }
 
-/* ================= 6. Badges & Tags ================= */
+/* ================= 7. Badges & Tags ================= */
 .badge-pet-cat {
   background-color: var(--cat-bg);
   color: var(--cat-text);
@@ -339,7 +461,7 @@
   color: var(--status-info-text);
 }
 
-/* ================= 7. Form Controls ================= */
+/* ================= 8. Form Controls ================= */
 .form-label-custom {
   font-weight: 800;
   font-size: 0.9rem;
@@ -365,7 +487,7 @@
   transform: translate(-1px, -1px);
 }
 
-/* ================= 8. 1200x300 Promotion Carousel ================= */
+/* ================= 9. 1200x300 Promotion Carousel ================= */
 .promo-slider-container {
   border: var(--border-brutal);
   border-radius: var(--radius-lg);
