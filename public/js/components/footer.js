@@ -81,15 +81,11 @@ function initFooter() {
                     </div>
                 </div>
 
-                <!-- Copyright & Badges -->
-                <div class="pt-2 border-top border-1 border-secondary d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-center text-md-start">
+                <!-- Copyright -->
+                <div class="pt-2 border-top border-1 border-secondary text-center text-md-start">
                     <small class="text-light opacity-75 fw-bold">
                         &copy; 2026 <strong>MiaWoof Petshop System</strong>. Seluruh Hak Cipta Dilindungi.
                     </small>
-                    <div>
-                        <span class="badge bg-yellow text-dark border border-2 border-dark px-2 py-1 small fw-bold" style="box-shadow: 2px 2px 0px #000000;">Native Node.js</span>
-                        <span class="badge bg-white text-dark border border-2 border-dark px-2 py-1 small fw-bold" style="box-shadow: 2px 2px 0px #000000;">Neo-Brutalism UI</span>
-                    </div>
                 </div>
             </div>
         </footer>
