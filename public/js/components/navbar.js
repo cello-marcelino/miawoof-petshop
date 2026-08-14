@@ -1,5 +1,5 @@
 /**
- * Clean Neo-Brutalist Customer Navbar Component (Off-White, Blue & Yellow Palette)
+ * Vibrant Yellow Neo-Brutalist Customer Navbar Component
  */
 function initNavbar(activePage = 'home', user = null) {
     const navbarRoot = document.getElementById('navbar-root');
@@ -22,7 +22,7 @@ function initNavbar(activePage = 'home', user = null) {
         const isActive = activePage === item.key;
         return `
             <li class="nav-item">
-                <a class="nav-link px-3 py-2 fw-bold d-flex align-items-center gap-2 rounded-2 text-decoration-none ${isActive ? 'bg-yellow text-dark border border-2 border-dark shadow-sm' : 'text-dark hover-bg-subtle'}" href="${item.url}" style="transition: all 0.15s ease;">
+                <a class="nav-link px-3 py-2 fw-bold d-flex align-items-center gap-2 rounded-2 text-decoration-none ${isActive ? 'bg-white text-dark border border-2 border-dark shadow-sm' : 'text-dark hover-opacity'}" href="${item.url}" style="transition: all 0.15s ease;">
                     <img src="${item.icon}" alt="${item.label}" width="16" height="16">
                     <span>${item.label}</span>
                 </a>
@@ -48,21 +48,21 @@ function initNavbar(activePage = 'home', user = null) {
         authSectionHtml = `
             <div class="d-flex align-items-center gap-2">
                 <a href="/login" class="btn btn-outline-custom btn-sm px-3 py-1">Masuk</a>
-                <a href="/register" class="btn btn-yellow-custom btn-sm px-3 py-1">Daftar</a>
+                <a href="/register" class="btn btn-blue-custom btn-sm px-3 py-1">Daftar</a>
             </div>
         `;
     }
 
     navbarRoot.innerHTML = `
-        <nav class="navbar navbar-expand-lg bg-white border-bottom border-2 border-dark sticky-top py-2" style="border-top: 4px solid var(--accent-yellow) !important;">
+        <nav class="navbar navbar-expand-lg border-bottom border-2 border-dark sticky-top py-2" style="background-color: var(--primary) !important;">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="38" height="38" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
-                    <span class="font-brand fs-4 text-primary fw-bold" style="line-height: 1;">MiaWoof</span>
-                    <span class="badge bg-yellow text-dark border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.65rem;">PETSHOP</span>
+                    <img src="/images/branding/logo.jpg" alt="MiaWoof Logo" width="40" height="40" class="rounded-2 border border-2 border-dark" onerror="this.src='/images/icons/paw.svg'">
+                    <span class="font-brand fs-3 text-dark fw-bold" style="line-height: 1;">MiaWoof</span>
+                    <span class="badge bg-blue text-white border border-1 border-dark rounded-1 fw-bold px-2 py-0" style="font-size: 0.68rem; letter-spacing: 0.5px;">PETSHOP</span>
                 </a>
 
-                <button class="navbar-toggler border-2 border-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <button class="navbar-toggler border-2 border-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 

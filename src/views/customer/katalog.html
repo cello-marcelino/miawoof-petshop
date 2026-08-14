@@ -26,8 +26,8 @@
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <div class="input-group" style="max-width: 320px;">
                         <input type="text" id="searchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
-                        <button class="btn btn-yellow-custom px-3" id="searchBtn">
-                            <img src="/images/icons/search.svg" alt="Cari" width="16" height="16">
+                        <button class="btn btn-blue-custom px-3" id="searchBtn">
+                            <img src="/images/icons/search-white.svg" alt="Cari" width="16" height="16">
                         </button>
                     </div>
                 </div>
@@ -51,9 +51,9 @@
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
                     <h5 class="modal-title fw-bold">Konfirmasi Pemesanan Produk</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="d-flex gap-3 align-items-center mb-4 p-3 bg-light rounded-2 border border-1 border-dark">
@@ -62,7 +62,7 @@
                         </div>
                         <div>
                             <h6 class="fw-bold text-dark mb-1" id="modalProductName">Nama Produk</h6>
-                            <div class="text-primary fw-bold" id="modalProductPrice">Rp 0</div>
+                            <div class="text-blue fw-bold" id="modalProductPrice">Rp 0</div>
                             <div class="text-muted small" id="modalProductStock">Sisa Stok: 0</div>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
 
                         <div class="p-3 bg-light rounded-2 border border-1 border-dark d-flex justify-content-between align-items-center mb-4">
                             <span class="text-muted fw-semibold">Total Pembayaran:</span>
-                            <span class="fw-bold text-primary fs-5" id="orderTotal">Rp 0</span>
+                            <span class="fw-bold text-blue fs-5" id="orderTotal">Rp 0</span>
                         </div>
 
                         <button type="submit" id="submitOrderBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
@@ -236,9 +236,9 @@
                                         <span class="text-muted small ${p.stock <= 5 ? 'text-danger fw-bold' : ''}">Stok: ${p.stock}</span>
                                     </div>
                                     <h6 class="fw-bold text-dark mb-1 text-truncate" title="${p.nama}">${p.nama}</h6>
-                                    <div class="fw-bold text-primary mb-3 fs-5">${formatRupiah(p.harga)}</div>
+                                    <div class="fw-bold text-blue mb-3 fs-5">${formatRupiah(p.harga)}</div>
                                     <button class="btn btn-primary-custom btn-sm w-100 justify-content-center mt-auto" onclick='openCheckoutModal(${JSON.stringify(p)})' ${p.stock <= 0 ? 'disabled' : ''}>
-                                        <img src="/images/icons/cart-white.svg" alt="Beli" width="14" height="14">
+                                        <img src="/images/icons/cart.svg" alt="Beli" width="14" height="14">
                                         <span>${p.stock > 0 ? 'Beli Sekarang' : 'Stok Habis'}</span>
                                     </button>
                                 </div>

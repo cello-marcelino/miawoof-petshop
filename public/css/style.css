@@ -28,52 +28,53 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--primary);
+  color: var(--accent-blue);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 a:hover {
-  color: var(--primary-hover);
+  color: var(--accent-blue-hover);
 }
 
-/* ================= Color Utility Overrides ================= */
-.text-primary, a.text-primary, .link-primary {
-  color: var(--primary) !important;
+/* ================= Color Utility Classes ================= */
+.text-primary, .text-yellow {
+  color: var(--primary-dark) !important;
 }
 
-.text-yellow {
-  color: var(--accent-yellow-dark) !important;
+.text-blue, a.text-blue, .link-primary {
+  color: var(--accent-blue) !important;
 }
 
-.bg-primary {
+.bg-primary, .bg-yellow {
   background-color: var(--primary) !important;
-  color: #ffffff !important;
-}
-
-.bg-yellow {
-  background-color: var(--accent-yellow) !important;
   color: var(--text-main) !important;
 }
 
+.bg-blue, .bg-accent-blue {
+  background-color: var(--accent-blue) !important;
+  color: #ffffff !important;
+}
+
 .bg-light-blue {
-  background-color: var(--primary-light) !important;
+  background-color: var(--accent-blue-light) !important;
 }
 
 .bg-light-yellow {
-  background-color: var(--accent-yellow-light) !important;
+  background-color: var(--primary-light) !important;
 }
 
 .btn-primary {
   background-color: var(--primary) !important;
   border: var(--border-brutal) !important;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   box-shadow: var(--shadow-brutal-sm) !important;
+  font-weight: 700 !important;
 }
 
 .btn-primary:hover, .btn-primary:focus {
   background-color: var(--primary-hover) !important;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   transform: translate(-2px, -2px) !important;
   box-shadow: var(--shadow-brutal-md) !important;
 }
@@ -104,7 +105,7 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-yellow);
+  background: var(--primary);
   border: 1px solid var(--border-dark);
 }
 
@@ -139,7 +140,7 @@ a:hover {
 
 .admin-topbar {
   height: var(--topbar-height);
-  background-color: #ffffff;
+  background-color: var(--primary);
   border-bottom: var(--border-brutal);
   display: flex;
   align-items: center;

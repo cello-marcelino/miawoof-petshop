@@ -72,14 +72,14 @@
     <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
                     <h5 class="modal-title fw-bold">Reservasi Jadwal Grooming</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
                         <h6 class="fw-bold text-dark mb-1" id="modalPaketName">Paket Grooming</h6>
-                        <div class="text-primary fw-bold fs-5" id="modalPaketPrice">Rp 0</div>
+                        <div class="text-blue fw-bold fs-5" id="modalPaketPrice">Rp 0</div>
                         <div class="text-muted small mt-1" id="modalPaketKet">Rincian perawatan...</div>
                     </div>
 
@@ -202,13 +202,13 @@
                                         <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
                                             ${p.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'}
                                         </span>
-                                        <div class="fw-bold text-primary fs-4">${formatRupiah(p.harga)}</div>
+                                        <div class="fw-bold text-blue fs-4">${formatRupiah(p.harga)}</div>
                                     </div>
                                     <h4 class="fw-bold text-dark mb-2">${p.nama_paket}</h4>
                                     <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
                                 </div>
                                 <button class="btn btn-primary-custom w-100 justify-content-center py-2" onclick='openBookingModal(${JSON.stringify(p)})'>
-                                    <img src="/images/icons/calendar-white.svg" alt="Reservasi" width="14" height="14">
+                                    <img src="/images/icons/calendar.svg" alt="Reservasi" width="14" height="14">
                                     <span>Reservasi Jadwal Ini</span>
                                 </button>
                             </div>

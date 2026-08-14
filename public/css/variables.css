@@ -1,27 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* ================= Neo-Brutalism Off-White, Blue & Yellow Palette ================= */
-  --primary: #2563eb;                 /* Vibrant Royal Blue */
-  --primary-hover: #1d4ed8;           /* Deep Cobalt Blue */
-  --primary-light: #eff6ff;           /* Soft Ice Blue Tint */
-  --primary-text: #1e40af;
+  /* ================= Neo-Brutalism: Primary Yellow & Accent Blue Palette ================= */
+  --primary: #ffd12f;                 /* Vibrant Sunny Yellow (PRIMARY) */
+  --primary-hover: #eab308;           /* Deep Gold Yellow */
+  --primary-light: #fef9c3;           /* Soft Pastel Butter Cream */
+  --primary-dark: #78350f;            /* Amber Brown */
+  --primary-text: #18181b;            /* High Contrast Dark Text */
 
-  /* ================= Vibrant Sunny Yellow Accent ================= */
-  --accent-yellow: #ffd12f;           /* Vibrant Punchy Yellow */
-  --accent-yellow-hover: #f5c018;
-  --accent-yellow-light: #fef9c3;     /* Soft Pastel Butter Tint */
-  --accent-yellow-dark: #78350f;      /* Deep Golden Brown */
+  /* ================= Royal Blue (ACCENT) ================= */
+  --accent-blue: #2563eb;             /* Vibrant Royal Cobalt Blue */
+  --accent-blue-hover: #1d4ed8;       /* Deep Navy Blue */
+  --accent-blue-light: #dbeafe;       /* Soft Sky Ice Blue */
+  --accent-blue-dark: #1e3a8a;        /* Deep Midnight Blue */
 
   --border-dark: #18181b;             /* Crisp Solid Pitch Dark Outline */
 
   /* ================= Dominant Off-White & Surfaces ================= */
-  --bg-body: #f8f9fc;                 /* Clean Off-White / Crisp Neutral */
+  --bg-body: #f4f6fb;                 /* Clean Off-White Background */
   --bg-surface: #ffffff;              /* Elevated Card Surface */
-  --bg-surface-subtle: #f1f3f9;       /* Input & Table Header Surface */
+  --bg-surface-subtle: #eceff5;       /* Input & Table Header Surface */
 
-  --text-main: #18181b;               /* Solid Pitch Dark */
-  --text-muted: #52525b;              /* Clean Charcoal Muted */
+  --text-main: #18181b;               /* Pitch Dark */
+  --text-muted: #52525b;              /* Charcoal Muted */
   --text-light: #ffffff;
 
   /* ================= Pet Categories (Yellow & Blue Contrast) ================= */
