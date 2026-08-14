@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Irish+Grover&display=swap');
 
 :root {
-  /* ================= 3-Color Neo-Brutalism Palette ================= */
+  /* ================= Consistent Navy Blue & Sunny Yellow Neo-Brutalism Palette ================= */
   /* 1. Canvas / Surface: Off-White */
-  --bg-body: #f8f9fa;                 /* Crisp Clean Off-White */
+  --bg-body: #f8f9fa;                 /* Clean Off-White */
   --bg-surface: #ffffff;              /* Elevated Pure White Card */
   --bg-surface-subtle: #f1f3f7;       /* Input & Header Surface */
 
-  /* 2. Primary Structural Color: Vibrant Electric Blue */
-  --primary: #2563eb;                 /* Electric Royal Blue (Header & Primary) */
-  --primary-hover: #1d4ed8;           /* Deep Cobalt Blue */
+  /* 2. Consistent Structural Navy Blue (Navbar, Footer, Buttons, Topbar) */
+  --primary: #1e3a8a;                 /* Deep Consistent Navy Blue */
+  --primary-hover: #172554;           /* Deep Midnight Navy */
   --primary-light: #dbeafe;           /* Soft Ice Blue Tint */
-  --primary-dark: #1e3a8a;            /* Midnight Navy Blue */
+  --primary-dark: #1e3a8a;            /* Consistent Navy Blue */
   --primary-text: #ffffff;
 
   /* 3. High-Voltage Accent: Cyber Sunny Yellow */
@@ -56,7 +56,7 @@
   --font-brand: 'Irish Grover', cursive, serif;
   --font-body: 'Inria Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Neo-Brutalism Shadows & Borders (Exact Library Metrics) */
+  /* Neo-Brutalism Shadows & Borders */
   --border-brutal: 2.5px solid var(--border-dark);
   --border-brutal-sm: 2px solid var(--border-dark);
   --border-brutal-lg: 3.5px solid var(--border-dark);
