@@ -643,7 +643,7 @@
 .category-filter-btn:hover {
   background-color: var(--accent-yellow-light) !important;
   color: var(--text-main) !important;
-  border: 2px solid #000000 !important;
+  border-color: transparent !important;
   box-shadow: 4px 4px 0px #000000 !important;
   transform: translate(-1.5px, -1.5px);
 }
@@ -663,7 +663,7 @@
 
 .category-filter-btn.active:hover {
   background-color: var(--accent-yellow-hover) !important;
-  border: 2px solid #000000 !important;
+  border-color: transparent !important;
   box-shadow: 4.5px 4.5px 0px #000000 !important;
   transform: translate(-1.5px, -1.5px);
 }
