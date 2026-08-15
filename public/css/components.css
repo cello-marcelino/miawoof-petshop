@@ -225,6 +225,80 @@
   box-shadow: var(--shadow-brutal-md);
 }
 
+/* Unified Admin Table Action Buttons */
+.btn-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: nowrap;
+}
+
+.btn-table-action {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  border-radius: 4px;
+  border: 1.5px solid #000000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+  box-shadow: 2px 2px 0px #000000;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn-table-action:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.btn-table-action:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.btn-table-action.btn-action-yellow {
+  background-color: var(--accent-yellow);
+  color: #000000 !important;
+}
+
+.btn-table-action.btn-action-yellow:hover {
+  background-color: #ffd700;
+}
+
+.btn-table-action.btn-action-blue {
+  background-color: var(--primary);
+  color: #ffffff !important;
+}
+
+.btn-table-action.btn-action-blue:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-table-action.btn-action-white {
+  background-color: #ffffff;
+  color: #000000 !important;
+}
+
+.btn-table-action.btn-action-white:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-table-action.btn-action-danger {
+  background-color: #fff0f0;
+  color: #c53030 !important;
+}
+
+.btn-table-action.btn-action-danger:hover {
+  background-color: #ffe0e0;
+  color: #9b2c2c !important;
+}
+
 /* ================= 3. Decorative Badges ================= */
 .badge-accent-yellow {
   background-color: var(--accent-yellow);

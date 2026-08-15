@@ -135,9 +135,12 @@
                             </div>
                         </div>
 
-                        <button type="submit" id="btnSaveSlide" class="btn btn-primary-custom w-100 justify-content-center py-2">
-                            <span>Simpan Slide Promosi</span>
-                        </button>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" id="btnSaveSlide" class="btn btn-primary-custom px-4">
+                                <span>Simpan Slide Promosi</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -270,14 +273,14 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center gap-1">
-                                        <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditSlideModal(${JSON.stringify(s)})'>
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick="deleteSlide(${s.id_slide})">
-                                            Hapus
-                                        </button>
-                                    </div>
+                                    <div class="btn-action-group">
+                                         <button class="btn-table-action btn-action-white" onclick='openEditSlideModal(${JSON.stringify(s)})' title="Edit Slide">
+                                             <span>Edit</span>
+                                         </button>
+                                         <button class="btn-table-action btn-action-danger" onclick="deleteSlide(${s.id_slide})" title="Hapus Slide">
+                                             <span>Hapus</span>
+                                         </button>
+                                     </div>
                                 </td>
                             </tr>
                         `;

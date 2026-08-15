@@ -177,9 +177,9 @@
     <div class="modal fade" id="orderEditModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
                     <h5 class="modal-title fw-bold">Edit Data Pesanan</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="editOrderForm">
@@ -211,9 +211,12 @@
                             <label class="form-label-custom">Catatan Admin</label>
                             <input type="text" id="editOrderAdminNotes" class="form-control form-control-custom">
                         </div>
-                        <button type="submit" id="btnSaveEditOrder" class="btn btn-primary-custom w-100 justify-content-center py-2">
-                            <span>Simpan Perubahan Pesanan</span>
-                        </button>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" id="btnSaveEditOrder" class="btn btn-primary-custom px-4">
+                                <span>Simpan Perubahan</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -418,16 +421,16 @@
                                     ${o.status === 'komplain' ? `<span class="badge bg-danger text-white mt-1 py-0 px-1" style="font-size: 0.65rem;">Ada Komplain!</span>` : ''}
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center gap-1">
-                                        <button class="btn btn-yellow-custom btn-sm p-1 px-2" onclick='openDetailModal(${JSON.stringify(o)})' title="Detail & Alur Konfirmasi">
-                                            Konfirmasi
-                                        </button>
-                                        <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditModal(${JSON.stringify(o)})' title="Edit Pesanan">
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick='deleteOrder(${o.id_pesanan})' title="Hapus Pesanan">
-                                            Hapus
-                                        </button>
+                                    <div class="btn-action-group">
+                                         <button class="btn-table-action btn-action-yellow" onclick='openDetailModal(${JSON.stringify(o)})' title="Detail & Alur Konfirmasi">
+                                             <span>Konfirmasi</span>
+                                         </button>
+                                         <button class="btn-table-action btn-action-white" onclick='openEditModal(${JSON.stringify(o)})' title="Edit Pesanan">
+                                             <span>Edit</span>
+                                         </button>
+                                         <button class="btn-table-action btn-action-danger" onclick='deleteOrder(${o.id_pesanan})' title="Hapus Pesanan">
+                                             <span>Hapus</span>
+                                         </button>
                                     </div>
                                 </td>
                             </tr>

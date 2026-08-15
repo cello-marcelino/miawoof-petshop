@@ -290,12 +290,12 @@
                         <td class="fw-bold text-dark">${formatRupiah(p.harga)}</td>
                         <td class="small text-muted">${p.exp ? formatTanggalIndo(p.exp) : '-'}</td>
                         <td>
-                            <div class="d-flex align-items-center gap-1">
-                                <button class="btn btn-outline-custom btn-sm py-1 px-2" onclick='openEditModal(${JSON.stringify(p)})'>
-                                    Edit
+                            <div class="btn-action-group">
+                                <button class="btn-table-action btn-action-white" onclick='openEditModal(${JSON.stringify(p)})' title="Edit Produk">
+                                    <span>Edit</span>
                                 </button>
-                                <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="deleteProduct(${p.id_produk})">
-                                    Hapus
+                                <button class="btn-table-action btn-action-danger" onclick="deleteProduct(${p.id_produk})" title="Hapus Produk">
+                                    <span>Hapus</span>
                                 </button>
                             </div>
                         </td>

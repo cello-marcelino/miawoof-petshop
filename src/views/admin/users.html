@@ -161,11 +161,13 @@
                     <td class="small fw-semibold text-dark">${u.no_hp || '-'}</td>
                     <td class="text-muted small" style="max-width: 220px;">${u.alamat || '-'}</td>
                     <td>
-                        ${u.role !== 'admin' ? `
-                            <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="deleteUser(${u.id})">
-                                Hapus
-                            </button>
-                        ` : '<span class="badge bg-light text-muted border border-1 border-dark small">Protected</span>'}
+                        <div class="btn-action-group">
+                            ${u.role !== 'admin' ? `
+                                <button class="btn-table-action btn-action-danger" onclick="deleteUser(${u.id})" title="Hapus Akun Pengguna">
+                                    <span>Hapus</span>
+                                </button>
+                            ` : '<span class="badge bg-light text-muted border border-1 border-dark small">Protected</span>'}
+                        </div>
                     </td>
                 </tr>
             `).join('');
