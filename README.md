@@ -51,10 +51,6 @@ Selamat datang di repositori **MiaWoof Petshop CMS, Booking & Media Asset Manage
 
 ```text
 miawoof-petshop/
-├── .agents/
-│   ├── PRD.md                    # Master Blueprint & Product Requirements Document
-│   └── RULES.md                  # Strict Security, Clean Code & Architectural Rules
-│
 ├── database/
 │   ├── petshop.db                # File database SQLite (terproteksi di .gitignore)
 │   └── seeders/
