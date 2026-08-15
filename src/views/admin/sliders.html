@@ -324,14 +324,23 @@
             slideFormModal = new bootstrap.Modal(document.getElementById('slideFormModal'));
             assetPickerModal = new bootstrap.Modal(document.getElementById('assetPickerModal'));
 
-            let currentUser = null;
+            // Check Session
+            let user = null;
             try {
                 const sessionRes = await fetch('/api/auth/session');
                 const sessionData = await sessionRes.json();
-                if (sessionData.authenticated) currentUser = sessionData.user;
-            } catch (e) {}
+                if (sessionData.authenticated && sessionData.user.role === 'admin') {
+                    user = sessionData.user;
+                } else {
+                    window.location.href = '/login';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = '/login';
+                return;
+            }
 
-            initAdminSidebar('sliders', currentUser);
+            initSidebar('sliders', user);
             loadAdminSlides();
             loadAdminAssets();
 
