@@ -153,20 +153,26 @@ function runMigrations() {
         });
     });
 
+    // Self-healing migration for slide image paths
+    db.run("UPDATE slides SET gambar = '/images/banners/banner1.jpg' WHERE gambar LIKE '%slide1.png'");
+    db.run("UPDATE slides SET gambar = '/images/banners/banner2.jpg' WHERE gambar LIKE '%slide2.png'");
+    db.run("UPDATE slides SET gambar = '/images/banners/banner3.jpg' WHERE gambar LIKE '%slide3.png'");
+    db.run("UPDATE slides SET gambar = '/images/banners/petAds1.jpg' WHERE gambar LIKE '%slide4.png'");
+
     // Seed default slides if table is empty
     db.get('SELECT COUNT(*) as count FROM slides', [], (err, row) => {
         if (!err && row && row.count === 0) {
             const defaultSlides = [
-                ['Promo Nutrisi Anabul Premium', 'Diskon Spesial hingga 30% untuk varian Royal Canin & ProPlan', '/images/banners/slide1.png', '/produk', 1],
-                ['Salon & Spa Higienis Berlisensi', 'Treatment anti-kutu & jamur dengan peralatan steril medis', '/images/banners/slide2.png', '/grooming', 2],
-                ['Snack & Vitamin Berkualitas', 'Dukung daya tahan tubuh dan keindahan bulu anabul kesayangan', '/images/banners/slide3.png', '/produk', 3],
-                ['Layanan Cepat Ambil di Toko / Diantar', 'Pesan praktis dari rumah, siap dikirim atau diambil langsung', '/images/banners/slide4.png', '/produk', 4]
+                ['Promo Nutrisi Anabul Premium', 'Diskon Spesial hingga 30% untuk varian Royal Canin & ProPlan', '/images/banners/banner1.jpg', '/produk', 1],
+                ['Salon & Spa Higienis Berlisensi', 'Treatment anti-kutu & jamur dengan peralatan steril medis', '/images/banners/banner2.jpg', '/grooming', 2],
+                ['Snack & Treats Berkualitas', 'Dukung daya tahan tubuh dan keindahan bulu anabul kesayangan', '/images/banners/banner3.jpg', '/produk', 3],
+                ['Layanan Cepat Ambil di Toko / Diantar', 'Pesan praktis dari rumah, siap dikirim atau diambil langsung', '/images/banners/petAds1.jpg', '/produk', 4]
             ];
 
             const insertStmt = db.prepare('INSERT INTO slides (judul, subjudul, gambar, link_url, urutan, is_active) VALUES (?, ?, ?, ?, ?, 1)');
             defaultSlides.forEach(slide => insertStmt.run(slide));
             insertStmt.finalize();
-            console.log('✅ Seeded default promotional slides.');
+            console.log('✅ Seeded default promotional slides with valid image paths.');
         }
     });
 }

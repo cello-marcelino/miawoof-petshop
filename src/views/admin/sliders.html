@@ -39,7 +39,7 @@
                     <div id="adminPreviewCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel">
                         <div class="carousel-inner" id="adminPreviewInner">
                             <div class="carousel-item active">
-                                <img src="/images/banners/slide1.png" class="d-block w-100" alt="Preview" onerror="this.src='/images/placeholders/default_product.png'">
+                                <img src="/images/banners/banner1.jpg" class="d-block w-100" alt="Preview" onerror="this.src='/images/banners/banner1.jpg'">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="prev">
@@ -98,9 +98,18 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label-custom">Path / URL Gambar Banner <span class="text-danger">*</span></label>
-                            <input type="text" id="formSlideGambar" class="form-control form-control-custom" placeholder="Contoh: /images/banners/slide1.png" required>
-                            <small class="text-muted">Dapat menggunakan file bawaan (/images/banners/slide1.png s/d slide4.png) atau URL gambar.</small>
+                            <label class="form-label-custom">Pilih Banner Template / File Gambar <span class="text-danger">*</span></label>
+                            <select id="selectBannerTemplate" class="form-select form-select-custom mb-2" onchange="applyBannerTemplate(this.value)">
+                                <option value="/images/banners/banner1.jpg">Banner 1: Nutrisi Premium (banner1.jpg)</option>
+                                <option value="/images/banners/banner2.jpg">Banner 2: Salon & Spa Grooming (banner2.jpg)</option>
+                                <option value="/images/banners/banner3.jpg">Banner 3: Snack & Treats (banner3.jpg)</option>
+                                <option value="/images/banners/petAds1.jpg">Banner Promo 1 (petAds1.jpg)</option>
+                                <option value="/images/banners/petAds2.jpg">Banner Promo 2 (petAds2.jpg)</option>
+                                <option value="/images/banners/petAds3.jpg">Banner Promo 3 (petAds3.jpg)</option>
+                                <option value="/images/banners/petAds4.jpg">Banner Promo 4 (petAds4.jpg)</option>
+                                <option value="custom">Ketik Path / URL Khusus...</option>
+                            </select>
+                            <input type="text" id="formSlideGambar" class="form-control form-control-custom" value="/images/banners/banner1.jpg" placeholder="/images/banners/banner1.jpg" required>
                         </div>
 
                         <div class="row g-3 mb-3">
@@ -199,6 +208,12 @@
             });
         });
 
+        function applyBannerTemplate(val) {
+            if (val !== 'custom') {
+                document.getElementById('formSlideGambar').value = val;
+            }
+        }
+
         async function loadAdminSlides() {
             const tbody = document.getElementById('adminSlidesTable');
             const previewInner = document.getElementById('adminPreviewInner');
@@ -216,7 +231,7 @@
                     if (activeSlides.length > 0) {
                         previewInner.innerHTML = activeSlides.map((s, idx) => `
                             <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                                <img src="${s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/slide1.png'">
+                                <img src="${s.gambar.startsWith('/') ? s.gambar : '/uploads/' + s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/banner1.jpg'">
                             </div>
                         `).join('');
                     } else {
@@ -224,41 +239,44 @@
                     }
 
                     // Render Table
-                    tbody.innerHTML = data.data.map(s => `
-                        <tr>
-                            <td class="fw-bold text-dark">#${s.urutan || 0}</td>
-                            <td>
-                                <img src="${s.gambar}" alt="${s.judul}" style="width: 140px; height: 35px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/slide1.png'">
-                            </td>
-                            <td>
-                                <div class="fw-bold text-dark">${s.judul}</div>
-                                <div class="text-muted small">${s.subjudul || '-'}</div>
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 font-monospace">
-                                    ${s.link_url || '/produk'}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" ${s.is_active === 1 ? 'checked' : ''} onchange="toggleSlideActive(${s.id_slide})" style="cursor: pointer;">
-                                    <label class="form-check-label small fw-bold ${s.is_active === 1 ? 'text-success' : 'text-muted'}">
-                                        ${s.is_active === 1 ? 'Aktif' : 'Non-Aktif'}
-                                    </label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-1">
-                                    <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditSlideModal(${JSON.stringify(s)})'>
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick="deleteSlide(${s.id_slide})">
-                                        Hapus
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `).join('');
+                    tbody.innerHTML = data.data.map(s => {
+                        const imgSrc = s.gambar.startsWith('/') ? s.gambar : '/uploads/' + s.gambar;
+                        return `
+                            <tr>
+                                <td class="fw-bold text-dark">#${s.urutan || 0}</td>
+                                <td>
+                                    <img src="${imgSrc}" alt="${s.judul}" style="width: 150px; height: 42px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/banner1.jpg'">
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">${s.judul}</div>
+                                    <div class="text-muted small">${s.subjudul || '-'}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 font-monospace">
+                                        ${s.link_url || '/produk'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" ${s.is_active === 1 ? 'checked' : ''} onchange="toggleSlideActive(${s.id_slide})" style="cursor: pointer;">
+                                        <label class="form-check-label small fw-bold ${s.is_active === 1 ? 'text-success' : 'text-muted'}">
+                                            ${s.is_active === 1 ? 'Aktif' : 'Non-Aktif'}
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditSlideModal(${JSON.stringify(s)})'>
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick="deleteSlide(${s.id_slide})">
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
                 } else {
                     tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada slide promosi yang dibuat.</td></tr>';
                 }
@@ -272,7 +290,8 @@
             document.getElementById('formSlideId').value = '';
             document.getElementById('formSlideJudul').value = '';
             document.getElementById('formSlideSubjudul').value = '';
-            document.getElementById('formSlideGambar').value = '/images/banners/slide1.png';
+            document.getElementById('selectBannerTemplate').value = '/images/banners/banner1.jpg';
+            document.getElementById('formSlideGambar').value = '/images/banners/banner1.jpg';
             document.getElementById('formSlideLink').value = '/produk';
             document.getElementById('formSlideUrutan').value = (allSlides.length + 1);
             document.getElementById('formSlideActive').checked = true;
@@ -288,6 +307,18 @@
             document.getElementById('formSlideLink').value = s.link_url || '/produk';
             document.getElementById('formSlideUrutan').value = s.urutan || 0;
             document.getElementById('formSlideActive').checked = s.is_active === 1;
+
+            const sel = document.getElementById('selectBannerTemplate');
+            let found = false;
+            for (let opt of sel.options) {
+                if (opt.value === s.gambar) {
+                    sel.value = s.gambar;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) sel.value = 'custom';
+
             slideFormModal.show();
         }
 
