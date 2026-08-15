@@ -7,9 +7,10 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
 
     const menuItems = [
         { key: 'dashboard', label: 'Dashboard', url: '/admin/dashboard', icon: '/images/icons/dashboard.svg' },
-        { key: 'produk', label: 'Kelola Produk', url: '/admin/produk', icon: '/images/icons/cart.svg' },
         { key: 'pesanan', label: 'Kelola Pesanan', url: '/admin/pesanan', icon: '/images/icons/package.svg' },
-        { key: 'grooming', label: 'Jadwal Grooming', url: '/admin/grooming', icon: '/images/icons/scissors.svg' },
+        { key: 'grooming', label: 'Salon & Grooming', url: '/admin/grooming', icon: '/images/icons/scissors.svg' },
+        { key: 'produk', label: 'Kelola Produk', url: '/admin/produk', icon: '/images/icons/cart.svg' },
+        { key: 'sliders', label: 'Kelola Slider CMS', url: '/admin/sliders', icon: '/images/icons/calendar.svg' },
         { key: 'users', label: 'Data Pengguna', url: '/admin/users', icon: '/images/icons/user.svg' },
         { key: 'profil', label: 'Pengaturan Profil', url: '/admin/profil', icon: '/images/icons/user.svg' }
     ];
@@ -30,13 +31,13 @@ function initSidebar(activeMenu = 'dashboard', user = null) {
         <aside class="admin-sidebar p-3 d-flex flex-column justify-content-between">
             <div>
                 <!-- Brand Header Box with Unified Logo and Brand Title -->
-                <div class="d-flex align-items-center gap-2 p-2 mb-3 bg-primary border border-2 border-dark rounded-2 shadow-sm">
+                <a href="/admin/dashboard" class="d-flex align-items-center gap-2 p-2 mb-3 bg-primary border border-2 border-dark rounded-2 shadow-sm text-decoration-none">
                     <img src="/images/branding/logo.jpg" alt="MiaWoof Petshop Logo" width="36" height="36" class="rounded-1 border border-1 border-white" onerror="this.src='/images/icons/paw.svg'">
                     <div>
                         <div class="brand-title fs-5 text-white fw-bold">MiaWoof Petshop</div>
                         <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold d-block mt-1" style="font-size: 0.62rem; width: fit-content;">ADMIN PANEL</span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Nav Items -->
                 <ul class="nav flex-column">

@@ -70,39 +70,79 @@
         </div>
     </main>
 
-    <!-- Checkout Modal -->
+    <!-- Checkout Modal with Pickup/Delivery Options -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold">Konfirmasi Pemesanan Produk</h5>
+                    <h5 class="modal-title fw-bold">Konfirmasi Pemesanan & Pengiriman</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="d-flex gap-3 align-items-center mb-4 p-3 bg-light rounded-2 border border-1 border-dark">
-                        <div class="product-img-wrapper" style="width: 70px; height: 70px; border-radius: 6px;">
+                        <div class="product-img-wrapper" style="width: 75px; height: 75px; border-radius: 6px; flex-shrink: 0;">
                             <img id="modalProductImg" src="" alt="Product" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         </div>
-                        <div>
+                        <div class="flex-grow-1">
                             <h6 class="fw-bold text-dark mb-1" id="modalProductName">Nama Produk</h6>
-                            <div class="text-blue fw-bold" id="modalProductPrice">Rp 0</div>
+                            <div class="text-blue fw-bold fs-5" id="modalProductPrice">Rp 0</div>
                             <div class="text-muted small" id="modalProductStock">Sisa Stok: 0</div>
                         </div>
                     </div>
 
                     <form id="orderForm">
                         <input type="hidden" id="modalProductId">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Jumlah Pesanan (Unit)</label>
+                                <input type="number" id="orderQuantity" class="form-control form-control-custom" value="1" min="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Metode Pengambilan</label>
+                                <div class="d-flex gap-2">
+                                    <div class="form-check flex-fill p-2 border border-2 border-dark rounded-2 bg-white d-flex align-items-center gap-2">
+                                        <input class="form-check-input ms-1" type="radio" name="metodePengambilan" id="metodeToko" value="ambil_ditoko" checked>
+                                        <label class="form-check-label fw-bold small text-dark cursor-pointer" for="metodeToko">
+                                            🏪 Ambil di Toko
+                                        </label>
+                                    </div>
+                                    <div class="form-check flex-fill p-2 border border-2 border-dark rounded-2 bg-white d-flex align-items-center gap-2">
+                                        <input class="form-check-input ms-1" type="radio" name="metodePengambilan" id="metodeAntar" value="diantar">
+                                        <label class="form-check-label fw-bold small text-dark cursor-pointer" for="metodeAntar">
+                                            🚚 Diantar ke Alamat
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Specific Fields (Hidden by default, shown if diantar) -->
+                        <div id="deliveryFields" style="display: none;" class="p-3 mb-3 bg-light rounded-2 border border-1 border-dark">
+                            <div class="mb-3">
+                                <label class="form-label-custom">Alamat Lengkap Pengiriman <span class="text-danger">*</span></label>
+                                <textarea id="alamatPengiriman" class="form-control form-control-custom" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, dan patokan..."></textarea>
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Nomor WhatsApp / Telp Penerima</label>
+                                <input type="text" id="noHpPenerima" class="form-control form-control-custom" placeholder="Contoh: 081234567890">
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            <label class="form-label-custom">Jumlah Pesanan (Unit)</label>
-                            <input type="number" id="orderQuantity" class="form-control form-control-custom" value="1" min="1" required>
+                            <label class="form-label-custom">Catatan Tambahan untuk Toko (Opsional)</label>
+                            <input type="text" id="catatanPelanggan" class="form-control form-control-custom" placeholder="Contoh: Tolong packing bubble wrap / saya ambil jam 16:00">
                         </div>
 
                         <div class="p-3 bg-light rounded-2 border border-1 border-dark d-flex justify-content-between align-items-center mb-4">
-                            <span class="text-muted fw-semibold">Total Pembayaran:</span>
-                            <span class="fw-bold text-blue fs-5" id="orderTotal">Rp 0</span>
+                            <div>
+                                <span class="text-muted fw-semibold d-block small">Total Pembayaran:</span>
+                                <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" id="selectedMethodBadge">Ambil di Toko (Bebas Ongkir)</span>
+                            </div>
+                            <span class="fw-bold text-blue fs-4" id="orderTotal">Rp 0</span>
                         </div>
 
-                        <button type="submit" id="submitOrderBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                        <button type="submit" id="submitOrderBtn" class="btn btn-primary-custom w-100 justify-content-center py-2 fs-6">
                             <span>Konfirmasi & Buat Pesanan</span>
                         </button>
                     </form>
@@ -130,7 +170,15 @@
             try {
                 const sessionRes = await fetch('/api/auth/session');
                 const sessionData = await sessionRes.json();
-                if (sessionData.authenticated) currentUser = sessionData.user;
+                if (sessionData.authenticated) {
+                    currentUser = sessionData.user;
+                    if (currentUser.alamat) {
+                        document.getElementById('alamatPengiriman').value = currentUser.alamat;
+                    }
+                    if (currentUser.no_hp) {
+                        document.getElementById('noHpPenerima').value = currentUser.no_hp;
+                    }
+                }
             } catch (e) {}
 
             initNavbar('produk', currentUser);
@@ -190,6 +238,15 @@
                 }
             });
 
+            // Delivery method radio changes
+            document.querySelectorAll('input[name="metodePengambilan"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const isDelivery = e.target.value === 'diantar';
+                    document.getElementById('deliveryFields').style.display = isDelivery ? 'block' : 'none';
+                    document.getElementById('selectedMethodBadge').innerText = isDelivery ? 'Diantar Kurir Toko' : 'Ambil di Toko (Bebas Ongkir)';
+                });
+            });
+
             // Quantity Change Event in Modal
             document.getElementById('orderQuantity').addEventListener('input', (e) => {
                 if (selectedProduct) {
@@ -208,17 +265,33 @@
                 }
 
                 const btn = document.getElementById('submitOrderBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span>Memproses Pesanan...</span>';
-
                 const id_produk = document.getElementById('modalProductId').value;
                 const jumlah = parseInt(document.getElementById('orderQuantity').value, 10);
+                const metode_pengambilan = document.querySelector('input[name="metodePengambilan"]:checked').value;
+                const alamat_pengiriman = document.getElementById('alamatPengiriman').value.trim();
+                const no_hp_penerima = document.getElementById('noHpPenerima').value.trim();
+                const catatan_pelanggan = document.getElementById('catatanPelanggan').value.trim();
+
+                if (metode_pengambilan === 'diantar' && !alamat_pengiriman) {
+                    alert('Mohon masukkan alamat lengkap pengiriman untuk pesanan diantar.');
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = '<span>Memproses Pesanan...</span>';
 
                 try {
                     const res = await fetch('/api/orders', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id_produk, jumlah })
+                        body: JSON.stringify({
+                            id_produk,
+                            jumlah,
+                            metode_pengambilan,
+                            alamat_pengiriman,
+                            no_hp_penerima,
+                            catatan_pelanggan
+                        })
                     });
                     const data = await res.json();
 
@@ -226,7 +299,7 @@
                         checkoutModal.hide();
                         showToast('Pesanan berhasil dibuat!', 'success');
                         setTimeout(() => {
-                            window.location.href = '/riwayat-pesanan?msg=Pesanan+berhasil+dibuat!&status=success';
+                            window.location.href = '/riwayat-pesanan?msg=Pesanan+berhasil+dibuat!+Admin+akan+segera+memproses&status=success';
                         }, 800);
                     } else {
                         showToast(data.message || 'Gagal membuat pesanan.', 'danger');
@@ -299,6 +372,10 @@
             document.getElementById('orderQuantity').value = 1;
             document.getElementById('orderQuantity').max = product.stock;
             document.getElementById('orderTotal').innerText = formatRupiah(product.harga);
+            document.getElementById('metodeToko').checked = true;
+            document.getElementById('deliveryFields').style.display = 'none';
+            document.getElementById('selectedMethodBadge').innerText = 'Ambil di Toko (Bebas Ongkir)';
+            document.getElementById('catatanPelanggan').value = '';
 
             checkoutModal.show();
         }

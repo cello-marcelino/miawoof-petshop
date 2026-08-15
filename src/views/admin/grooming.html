@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Jadwal Grooming - Admin MiaWoof</title>
+    <title>Salon & Grooming - Admin MiaWoof</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -16,85 +16,180 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Manajemen Jadwal Grooming</h5>
-                    <small class="text-muted">Kelola reservasi jadwal salon anabul dan master paket perawatan.</small>
-                </div>
-                <div>
-                    <button class="btn btn-outline-custom btn-sm" onclick="openPaketModal()">
-                        <img src="/images/icons/scissors.svg" alt="Paket" width="14" height="14">
-                        <span>Kelola Master Paket</span>
-                    </button>
+                    <h5 class="fw-bold text-white mb-0">Manajemen Salon & Grooming</h5>
+                    <small class="text-light opacity-90">Kelola jadwal reservasi antrean, konfirmasi kedatangan, dan master paket perawatan.</small>
                 </div>
             </header>
 
             <div class="admin-content-body">
-                <!-- Bookings Table Container -->
-                <div class="table-custom-container">
-                    <div class="table-responsive">
-                        <table class="table table-custom">
-                            <thead>
-                                <tr>
-                                    <th>No. Booking</th>
-                                    <th>Pelanggan</th>
-                                    <th>Kontak</th>
-                                    <th>Paket Grooming</th>
-                                    <th>Tanggal Booking</th>
-                                    <th>Jam</th>
-                                    <th>Status</th>
-                                    <th>Ubah Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminBookingsTable">
-                                <tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>
-                            </tbody>
-                        </table>
+                <!-- Nav Tabs for Grooming Management -->
+                <ul class="nav nav-pills mb-4 gap-2" id="groomingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="btn btn-yellow-custom active" id="tabBookingsBtn" data-bs-toggle="pill" data-bs-target="#tabBookings" type="button" role="tab">
+                            <span>📅 Jadwal & Reservasi Booking</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="btn btn-outline-custom" id="tabPaketsBtn" data-bs-toggle="pill" data-bs-target="#tabPakets" type="button" role="tab">
+                            <span>✂️ Kelola Master Paket Grooming</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="groomingTabContent">
+                    <!-- Tab 1: Bookings Management -->
+                    <div class="tab-pane fade show active" id="tabBookings" role="tabpanel">
+                        <div class="card-modern p-3 mb-4">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-lg-5">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-2 border-dark border-end-0">
+                                            <img src="/images/icons/search.svg" alt="Cari" width="16" height="16">
+                                        </span>
+                                        <input type="text" id="filterBookingSearch" class="form-control form-control-custom border-start-0" placeholder="Cari nama pelanggan, nama anabul, atau paket...">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <select id="filterBookingStatus" class="form-select form-select-custom">
+                                        <option value="all">Semua Status Booking</option>
+                                        <option value="menunggu_konfirmasi">⏳ Menunggu Konfirmasi</option>
+                                        <option value="dikonfirmasi">📅 Dikonfirmasi / Terjadwal</option>
+                                        <option value="selesai">✅ Selesai Perawatan</option>
+                                        <option value="dibatalkan">❌ Dibatalkan</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 text-end">
+                                    <button class="btn btn-outline-custom w-100 justify-content-center" onclick="loadAdminBookings()">
+                                        <span>Segarkan Jadwal</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bookings Table Container -->
+                        <div class="table-custom-container">
+                            <div class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>No. Booking</th>
+                                            <th>Pelanggan</th>
+                                            <th>Hewan Peliharaan</th>
+                                            <th>Paket Grooming</th>
+                                            <th>Jadwal Sesi</th>
+                                            <th>Status</th>
+                                            <th>Catatan Admin</th>
+                                            <th>Aksi Konfirmasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminBookingsTable">
+                                        <tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Master Paket Grooming -->
+                    <div class="tab-pane fade" id="tabPakets" role="tabpanel">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Daftar Paket Grooming Aktif</h5>
+                                <p class="text-muted small mb-0">Paket yang tersedia akan langsung muncul pada pilihan reservasi pelanggan.</p>
+                            </div>
+                            <button class="btn btn-primary-custom" onclick="openCreatePaketModal()">
+                                <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
+                                <span>Tambah Paket Baru</span>
+                            </button>
+                        </div>
+
+                        <div class="row g-4" id="adminPaketsGrid">
+                            <div class="col-12 text-center py-5 text-muted">Memuat daftar paket...</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Paket Grooming Manager Modal -->
-    <div class="modal fade" id="paketModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- Booking Action Modal -->
+    <div class="modal fade" id="bookingActionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold" id="bookingActionModalTitle">Kelola Reservasi Grooming</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-3">
+                        <div class="fw-bold text-dark fs-6" id="actionBookingCustomer">-</div>
+                        <div class="small text-muted" id="actionBookingPet">-</div>
+                        <div class="small text-muted" id="actionBookingPaket">-</div>
+                        <div class="small fw-bold text-primary mt-1" id="actionBookingSchedule">-</div>
+                        <div class="small text-muted mt-2"><strong>Catatan Pelanggan:</strong> <span id="actionBookingNotes">-</span></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label-custom">Catatan / Instruksi dari Admin</label>
+                        <input type="text" id="actionAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Harap datang 10 menit lebih awal / Bawa buku vaksin">
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-primary-custom btn-sm" onclick="submitBookingStatus('dikonfirmasi')">
+                            <span>📅 Konfirmasi Jadwal</span>
+                        </button>
+                        <button type="button" class="btn btn-success-custom btn-sm" onclick="submitBookingStatus('selesai')">
+                            <span>✅ Selesai Treatment</span>
+                        </button>
+                        <button type="button" class="btn btn-danger-custom btn-sm" onclick="submitBookingStatus('dibatalkan')">
+                            <span>❌ Batalkan Jadwal</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paket Grooming Form Modal (Create & Edit) -->
+    <div class="modal fade" id="paketFormModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold">Master Paket Grooming</h5>
+                    <h5 class="modal-title fw-bold" id="paketModalTitle">Tambah Paket Grooming</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <!-- Add Paket Form -->
-                    <form id="addPaketForm" class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
-                        <h6 class="fw-bold text-dark mb-3">Tambah Paket Baru</h6>
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-5">
-                                <input type="text" id="paketNama" class="form-control form-control-custom form-control-sm" placeholder="Nama Paket (e.g. Spa Medicated)" required>
-                            </div>
-                            <div class="col-md-4">
-                                <select id="paketJenis" class="form-select form-select-custom form-select-sm" required>
+                    <form id="paketForm">
+                        <input type="hidden" id="formPaketId">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Nama Paket Perawatan <span class="text-danger">*</span></label>
+                            <input type="text" id="formPaketNama" class="form-control form-control-custom" placeholder="Contoh: Spa Anti Jamur & Kutu" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Kategori Spesies <span class="text-danger">*</span></label>
+                                <select id="formPaketJenis" class="form-select form-select-custom" required>
                                     <option value="kucing">Kucing</option>
                                     <option value="anjing">Anjing</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <input type="number" id="paketHarga" class="form-control form-control-custom form-control-sm" placeholder="Tarif (Rp)" min="1000" required>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Tarif Harga (Rp) <span class="text-danger">*</span></label>
+                                <input type="number" id="formPaketHarga" class="form-control form-control-custom" placeholder="Contoh: 120000" min="1000" required>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <input type="text" id="paketKet" class="form-control form-control-custom form-control-sm" placeholder="Rincian perlakuan (e.g. Mandi air hangat, potong kuku, styling)" required>
+                            <label class="form-label-custom">Estimasi Durasi (Menit)</label>
+                            <input type="number" id="formPaketDurasi" class="form-control form-control-custom" value="60" min="15">
                         </div>
-                        <button type="submit" class="btn btn-primary-custom btn-sm w-100 justify-content-center py-1">Simpan Paket</button>
+                        <div class="mb-4">
+                            <label class="form-label-custom">Rincian & Manfaat Treatment <span class="text-danger">*</span></label>
+                            <textarea id="formPaketKet" class="form-control form-control-custom" rows="3" placeholder="Contoh: Mandi busa medis, potong kuku, pembersihan telinga, perapian bulu, parfum segar..." required></textarea>
+                        </div>
+                        <button type="submit" id="btnSavePaket" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                            <span>Simpan Paket Grooming</span>
+                        </button>
                     </form>
-
-                    <!-- Existing Pakets List -->
-                    <h6 class="fw-bold text-dark mb-2">Daftar Paket Aktif</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle">
-                            <tbody id="paketListBody">
-                                <tr><td class="text-muted">Memuat paket...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
@@ -105,10 +200,13 @@
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
-        let paketModal = null;
+        let bookingActionModal = null;
+        let paketFormModal = null;
+        let selectedBooking = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            paketModal = new bootstrap.Modal(document.getElementById('paketModal'));
+            bookingActionModal = new bootstrap.Modal(document.getElementById('bookingActionModal'));
+            paketFormModal = new bootstrap.Modal(document.getElementById('paketFormModal'));
 
             // Check Session
             let user = null;
@@ -128,147 +226,269 @@
 
             initSidebar('grooming', user);
             loadAdminBookings();
+            loadAdminPakets();
 
-            // Add Paket Event
-            document.getElementById('addPaketForm').addEventListener('submit', async (e) => {
+            // Tab button styles toggle
+            document.getElementById('tabBookingsBtn').addEventListener('click', () => {
+                document.getElementById('tabBookingsBtn').className = 'btn btn-yellow-custom active';
+                document.getElementById('tabPaketsBtn').className = 'btn btn-outline-custom';
+            });
+            document.getElementById('tabPaketsBtn').addEventListener('click', () => {
+                document.getElementById('tabPaketsBtn').className = 'btn btn-yellow-custom active';
+                document.getElementById('tabBookingsBtn').className = 'btn btn-outline-custom';
+            });
+
+            // Booking Filters
+            document.getElementById('filterBookingStatus').addEventListener('change', loadAdminBookings);
+            document.getElementById('filterBookingSearch').addEventListener('input', debounce(loadAdminBookings, 300));
+
+            // Paket Form Submit
+            document.getElementById('paketForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const nama_paket = document.getElementById('paketNama').value;
-                const jenis_hewan = document.getElementById('paketJenis').value;
-                const harga = document.getElementById('paketHarga').value;
-                const keterangan_grooming = document.getElementById('paketKet').value;
+                const id = document.getElementById('formPaketId').value;
+                const nama_paket = document.getElementById('formPaketNama').value.trim();
+                const jenis_hewan = document.getElementById('formPaketJenis').value;
+                const harga = parseInt(document.getElementById('formPaketHarga').value, 10);
+                const durasi_menit = parseInt(document.getElementById('formPaketDurasi').value, 10);
+                const keterangan_grooming = document.getElementById('formPaketKet').value.trim();
+
+                const btn = document.getElementById('btnSavePaket');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Menyimpan...</span>';
 
                 try {
-                    const res = await fetch('/api/pakets', {
+                    const url = id ? `/api/pakets/${id}` : '/api/pakets';
+                    const res = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nama_paket, jenis_hewan, harga, keterangan_grooming })
+                        body: JSON.stringify({ nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming })
                     });
                     const data = await res.json();
                     if (data.success) {
                         showToast(data.message, 'success');
-                        document.getElementById('addPaketForm').reset();
-                        loadPaketsList();
+                        paketFormModal.hide();
+                        loadAdminPakets();
                     } else {
-                        showToast(data.message || 'Gagal membuat paket.', 'danger');
+                        showToast(data.message || 'Gagal menyimpan paket.', 'danger');
                     }
                 } catch (err) {
                     showToast('Terjadi kesalahan jaringan.', 'danger');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Simpan Paket Grooming</span>';
                 }
             });
         });
 
         async function loadAdminBookings() {
             const tbody = document.getElementById('adminBookingsTable');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>';
+
+            const status = document.getElementById('filterBookingStatus').value;
+            const search = document.getElementById('filterBookingSearch').value.trim();
+
+            let url = '/api/bookings?';
+            if (status !== 'all') url += `status=${status}&`;
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+
             try {
-                const res = await fetch('/api/bookings');
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
                     tbody.innerHTML = data.data.map(b => {
-                        let badgeClass = 'badge-status-pending';
-                        if (b.status === 'dikonfirmasi' || b.status === 'selesai') badgeClass = 'badge-status-success';
-                        else if (b.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+                        let statusBadge = '';
+                        if (b.status === 'dikonfirmasi') statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi</span>';
+                        else if (b.status === 'selesai') statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai</span>';
+                        else if (b.status === 'dibatalkan') statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Batal</span>';
+                        else statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
 
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#BKG-${b.id_booking}</td>
                                 <td>
                                     <div class="fw-bold text-dark">${b.customer_name}</div>
-                                    <div class="text-muted small">${b.email || '-'}</div>
+                                    <div class="small text-muted">${b.customer_phone || '-'}</div>
                                 </td>
-                                <td class="fw-semibold text-dark">${b.no_hp || '-'}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">🐾 ${b.nama_hewan || 'Anabul'}</div>
+                                    <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize" style="font-size: 0.7rem;">
+                                        ${b.jenis_hewan || 'hewan'}
+                                    </span>
+                                </td>
                                 <td>
                                     <div class="fw-bold text-dark">${b.nama_paket}</div>
-                                    <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize" style="font-size: 0.7rem;">
-                                        ${b.jenis_hewan}
-                                    </span>
-                                </td>
-                                <td class="fw-semibold text-dark">${formatTanggalIndo(b.tgl_booking)}</td>
-                                <td class="fw-bold text-primary">${b.waktu} WIB</td>
-                                <td>
-                                    <span class="badge-status ${badgeClass} text-capitalize">
-                                        ● ${b.status}
-                                    </span>
+                                    <div class="small text-primary fw-bold">${formatRupiah(b.harga)}</div>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-custom form-select-sm" onchange="updateBookingStatus(${b.id_booking}, this.value)" style="width: 180px;">
-                                        <option value="menunggu konfirmasi" ${b.status === 'menunggu konfirmasi' ? 'selected' : ''}>Menunggu Konfirmasi</option>
-                                        <option value="dikonfirmasi" ${b.status === 'dikonfirmasi' ? 'selected' : ''}>Dikonfirmasi</option>
-                                        <option value="selesai" ${b.status === 'selesai' ? 'selected' : ''}>Selesai</option>
-                                        <option value="dibatalkan" ${b.status === 'dibatalkan' ? 'selected' : ''}>Dibatalkan</option>
-                                    </select>
+                                    <div class="fw-bold text-dark">${formatTanggalIndo(b.tgl_booking)}</div>
+                                    <div class="small text-muted">Pukul <strong>${b.waktu} WIB</strong></div>
+                                </td>
+                                <td>${statusBadge}</td>
+                                <td style="max-width: 180px;">
+                                    <div class="small text-truncate" title="${b.catatan_admin || 'Belum ada catatan'}">
+                                        ${b.catatan_admin || '-'}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button class="btn btn-yellow-custom btn-sm p-1 px-2" onclick='openBookingActionModal(${JSON.stringify(b)})'>
+                                            Kelola
+                                        </button>
+                                        <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick="deleteBooking(${b.id_booking})">
+                                            Hapus
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `;
                     }).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada jadwal booking masuk.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Tidak ada jadwal booking yang sesuai filter.</td></tr>';
                 }
             } catch (err) {
                 tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat jadwal booking.</td></tr>';
             }
         }
 
-        async function updateBookingStatus(id_booking, status) {
+        function openBookingActionModal(b) {
+            selectedBooking = b;
+            document.getElementById('bookingActionModalTitle').innerText = `Kelola Booking #BKG-${b.id_booking}`;
+            document.getElementById('actionBookingCustomer').innerText = `Pelanggan: ${b.customer_name} (${b.customer_phone || '-'})`;
+            document.getElementById('actionBookingPet').innerText = `Hewan: ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan})`;
+            document.getElementById('actionBookingPaket').innerText = `Paket: ${b.nama_paket} - ${formatRupiah(b.harga)}`;
+            document.getElementById('actionBookingSchedule').innerText = `Jadwal: ${formatTanggalIndo(b.tgl_booking)} | ${b.waktu} WIB`;
+            document.getElementById('actionBookingNotes').innerText = b.catatan || 'Tidak ada catatan khusus dari pelanggan.';
+            document.getElementById('actionAdminNotes').value = b.catatan_admin || '';
+            bookingActionModal.show();
+        }
+
+        async function submitBookingStatus(status) {
+            if (!selectedBooking) return;
+            const catatan_admin = document.getElementById('actionAdminNotes').value.trim();
+
             try {
-                const res = await fetch(`/api/bookings/${id_booking}/status`, {
+                const res = await fetch(`/api/bookings/${selectedBooking.id_booking}/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify({ status, catatan_admin })
                 });
                 const data = await res.json();
                 if (data.success) {
                     showToast(data.message, 'success');
+                    bookingActionModal.hide();
                     loadAdminBookings();
                 } else {
-                    showToast(data.message || 'Gagal mengubah status.', 'danger');
+                    showToast(data.message || 'Gagal memperbarui status booking.', 'danger');
                 }
             } catch (err) {
                 showToast('Terjadi kesalahan jaringan.', 'danger');
             }
         }
 
-        function openPaketModal() {
-            loadPaketsList();
-            paketModal.show();
-        }
-
-        async function loadPaketsList() {
-            const tbody = document.getElementById('paketListBody');
+        async function deleteBooking(id_booking) {
+            if (!confirm('Hapus riwayat booking grooming ini?')) return;
             try {
-                const res = await fetch('/api/pakets');
+                const res = await fetch(`/api/bookings/${id_booking}`, { method: 'DELETE' });
                 const data = await res.json();
-                if (data.success && data.data.length > 0) {
-                    tbody.innerHTML = data.data.map(p => `
-                        <tr>
-                            <td>
-                                <div class="fw-bold text-dark">${p.nama_paket} (${p.jenis_hewan})</div>
-                                <div class="text-muted small">${p.keterangan_grooming}</div>
-                            </td>
-                            <td class="fw-bold text-primary">${formatRupiah(p.harga)}</td>
-                            <td class="text-end">
-                                <button class="btn btn-danger-custom btn-sm py-0 px-2" onclick="deletePaket(${p.id_paket})">
-                                    <img src="/images/icons/trash.svg" alt="Hapus" width="12" height="12">
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="3" class="text-muted small">Belum ada paket.</td></tr>';
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminBookings();
                 }
             } catch (e) {}
         }
 
+        // ================= Paket Grooming CRUD =================
+        async function loadAdminPakets() {
+            const grid = document.getElementById('adminPaketsGrid');
+            try {
+                const res = await fetch('/api/pakets');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    grid.innerHTML = data.data.map(p => `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                            ${p.jenis_hewan}
+                                        </span>
+                                        <span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold small">
+                                            ⏱️ ${p.durasi_menit || 60} Menit
+                                        </span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">${p.nama_paket}</h5>
+                                    <div class="fw-bold text-blue fs-5 mb-3">${formatRupiah(p.harga)}</div>
+                                    <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 pt-3 border-top border-1 border-dark">
+                                    <button class="btn btn-outline-custom btn-sm flex-fill justify-content-center" onclick='openEditPaketModal(${JSON.stringify(p)})'>
+                                        Edit Paket
+                                    </button>
+                                    <button class="btn btn-danger-custom btn-sm flex-fill justify-content-center" onclick="deletePaket(${p.id_paket})">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada paket grooming yang ditambahkan.</div>';
+                }
+            } catch (err) {
+                grid.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat paket grooming.</div>';
+            }
+        }
+
+        function openCreatePaketModal() {
+            document.getElementById('paketModalTitle').innerText = 'Tambah Paket Grooming Baru';
+            document.getElementById('formPaketId').value = '';
+            document.getElementById('formPaketNama').value = '';
+            document.getElementById('formPaketJenis').value = 'kucing';
+            document.getElementById('formPaketHarga').value = '';
+            document.getElementById('formPaketDurasi').value = '60';
+            document.getElementById('formPaketKet').value = '';
+            paketFormModal.show();
+        }
+
+        function openEditPaketModal(p) {
+            document.getElementById('paketModalTitle').innerText = `Edit Paket Grooming: ${p.nama_paket}`;
+            document.getElementById('formPaketId').value = p.id_paket;
+            document.getElementById('formPaketNama').value = p.nama_paket;
+            document.getElementById('formPaketJenis').value = p.jenis_hewan;
+            document.getElementById('formPaketHarga').value = p.harga;
+            document.getElementById('formPaketDurasi').value = p.durasi_menit || 60;
+            document.getElementById('formPaketKet').value = p.keterangan_grooming;
+            paketFormModal.show();
+        }
+
         async function deletePaket(id) {
-            if (!confirm('Hapus paket grooming ini?')) return;
+            if (!confirm('Apakah Anda yakin ingin menghapus paket grooming ini?')) return;
             try {
                 const res = await fetch(`/api/pakets/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (data.success) {
                     showToast(data.message, 'success');
-                    loadPaketsList();
+                    loadAdminPakets();
+                } else {
+                    showToast(data.message || 'Gagal menghapus paket.', 'danger');
                 }
-            } catch (e) {}
+            } catch (e) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
     </script>
 </body>

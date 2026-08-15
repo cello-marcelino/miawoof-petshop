@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Pesanan - Admin MiaWoof</title>
+    <title>Kelola Pesanan - Admin MiaWoof Petshop</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -16,12 +16,49 @@
         <main class="admin-main-content">
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-dark mb-0">Kelola Pesanan Pelanggan</h5>
-                    <small class="text-muted">Pantau transaksi dan perbarui status proses pengiriman belanja.</small>
+                    <h5 class="fw-bold text-white mb-0">Manajemen Pesanan Pelanggan</h5>
+                    <small class="text-light opacity-90">Konfirmasi pemesanan toko/antar, keep stok barang, pantau pengiriman, dan tanggapi komplain.</small>
                 </div>
             </header>
 
             <div class="admin-content-body">
+                <!-- Filters & Search Toolbar -->
+                <div class="card-modern p-3 mb-4">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-2 border-dark border-end-0">
+                                    <img src="/images/icons/search.svg" alt="Search" width="16" height="16">
+                                </span>
+                                <input type="text" id="filterSearch" class="form-control form-control-custom border-start-0" placeholder="Cari pelanggan, ID order, atau produk...">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <select id="filterStatus" class="form-select form-select-custom">
+                                <option value="all">Semua Status Pesanan</option>
+                                <option value="menunggu_konfirmasi">⏳ Menunggu Konfirmasi</option>
+                                <option value="disiapkan_di_toko">🏪 Disiapkan di Toko (Keep)</option>
+                                <option value="dalam_pengantaran">🚚 Dalam Pengantaran</option>
+                                <option value="selesai">✅ Selesai Diterima</option>
+                                <option value="komplain">⚠️ Komplain Pelanggan</option>
+                                <option value="dibatalkan">❌ Dibatalkan</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <select id="filterMetode" class="form-select form-select-custom">
+                                <option value="all">Semua Metode</option>
+                                <option value="ambil_ditoko">🏪 Ambil di Toko</option>
+                                <option value="diantar">🚚 Diantar Kurir</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 text-end">
+                            <button id="btnRefresh" class="btn btn-outline-custom w-100 justify-content-center">
+                                <span>Segarkan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Orders Table Container -->
                 <div class="table-custom-container">
                     <div class="table-responsive">
@@ -30,12 +67,12 @@
                                 <tr>
                                     <th>No. Order</th>
                                     <th>Pelanggan</th>
-                                    <th>Kontak / Alamat</th>
-                                    <th>Detail Produk</th>
+                                    <th>Produk & Jumlah</th>
+                                    <th>Metode & Alamat</th>
                                     <th>Total Bayar</th>
-                                    <th>Tanggal</th>
                                     <th>Status Saat Ini</th>
-                                    <th>Ubah Status</th>
+                                    <th>Keterangan Admin</th>
+                                    <th>Aksi Manajemen</th>
                                 </tr>
                             </thead>
                             <tbody id="adminOrdersTable">
@@ -48,12 +85,150 @@
         </main>
     </div>
 
+    <!-- Order Detail & Workflow Confirmation Modal -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold" id="detailModalTitle">Detail & Konfirmasi Pesanan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-2 border border-1 border-dark h-100">
+                                <h6 class="fw-bold text-dark border-bottom border-1 border-dark pb-2 mb-2">Informasi Pembeli</h6>
+                                <div class="small mb-1"><strong>Nama:</strong> <span id="detailCustomerName">-</span></div>
+                                <div class="small mb-1"><strong>Kontak:</strong> <span id="detailCustomerPhone">-</span></div>
+                                <div class="small mb-1"><strong>Email:</strong> <span id="detailCustomerEmail">-</span></div>
+                                <div class="small mb-1"><strong>Metode:</strong> <span id="detailMethodBadge" class="badge bg-white text-dark border border-1 border-dark">-</span></div>
+                                <div class="small mt-2" id="detailAddressBlock"><strong>Alamat Antar:</strong> <span id="detailAddress">-</span></div>
+                                <div class="small mt-1 text-muted"><strong>Catatan Pembeli:</strong> <span id="detailCustomerNotes">-</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-2 border border-1 border-dark h-100">
+                                <h6 class="fw-bold text-dark border-bottom border-1 border-dark pb-2 mb-2">Rincian Barang</h6>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <img id="detailProductImg" src="" alt="Produk" style="width: 50px; height: 50px; object-fit: contain; background: #fff; border: 1px solid #000; border-radius: 4px;">
+                                    <div>
+                                        <div class="fw-bold text-dark" id="detailProductName">-</div>
+                                        <div class="small text-muted" id="detailProductPrice">-</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-1 border-dark">
+                                    <span class="fw-bold text-dark">Total Pembayaran:</span>
+                                    <span class="fw-bold text-blue fs-5" id="detailTotalAmount">Rp 0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Complaint Review & Response Section (If Status is Komplain) -->
+                    <div id="complaintSection" style="display: none;" class="p-3 mb-4 bg-danger-subtle border border-2 border-danger rounded-2">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="fs-5">⚠️</span>
+                            <h6 class="fw-bold text-danger mb-0">Keluhan / Komplain dari Pelanggan:</h6>
+                        </div>
+                        <div class="p-2 bg-white rounded-1 border border-1 border-dark mb-3 small" id="detailComplaintText">-</div>
+                        
+                        <label class="form-label-custom">Tanggapan Admin untuk Pelanggan:</label>
+                        <textarea id="adminComplaintResponse" class="form-control form-control-custom mb-3" rows="2" placeholder="Tuliskan solusi/tanggapan untuk pelanggan (misal: barang pengganti dikirim / refund diproses)..."></textarea>
+                        <button type="button" id="btnSubmitComplaintResponse" class="btn btn-primary-custom btn-sm w-100 justify-content-center">
+                            <span>Kirim Tanggapan & Selesaikan Komplain</span>
+                        </button>
+                    </div>
+
+                    <!-- Workflow Status Action Center -->
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark">
+                        <h6 class="fw-bold text-dark mb-3">Tindakan Alur Status Pesanan:</h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label-custom">Catatan / Keterangan Toko ke Pelanggan</label>
+                            <input type="text" id="workflowAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Pesanan telah di-keep di kasir / Kurir Bpk. Rian sedang mengantar (08123...)">
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button" id="btnKeepStore" class="btn btn-yellow-custom btn-sm">
+                                <span>🏪 Barang Siap & Di-Keep di Toko</span>
+                            </button>
+                            <button type="button" id="btnOutForDelivery" class="btn btn-primary-custom btn-sm">
+                                <span>🚚 Kirim / Dalam Pengantaran</span>
+                            </button>
+                            <button type="button" id="btnMarkComplete" class="btn btn-success-custom btn-sm">
+                                <span>✅ Tandai Selesai</span>
+                            </button>
+                            <button type="button" id="btnCancelOrder" class="btn btn-danger-custom btn-sm">
+                                <span>❌ Batalkan Pesanan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Edit Modal -->
+    <div class="modal fade" id="orderEditModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold">Edit Data Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editOrderForm">
+                        <input type="hidden" id="editOrderId">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Jumlah Pesanan (Unit)</label>
+                            <input type="number" id="editOrderQty" class="form-control form-control-custom" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Total Bayar (Rp)</label>
+                            <input type="number" id="editOrderTotal" class="form-control form-control-custom" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Metode Pengambilan</label>
+                            <select id="editOrderMethod" class="form-select form-select-custom">
+                                <option value="ambil_ditoko">Ambil di Toko</option>
+                                <option value="diantar">Diantar Kurir</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Alamat Pengiriman (Jika Diantar)</label>
+                            <textarea id="editOrderAddress" class="form-control form-control-custom" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">No. WhatsApp / Telp Penerima</label>
+                            <input type="text" id="editOrderPhone" class="form-control form-control-custom">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label-custom">Catatan Admin</label>
+                            <input type="text" id="editOrderAdminNotes" class="form-control form-control-custom">
+                        </div>
+                        <button type="submit" id="btnSaveEditOrder" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                            <span>Simpan Perubahan Pesanan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/vendor/bootstrap.bundle.min.js"></script>
     <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
+        let currentOrders = [];
+        let selectedOrder = null;
+        let detailModal = null;
+        let editModal = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
+            detailModal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+            editModal = new bootstrap.Modal(document.getElementById('orderEditModal'));
+
             // Check Session
             let user = null;
             try {
@@ -71,81 +246,285 @@
             }
 
             initSidebar('pesanan', user);
+
+            // Check URL search param for status (e.g. ?status=komplain from dashboard banner)
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialStatus = urlParams.get('status');
+            if (initialStatus) {
+                document.getElementById('filterStatus').value = initialStatus;
+            }
+
             loadAdminOrders();
+
+            // Filter Event Listeners
+            document.getElementById('filterStatus').addEventListener('change', loadAdminOrders);
+            document.getElementById('filterMetode').addEventListener('change', loadAdminOrders);
+            document.getElementById('filterSearch').addEventListener('input', debounce(loadAdminOrders, 300));
+            document.getElementById('btnRefresh').addEventListener('click', loadAdminOrders);
+
+            // Modal Workflow Action Buttons
+            document.getElementById('btnKeepStore').addEventListener('click', () => {
+                if (!selectedOrder) return;
+                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Barang pesanan telah disiapkan dan di-keep di rak kasir khusus, silakan diambil dengan menunjukkan ID Pesanan.';
+                updateOrderStatusApi(selectedOrder.id_pesanan, 'disiapkan_di_toko', notes);
+            });
+
+            document.getElementById('btnOutForDelivery').addEventListener('click', () => {
+                if (!selectedOrder) return;
+                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan sedang dalam proses pengantaran oleh kurir toko kami.';
+                updateOrderStatusApi(selectedOrder.id_pesanan, 'dalam_pengantaran', notes);
+            });
+
+            document.getElementById('btnMarkComplete').addEventListener('click', () => {
+                if (!selectedOrder) return;
+                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan telah selesai diserahkan ke pelanggan.';
+                updateOrderStatusApi(selectedOrder.id_pesanan, 'selesai', notes);
+            });
+
+            document.getElementById('btnCancelOrder').addEventListener('click', () => {
+                if (!selectedOrder) return;
+                if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok produk akan otomatis dikembalikan.')) return;
+                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan dibatalkan oleh Admin.';
+                updateOrderStatusApi(selectedOrder.id_pesanan, 'dibatalkan', notes);
+            });
+
+            document.getElementById('btnSubmitComplaintResponse').addEventListener('click', async () => {
+                if (!selectedOrder) return;
+                const responseText = document.getElementById('adminComplaintResponse').value.trim();
+                if (!responseText) {
+                    alert('Mohon isi tanggapan untuk komplain pelanggan.');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`/api/orders/${selectedOrder.id_pesanan}/respond-complaint`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            komplain_tanggapan: responseText,
+                            status: 'selesai'
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        detailModal.hide();
+                        loadAdminOrders();
+                    } else {
+                        showToast(data.message || 'Gagal mengirim tanggapan komplain.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                }
+            });
+
+            // Edit Form Submit
+            document.getElementById('editOrderForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editOrderId').value;
+                const jumlah = parseInt(document.getElementById('editOrderQty').value, 10);
+                const total = parseInt(document.getElementById('editOrderTotal').value, 10);
+                const metode_pengambilan = document.getElementById('editOrderMethod').value;
+                const alamat_pengiriman = document.getElementById('editOrderAddress').value.trim();
+                const no_hp_penerima = document.getElementById('editOrderPhone').value.trim();
+                const catatan_admin = document.getElementById('editOrderAdminNotes').value.trim();
+
+                try {
+                    const res = await fetch(`/api/orders/${id}/edit`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jumlah,
+                            total,
+                            status: selectedOrder ? selectedOrder.status : 'menunggu_konfirmasi',
+                            metode_pengambilan,
+                            alamat_pengiriman,
+                            no_hp_penerima,
+                            catatan_admin
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        editModal.hide();
+                        loadAdminOrders();
+                    } else {
+                        showToast(data.message || 'Gagal memperbarui pesanan.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                }
+            });
         });
 
         async function loadAdminOrders() {
             const tbody = document.getElementById('adminOrdersTable');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Memuat daftar pesanan...</td></tr>';
+
+            const status = document.getElementById('filterStatus').value;
+            const metode = document.getElementById('filterMetode').value;
+            const search = document.getElementById('filterSearch').value.trim();
+
+            let url = '/api/orders?';
+            if (status !== 'all') url += `status=${status}&`;
+            if (metode !== 'all') url += `metode=${metode}&`;
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+
             try {
-                const res = await fetch('/api/orders');
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
+                    currentOrders = data.data;
                     tbody.innerHTML = data.data.map(o => {
-                        let badgeClass = 'badge-status-pending';
-                        if (o.status === 'selesai') badgeClass = 'badge-status-success';
-                        else if (o.status === 'diproses') badgeClass = 'badge-status-info';
-                        else if (o.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+                        let statusBadge = '';
+                        if (o.status === 'selesai') statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai</span>';
+                        else if (o.status === 'disiapkan_di_toko') statusBadge = '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold">🏪 Di-Keep di Toko</span>';
+                        else if (o.status === 'dalam_pengantaran') statusBadge = '<span class="badge bg-info text-dark border border-1 border-dark px-2 py-1 fw-bold">🚚 Dalam Pengantaran</span>';
+                        else if (o.status === 'komplain') statusBadge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-1 fw-bold">⚠️ Komplain</span>';
+                        else if (o.status === 'dibatalkan') statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Batal</span>';
+                        else statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+
+                        const methodBadge = o.metode_pengambilan === 'diantar'
+                            ? '<span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 fw-bold">🚚 Diantar</span>'
+                            : '<span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 fw-bold">🏪 Ambil Sendiri</span>';
 
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#ORD-${o.id_pesanan}</td>
                                 <td>
                                     <div class="fw-bold text-dark">${o.customer_name}</div>
-                                    <div class="text-muted small">${o.email || '-'}</div>
-                                </td>
-                                <td>
-                                    <div class="small fw-semibold text-dark">${o.no_hp || '-'}</div>
-                                    <div class="text-muted small" style="max-width: 200px;">${o.alamat || '-'}</div>
+                                    <div class="small text-muted">${o.customer_phone || '-'}</div>
                                 </td>
                                 <td>
                                     <div class="fw-semibold text-dark">${o.nama_produk}</div>
-                                    <div class="text-muted small">Jumlah: ${o.jumlah} unit (${formatRupiah(o.harga)}/unit)</div>
-                                </td>
-                                <td class="fw-bold text-primary">${formatRupiah(o.total)}</td>
-                                <td class="text-muted small">${formatTanggalIndo(o.tgl_pesanan)}</td>
-                                <td>
-                                    <span class="badge-status ${badgeClass} text-capitalize">
-                                        ● ${o.status}
-                                    </span>
+                                    <div class="small text-muted">${o.jumlah} unit &bull; ${formatRupiah(o.harga)}</div>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-custom form-select-sm" onchange="updateStatus(${o.id_pesanan}, this.value)" style="width: 180px;">
-                                        <option value="menunggu pembayaran" ${o.status === 'menunggu pembayaran' ? 'selected' : ''}>Menunggu Pembayaran</option>
-                                        <option value="diproses" ${o.status === 'diproses' ? 'selected' : ''}>Diproses</option>
-                                        <option value="selesai" ${o.status === 'selesai' ? 'selected' : ''}>Selesai</option>
-                                        <option value="dibatalkan" ${o.status === 'dibatalkan' ? 'selected' : ''}>Dibatalkan</option>
-                                    </select>
+                                    <div class="mb-1">${methodBadge}</div>
+                                    ${o.metode_pengambilan === 'diantar' && o.alamat_pengiriman ? `<div class="small text-muted text-truncate" style="max-width: 160px;" title="${o.alamat_pengiriman}">📍 ${o.alamat_pengiriman}</div>` : ''}
+                                </td>
+                                <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
+                                <td>${statusBadge}</td>
+                                <td style="max-width: 180px;">
+                                    <div class="small text-truncate ${o.catatan_admin ? 'fw-bold text-dark' : 'text-muted'}" title="${o.catatan_admin || 'Belum ada catatan'}">
+                                        ${o.catatan_admin || '-'}
+                                    </div>
+                                    ${o.status === 'komplain' ? `<span class="badge bg-danger text-white mt-1 py-0 px-1" style="font-size: 0.65rem;">Ada Komplain!</span>` : ''}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button class="btn btn-yellow-custom btn-sm p-1 px-2" onclick='openDetailModal(${JSON.stringify(o)})' title="Detail & Alur Konfirmasi">
+                                            Konfirmasi
+                                        </button>
+                                        <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditModal(${JSON.stringify(o)})' title="Edit Pesanan">
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick='deleteOrder(${o.id_pesanan})' title="Hapus Pesanan">
+                                            Hapus
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `;
                     }).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada pesanan masuk.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Tidak ada data pesanan yang sesuai filter.</td></tr>';
                 }
             } catch (err) {
                 tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat daftar pesanan.</td></tr>';
             }
         }
 
-        async function updateStatus(id_pesanan, status) {
+        function openDetailModal(order) {
+            selectedOrder = order;
+            document.getElementById('detailModalTitle').innerText = `Detail & Konfirmasi Pesanan #ORD-${order.id_pesanan}`;
+            document.getElementById('detailCustomerName').innerText = order.customer_name;
+            document.getElementById('detailCustomerPhone').innerText = order.no_hp_penerima || order.customer_phone || '-';
+            document.getElementById('detailCustomerEmail').innerText = order.email || '-';
+            document.getElementById('detailMethodBadge').innerText = order.metode_pengambilan === 'diantar' ? '🚚 Diantar ke Alamat' : '🏪 Ambil Sendiri di Toko';
+            document.getElementById('detailAddress').innerText = order.alamat_pengiriman || order.customer_address || '-';
+            document.getElementById('detailCustomerNotes').innerText = order.catatan_pelanggan || '-';
+
+            document.getElementById('detailProductName').innerText = order.nama_produk;
+            document.getElementById('detailProductPrice').innerText = `${order.jumlah} unit x ${formatRupiah(order.harga)}`;
+            document.getElementById('detailTotalAmount').innerText = formatRupiah(order.total);
+            document.getElementById('detailProductImg').src = `/uploads/${order.gambar || 'default_product.png'}`;
+
+            document.getElementById('workflowAdminNotes').value = order.catatan_admin || '';
+
+            // Handle Complaint Section Visibility
+            const complaintSection = document.getElementById('complaintSection');
+            if (order.status === 'komplain' || order.komplain_text) {
+                complaintSection.style.display = 'block';
+                document.getElementById('detailComplaintText').innerText = order.komplain_text || 'Tidak ada teks komplain.';
+                document.getElementById('adminComplaintResponse').value = order.komplain_tanggapan || '';
+            } else {
+                complaintSection.style.display = 'none';
+            }
+
+            detailModal.show();
+        }
+
+        function openEditModal(order) {
+            selectedOrder = order;
+            document.getElementById('editOrderId').value = order.id_pesanan;
+            document.getElementById('editOrderQty').value = order.jumlah;
+            document.getElementById('editOrderTotal').value = order.total;
+            document.getElementById('editOrderMethod').value = order.metode_pengambilan || 'ambil_ditoko';
+            document.getElementById('editOrderAddress').value = order.alamat_pengiriman || '';
+            document.getElementById('editOrderPhone').value = order.no_hp_penerima || '';
+            document.getElementById('editOrderAdminNotes').value = order.catatan_admin || '';
+            editModal.show();
+        }
+
+        async function updateOrderStatusApi(id_pesanan, status, catatan_admin) {
             try {
                 const res = await fetch(`/api/orders/${id_pesanan}/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify({ status, catatan_admin })
                 });
                 const data = await res.json();
-
                 if (data.success) {
                     showToast(data.message, 'success');
+                    detailModal.hide();
                     loadAdminOrders();
                 } else {
-                    showToast(data.message || 'Gagal mengubah status.', 'danger');
+                    showToast(data.message || 'Gagal memperbarui status.', 'danger');
                 }
             } catch (err) {
                 showToast('Terjadi kesalahan jaringan.', 'danger');
             }
+        }
+
+        async function deleteOrder(id_pesanan) {
+            if (!confirm('Apakah Anda yakin ingin menghapus pesanan ini secara permanen? Stok akan otomatis disesuaikan.')) return;
+
+            try {
+                const res = await fetch(`/api/orders/${id_pesanan}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminOrders();
+                } else {
+                    showToast(data.message || 'Gagal menghapus pesanan.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
     </script>
 </body>

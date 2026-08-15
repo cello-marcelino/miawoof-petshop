@@ -8,6 +8,7 @@ const AuthController = require('./src/controllers/AuthController');
 const ProductController = require('./src/controllers/ProductController');
 const BookingController = require('./src/controllers/BookingController');
 const OrderController = require('./src/controllers/OrderController');
+const SlideController = require('./src/controllers/SlideController');
 const UserController = require('./src/controllers/UserController');
 const SessionManager = require('./src/utils/SessionManager');
 
@@ -90,7 +91,7 @@ const server = http.createServer(async (req, res) => {
             const body = await parseJsonBody(req);
             return AuthController.handleRegister(req, res, body);
         }
-        if ((pathname === '/api/auth/logout' || pathname === '/logout')) {
+        if (pathname === '/api/auth/logout' || pathname === '/logout') {
             return AuthController.handleLogout(req, res);
         }
         if (pathname === '/api/auth/session' && method === 'GET') {
@@ -116,6 +117,29 @@ const server = http.createServer(async (req, res) => {
             if (method === 'DELETE') return ProductController.handleDeleteProduct(req, res, id);
         }
 
+        // --- Slide / Banner CMS APIs ---
+        if (pathname === '/api/slides' && method === 'GET') {
+            return SlideController.handleGetSlides(req, res, queryParams);
+        }
+        if (pathname === '/api/slides' && method === 'POST') {
+            const body = await parseJsonBody(req);
+            return SlideController.handleCreateSlide(req, res, body);
+        }
+        const slideMatch = pathname.match(/^\/api\/slides\/(\d+)$/);
+        if (slideMatch) {
+            const id = slideMatch[1];
+            if (method === 'GET') return SlideController.handleGetSlideById(req, res, id);
+            if (method === 'POST' || method === 'PUT') {
+                const body = await parseJsonBody(req);
+                return SlideController.handleUpdateSlide(req, res, id, body);
+            }
+            if (method === 'DELETE') return SlideController.handleDeleteSlide(req, res, id);
+        }
+        const slideToggleMatch = pathname.match(/^\/api\/slides\/(\d+)\/toggle$/);
+        if (slideToggleMatch && method === 'POST') {
+            return SlideController.handleToggleActive(req, res, slideToggleMatch[1]);
+        }
+
         // --- Paket Grooming APIs ---
         if (pathname === '/api/pakets' && method === 'GET') {
             return BookingController.handleGetPakets(req, res);
@@ -125,13 +149,19 @@ const server = http.createServer(async (req, res) => {
             return BookingController.handleCreatePaket(req, res, body);
         }
         const paketMatch = pathname.match(/^\/api\/pakets\/(\d+)$/);
-        if (paketMatch && method === 'DELETE') {
-            return BookingController.handleDeletePaket(req, res, paketMatch[1]);
+        if (paketMatch) {
+            const id = paketMatch[1];
+            if (method === 'GET') return BookingController.handleGetPaketById(req, res, id);
+            if (method === 'POST' || method === 'PUT') {
+                const body = await parseJsonBody(req);
+                return BookingController.handleUpdatePaket(req, res, id, body);
+            }
+            if (method === 'DELETE') return BookingController.handleDeletePaket(req, res, id);
         }
 
-        // --- Booking APIs ---
+        // --- Booking Grooming APIs ---
         if (pathname === '/api/bookings' && method === 'GET') {
-            return BookingController.handleGetBookings(req, res);
+            return BookingController.handleGetBookings(req, res, queryParams);
         }
         if (pathname === '/api/bookings' && method === 'POST') {
             const body = await parseJsonBody(req);
@@ -146,19 +176,48 @@ const server = http.createServer(async (req, res) => {
         if (bookingCancelMatch && method === 'POST') {
             return BookingController.handleCancelBooking(req, res, bookingCancelMatch[1]);
         }
+        const bookingDeleteMatch = pathname.match(/^\/api\/bookings\/(\d+)$/);
+        if (bookingDeleteMatch && method === 'DELETE') {
+            return BookingController.handleDeleteBooking(req, res, bookingDeleteMatch[1]);
+        }
 
-        // --- Order APIs ---
+        // --- Order APIs (with Pickup/Delivery, Workflow & Complaints) ---
         if (pathname === '/api/orders' && method === 'GET') {
-            return OrderController.handleGetOrders(req, res);
+            return OrderController.handleGetOrders(req, res, queryParams);
         }
         if (pathname === '/api/orders' && method === 'POST') {
             const body = await parseJsonBody(req);
             return OrderController.handleCheckout(req, res, body);
         }
+        const orderIdMatch = pathname.match(/^\/api\/orders\/(\d+)$/);
+        if (orderIdMatch) {
+            const id = orderIdMatch[1];
+            if (method === 'GET') return OrderController.handleGetOrderById(req, res, id);
+            if (method === 'DELETE') return OrderController.handleDeleteOrder(req, res, id);
+        }
         const orderStatusMatch = pathname.match(/^\/api\/orders\/(\d+)\/status$/);
         if (orderStatusMatch && method === 'POST') {
             const body = await parseJsonBody(req);
             return OrderController.handleUpdateOrderStatus(req, res, orderStatusMatch[1], body);
+        }
+        const orderEditMatch = pathname.match(/^\/api\/orders\/(\d+)\/edit$/);
+        if (orderEditMatch && method === 'POST') {
+            const body = await parseJsonBody(req);
+            return OrderController.handleEditOrder(req, res, orderEditMatch[1], body);
+        }
+        const orderConfirmReceivedMatch = pathname.match(/^\/api\/orders\/(\d+)\/confirm-received$/);
+        if (orderConfirmReceivedMatch && method === 'POST') {
+            return OrderController.handleConfirmReceived(req, res, orderConfirmReceivedMatch[1]);
+        }
+        const orderComplaintMatch = pathname.match(/^\/api\/orders\/(\d+)\/complaint$/);
+        if (orderComplaintMatch && method === 'POST') {
+            const body = await parseJsonBody(req);
+            return OrderController.handleSubmitComplaint(req, res, orderComplaintMatch[1], body);
+        }
+        const orderRespondComplaintMatch = pathname.match(/^\/api\/orders\/(\d+)\/respond-complaint$/);
+        if (orderRespondComplaintMatch && method === 'POST') {
+            const body = await parseJsonBody(req);
+            return OrderController.handleRespondComplaint(req, res, orderRespondComplaintMatch[1], body);
         }
         const orderCancelMatch = pathname.match(/^\/api\/orders\/(\d+)\/cancel$/);
         if (orderCancelMatch && method === 'POST') {
@@ -225,6 +284,9 @@ const server = http.createServer(async (req, res) => {
         }
         if (pathname === '/admin/grooming') {
             return serveView(res, 'admin/grooming.html');
+        }
+        if (pathname === '/admin/sliders') {
+            return serveView(res, 'admin/sliders.html');
         }
         if (pathname === '/admin/users') {
             return serveView(res, 'admin/users.html');

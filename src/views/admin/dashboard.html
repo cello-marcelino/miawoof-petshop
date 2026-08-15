@@ -14,11 +14,11 @@
         <div id="sidebar-root"></div>
 
         <main class="admin-main-content">
-            <!-- Topbar (Royal Blue Background with Yellow Accent Date) -->
+            <!-- Topbar -->
             <header class="admin-topbar">
                 <div>
-                    <h5 class="fw-bold text-white mb-0">Dashboard Analitik</h5>
-                    <small class="text-light opacity-90">Ikhtisar performa penjualan produk dan reservasi grooming.</small>
+                    <h5 class="fw-bold text-white mb-0">Dashboard Manajemen Petshop</h5>
+                    <small class="text-light opacity-90">Pantau pesanan belanja, reservasi grooming, dan penanganan layanan pelanggan.</small>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-2 fw-bold d-flex align-items-center gap-2" id="todayDateBadge">
@@ -29,7 +29,21 @@
             </header>
 
             <div class="admin-content-body">
-                <!-- Stat Widgets Row (Yellow & Blue Contrast) -->
+                <!-- Active Complaint Notification Banner (Dynamically shown if complaints > 0) -->
+                <div id="complaintAlertBanner" style="display: none;" class="card-modern p-3 mb-4 bg-danger text-white border-dark d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="fs-3">⚠️</span>
+                        <div>
+                            <h6 class="fw-bold mb-0">Pemberitahuan Komplain Pelanggan Aktif!</h6>
+                            <small class="opacity-90" id="complaintAlertText">Terdapat pesanan yang membutuhkan respon/tanggapan dari Admin.</small>
+                        </div>
+                    </div>
+                    <a href="/admin/pesanan?status=komplain" class="btn btn-yellow-custom btn-sm">
+                        <span>Tanggapi Komplain Sekarang &rarr;</span>
+                    </a>
+                </div>
+
+                <!-- Stat Widgets Row -->
                 <div class="row g-4 mb-4">
                     <div class="col-xl-3 col-md-6">
                         <div class="stat-widget">
@@ -39,6 +53,7 @@
                             <div>
                                 <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Total Pendapatan</div>
                                 <h4 class="fw-bold text-dark mb-0" id="statRevenue">Rp 0</h4>
+                                <small class="text-success fw-bold">Dari pesanan sukses</small>
                             </div>
                         </div>
                     </div>
@@ -51,7 +66,7 @@
                             <div>
                                 <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Total Pesanan</div>
                                 <h4 class="fw-bold text-dark mb-0" id="statOrders">0</h4>
-                                <small class="text-muted fw-semibold" id="statPendingOrders">0 pending</small>
+                                <small class="text-muted fw-semibold" id="statOrderBreakdown">0 menunggu konfirmasi</small>
                             </div>
                         </div>
                     </div>
@@ -62,9 +77,9 @@
                                 <img src="/images/icons/scissors.svg" alt="Bookings" width="22" height="22">
                             </div>
                             <div>
-                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Booking Grooming</div>
+                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Jadwal Grooming</div>
                                 <h4 class="fw-bold text-dark mb-0" id="statBookings">0</h4>
-                                <small class="text-muted fw-semibold" id="statPendingBookings">0 menunggu</small>
+                                <small class="text-muted fw-semibold" id="statPendingBookings">0 menunggu konfirmasi</small>
                             </div>
                         </div>
                     </div>
@@ -75,9 +90,9 @@
                                 <img src="/images/icons/user-white.svg" alt="Users" width="22" height="22">
                             </div>
                             <div>
-                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Total Customer</div>
-                                <h4 class="fw-bold text-dark mb-0" id="statUsers">0</h4>
-                                <small class="text-muted">Terdaftar</small>
+                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Komplain Pelanggan</div>
+                                <h4 class="fw-bold text-danger mb-0" id="statComplaints">0</h4>
+                                <small class="text-muted">Perlu tindak lanjut</small>
                             </div>
                         </div>
                     </div>
@@ -90,20 +105,20 @@
                         <div class="card-modern p-4 h-100">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <h5 class="fw-bold text-dark mb-0">Pesanan Belanja Terbaru</h5>
-                                <a href="/admin/pesanan" class="btn btn-outline-custom btn-sm">Lihat Semua &rarr;</a>
+                                <a href="/admin/pesanan" class="btn btn-outline-custom btn-sm">Buka Kelola Pesanan &rarr;</a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-custom">
                                     <thead>
                                         <tr>
                                             <th>Pelanggan</th>
-                                            <th>Produk</th>
+                                            <th>Metode</th>
                                             <th>Total</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recentOrdersBody">
-                                        <tr><td colspan="4" class="text-center py-4 text-muted">Memuat data...</td></tr>
+                                        <tr><td colspan="4" class="text-center py-4 text-muted">Memuat data pesanan...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -114,21 +129,21 @@
                     <div class="col-lg-6">
                         <div class="card-modern p-4 h-100">
                             <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h5 class="fw-bold text-dark mb-0">Jadwal Grooming Mendatang</h5>
-                                <a href="/admin/grooming" class="btn btn-outline-custom btn-sm">Lihat Semua &rarr;</a>
+                                <h5 class="fw-bold text-dark mb-0">Reservasi Grooming Terkini</h5>
+                                <a href="/admin/grooming" class="btn btn-outline-custom btn-sm">Buka Kelola Grooming &rarr;</a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-custom">
                                     <thead>
                                         <tr>
-                                            <th>Pelanggan</th>
+                                            <th>Pelanggan / Hewan</th>
                                             <th>Paket</th>
                                             <th>Jadwal</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="recentBookingsBody">
-                                        <tr><td colspan="4" class="text-center py-4 text-muted">Memuat data...</td></tr>
+                                        <tr><td colspan="4" class="text-center py-4 text-muted">Memuat data booking...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -179,10 +194,16 @@
                     const d = statsResult.data;
                     document.getElementById('statRevenue').innerText = formatRupiah(d.totalRevenue);
                     document.getElementById('statOrders').innerText = d.totalOrders;
-                    document.getElementById('statPendingOrders').innerText = `${d.pendingOrders} menunggu bayar`;
+                    document.getElementById('statOrderBreakdown').innerText = `${d.pendingOrders} antrean konfirmasi`;
                     document.getElementById('statBookings').innerText = d.totalBookings;
                     document.getElementById('statPendingBookings').innerText = `${d.pendingBookings} menunggu konfirmasi`;
-                    document.getElementById('statUsers').innerText = d.totalUsers;
+                    document.getElementById('statComplaints').innerText = d.complaintOrders || 0;
+
+                    if (d.complaintOrders > 0) {
+                        const alertBanner = document.getElementById('complaintAlertBanner');
+                        alertBanner.style.display = 'flex';
+                        document.getElementById('complaintAlertText').innerText = `Ada ${d.complaintOrders} pesanan berstatus komplain yang butuh respon segera.`;
+                    }
                 }
 
                 // 2. Fetch Orders
@@ -191,18 +212,30 @@
                 const ordersBody = document.getElementById('recentOrdersBody');
                 if (ordersData.success && ordersData.data.length > 0) {
                     const recent = ordersData.data.slice(0, 5);
-                    ordersBody.innerHTML = recent.map(o => `
-                        <tr>
-                            <td class="fw-bold text-dark">${o.customer_name}</td>
-                            <td>${o.nama_produk} (${o.jumlah}x)</td>
-                            <td class="fw-bold text-primary">${formatRupiah(o.total)}</td>
-                            <td>
-                                <span class="badge-status ${o.status === 'selesai' ? 'badge-status-success' : o.status === 'diproses' ? 'badge-status-info' : o.status === 'dibatalkan' ? 'badge-status-danger' : 'badge-status-pending'} text-capitalize" style="font-size: 0.75rem;">
-                                    ${o.status}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('');
+                    ordersBody.innerHTML = recent.map(o => {
+                        let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Pending</span>';
+                        if (o.status === 'disiapkan_di_toko') badge = '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0">🏪 Di Toko</span>';
+                        else if (o.status === 'dalam_pengantaran') badge = '<span class="badge bg-info text-dark border border-1 border-dark px-2 py-0">🚚 Kurir</span>';
+                        else if (o.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
+                        else if (o.status === 'komplain') badge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-0">⚠️ Komplain</span>';
+                        else if (o.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">${o.customer_name}</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 140px;">${o.nama_produk} (${o.jumlah}x)</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold">
+                                        ${o.metode_pengambilan === 'diantar' ? '🚚 Diantar' : '🏪 Ambil'}
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
+                                <td>${badge}</td>
+                            </tr>
+                        `;
+                    }).join('');
                 } else {
                     ordersBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada pesanan masuk.</td></tr>';
                 }
@@ -213,18 +246,24 @@
                 const bookingsBody = document.getElementById('recentBookingsBody');
                 if (bookingsData.success && bookingsData.data.length > 0) {
                     const recent = bookingsData.data.slice(0, 5);
-                    bookingsBody.innerHTML = recent.map(b => `
-                        <tr>
-                            <td class="fw-bold text-dark">${b.customer_name}</td>
-                            <td>${b.nama_paket}</td>
-                            <td>${formatTanggalIndo(b.tgl_booking)} (${b.waktu})</td>
-                            <td>
-                                <span class="badge-status ${b.status === 'dikonfirmasi' || b.status === 'selesai' ? 'badge-status-success' : b.status === 'dibatalkan' ? 'badge-status-danger' : 'badge-status-pending'} text-capitalize" style="font-size: 0.75rem;">
-                                    ${b.status}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('');
+                    bookingsBody.innerHTML = recent.map(b => {
+                        let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Menunggu</span>';
+                        if (b.status === 'dikonfirmasi') badge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-0">📅 Dikonfirmasi</span>';
+                        else if (b.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
+                        else if (b.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">${b.customer_name}</div>
+                                    <div class="text-muted small">🐾 ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan || 'hewan'})</div>
+                                </td>
+                                <td class="fw-semibold text-dark">${b.nama_paket}</td>
+                                <td class="small text-muted">${formatTanggalIndo(b.tgl_booking)}<br><strong class="text-dark">${b.waktu}</strong></td>
+                                <td>${badge}</td>
+                            </tr>
+                        `;
+                    }).join('');
                 } else {
                     bookingsBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada booking grooming.</td></tr>';
                 }

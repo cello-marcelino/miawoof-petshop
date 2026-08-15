@@ -62,10 +62,14 @@ class UserController {
                     totalProducts: productStats.total_produk,
                     totalStock: productStats.total_stok,
                     totalOrders: orderStats.total_pesanan,
-                    totalRevenue: orderStats.total_pendapatan,
-                    pendingOrders: orderStats.pending_pesanan,
+                    totalRevenue: orderStats.total_pendapatan || 0,
+                    pendingOrders: orderStats.pending_pesanan || 0,
+                    siapTokoOrders: orderStats.siap_toko_pesanan || 0,
+                    antarOrders: orderStats.antar_pesanan || 0,
+                    complaintOrders: orderStats.komplain_pesanan || 0,
                     totalBookings: bookingStats.total_booking,
-                    pendingBookings: bookingStats.pending_booking
+                    pendingBookings: bookingStats.pending_booking || 0,
+                    confirmedBookings: bookingStats.confirmed_booking || 0
                 }
             }));
         } catch (err) {

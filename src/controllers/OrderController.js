@@ -2,7 +2,7 @@ const OrderService = require('../services/OrderService');
 const SessionManager = require('../utils/SessionManager');
 
 class OrderController {
-    static async handleGetOrders(req, res) {
+    static async handleGetOrders(req, res, queryParams) {
         const session = SessionManager.getSession(req);
         if (!session) {
             res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -12,7 +12,12 @@ class OrderController {
         try {
             let orders;
             if (session.role === 'admin') {
-                orders = await OrderService.getAllOrders();
+                const filters = {
+                    status: queryParams ? queryParams.get('status') : null,
+                    metode: queryParams ? queryParams.get('metode') : null,
+                    search: queryParams ? queryParams.get('search') : null
+                };
+                orders = await OrderService.getAllOrders(filters);
             } else {
                 orders = await OrderService.getCustomerOrders(session.userId);
             }
@@ -21,6 +26,28 @@ class OrderController {
             res.end(JSON.stringify({ success: true, data: orders }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleGetOrderById(req, res, id) {
+        const session = SessionManager.getSession(req);
+        if (!session) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
+        }
+
+        try {
+            const order = await OrderService.getOrderById(id);
+            if (session.role !== 'admin' && order.id_pembeli !== session.userId) {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Akses ditolak.' }));
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, data: order }));
+        } catch (err) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: err.message }));
         }
     }
@@ -36,7 +63,11 @@ class OrderController {
             const order = await OrderService.checkoutOrder({
                 id_produk: body.id_produk,
                 id_pembeli: session.userId,
-                jumlah: body.jumlah
+                jumlah: body.jumlah,
+                metode_pengambilan: body.metode_pengambilan,
+                alamat_pengiriman: body.alamat_pengiriman,
+                no_hp_penerima: body.no_hp_penerima,
+                catatan_pelanggan: body.catatan_pelanggan
             });
 
             res.writeHead(201, { 'Content-Type': 'application/json' });
@@ -55,9 +86,94 @@ class OrderController {
         }
 
         try {
-            await OrderService.updateOrderStatus(id, body.status);
+            await OrderService.updateOrderStatus(id, body.status, body.catatan_admin);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true, message: 'Status pesanan berhasil diperbarui.' }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleEditOrder(req, res, id, body) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
+        }
+
+        try {
+            await OrderService.updateOrderDetails(id, body);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Data pesanan berhasil diperbarui.' }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleDeleteOrder(req, res, id) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
+        }
+
+        try {
+            await OrderService.deleteOrder(id);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Pesanan berhasil dihapus dan stok telah disesuaikan.' }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleConfirmReceived(req, res, id) {
+        const session = SessionManager.getSession(req);
+        if (!session) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
+        }
+
+        try {
+            await OrderService.confirmReceivedByCustomer(id, session.userId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Terima kasih! Pesanan telah Anda konfirmasi diterima.' }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleSubmitComplaint(req, res, id, body) {
+        const session = SessionManager.getSession(req);
+        if (!session) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
+        }
+
+        try {
+            await OrderService.submitComplaint(id, session.userId, body.komplain_text);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Komplain pesanan berhasil diajukan. Tim admin kami akan segera menindaklanjuti.' }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleRespondComplaint(req, res, id, body) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
+        }
+
+        try {
+            await OrderService.respondComplaint(id, body.komplain_tanggapan, body.status || 'selesai');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Tanggapan komplain berhasil dikirim ke pelanggan.' }));
         } catch (err) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: err.message }));

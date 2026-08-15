@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Slider Promosi - Admin MiaWoof</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div id="sidebar-root"></div>
+
+        <main class="admin-main-content">
+            <header class="admin-topbar">
+                <div>
+                    <h5 class="fw-bold text-white mb-0">Manajemen Slider & Banner Promosi</h5>
+                    <small class="text-light opacity-90">Atur banner promosi, diskon, dan pengumuman yang tampil di halaman beranda pelanggan.</small>
+                </div>
+                <button class="btn btn-yellow-custom" onclick="openCreateSlideModal()">
+                    <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
+                    <span>Tambah Slide Baru</span>
+                </button>
+            </header>
+
+            <div class="admin-content-body">
+                <!-- Live Preview of Carousel -->
+                <div class="card-modern p-4 mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold">PREVIEW LIVE</span>
+                            <h5 class="fw-bold text-dark mb-0 mt-1">Pratinjau Slider Beranda</h5>
+                        </div>
+                        <small class="text-muted">Ukuran standar proporsional (1200 &times; 300 px)</small>
+                    </div>
+
+                    <div id="adminPreviewCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="adminPreviewInner">
+                            <div class="carousel-item active">
+                                <img src="/images/banners/slide1.png" class="d-block w-100" alt="Preview" onerror="this.src='/images/placeholders/default_product.png'">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Slides Table Container -->
+                <div class="table-custom-container">
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Urutan</th>
+                                    <th>Banner Pratinjau</th>
+                                    <th>Judul & Subjudul</th>
+                                    <th>Target Link</th>
+                                    <th>Status Banner</th>
+                                    <th>Aksi Pengaturan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSlidesTable">
+                                <tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide Form Modal (Create & Edit) -->
+    <div class="modal fade" id="slideFormModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold" id="slideModalTitle">Tambah Slide Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="slideForm">
+                        <input type="hidden" id="formSlideId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label-custom">Judul Promosi / Slide <span class="text-danger">*</span></label>
+                            <input type="text" id="formSlideJudul" class="form-control form-control-custom" placeholder="Contoh: Promo Diskon 30% Makanan Kucing" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Subjudul / Deskripsi Pendek</label>
+                            <input type="text" id="formSlideSubjudul" class="form-control form-control-custom" placeholder="Contoh: Berlaku khusus untuk varian Royal Canin & ProPlan">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Path / URL Gambar Banner <span class="text-danger">*</span></label>
+                            <input type="text" id="formSlideGambar" class="form-control form-control-custom" placeholder="Contoh: /images/banners/slide1.png" required>
+                            <small class="text-muted">Dapat menggunakan file bawaan (/images/banners/slide1.png s/d slide4.png) atau URL gambar.</small>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label-custom">Target Tautan Halaman (Link URL)</label>
+                                <input type="text" id="formSlideLink" class="form-control form-control-custom" value="/produk" placeholder="/produk atau /grooming">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Urutan (No)</label>
+                                <input type="number" id="formSlideUrutan" class="form-control form-control-custom" value="1" min="0">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch p-2 border border-1 border-dark rounded-2 bg-light d-flex align-items-center justify-content-between">
+                                <label class="form-check-label fw-bold text-dark" for="formSlideActive">Status Aktif di Halaman Utama</label>
+                                <input class="form-check-input ms-0 me-2" type="checkbox" id="formSlideActive" checked style="cursor: pointer;">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnSaveSlide" class="btn btn-primary-custom w-100 justify-content-center py-2">
+                            <span>Simpan Slide Promosi</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/utils/formatters.js"></script>
+    <script src="/js/components/sidebar.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        let slideFormModal = null;
+        let allSlides = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            slideFormModal = new bootstrap.Modal(document.getElementById('slideFormModal'));
+
+            // Check Session
+            let user = null;
+            try {
+                const sessionRes = await fetch('/api/auth/session');
+                const sessionData = await sessionRes.json();
+                if (sessionData.authenticated && sessionData.user.role === 'admin') {
+                    user = sessionData.user;
+                } else {
+                    window.location.href = '/login';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = '/login';
+                return;
+            }
+
+            initSidebar('sliders', user);
+            loadAdminSlides();
+
+            // Slide Form Submit
+            document.getElementById('slideForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('formSlideId').value;
+                const judul = document.getElementById('formSlideJudul').value.trim();
+                const subjudul = document.getElementById('formSlideSubjudul').value.trim();
+                const gambar = document.getElementById('formSlideGambar').value.trim();
+                const link_url = document.getElementById('formSlideLink').value.trim();
+                const urutan = parseInt(document.getElementById('formSlideUrutan').value, 10) || 0;
+                const is_active = document.getElementById('formSlideActive').checked ? 1 : 0;
+
+                const btn = document.getElementById('btnSaveSlide');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Menyimpan...</span>';
+
+                try {
+                    const url = id ? `/api/slides/${id}` : '/api/slides';
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ judul, subjudul, gambar, link_url, urutan, is_active })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        slideFormModal.hide();
+                        loadAdminSlides();
+                    } else {
+                        showToast(data.message || 'Gagal menyimpan slide.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Simpan Slide Promosi</span>';
+                }
+            });
+        });
+
+        async function loadAdminSlides() {
+            const tbody = document.getElementById('adminSlidesTable');
+            const previewInner = document.getElementById('adminPreviewInner');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>';
+
+            try {
+                const res = await fetch('/api/slides');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    allSlides = data.data;
+                    
+                    // Render preview carousel
+                    const activeSlides = data.data.filter(s => s.is_active === 1);
+                    if (activeSlides.length > 0) {
+                        previewInner.innerHTML = activeSlides.map((s, idx) => `
+                            <div class="carousel-item ${idx === 0 ? 'active' : ''}">
+                                <img src="${s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/slide1.png'">
+                            </div>
+                        `).join('');
+                    } else {
+                        previewInner.innerHTML = '<div class="carousel-item active p-5 text-center bg-light text-muted">Semua banner sedang dinonaktifkan.</div>';
+                    }
+
+                    // Render Table
+                    tbody.innerHTML = data.data.map(s => `
+                        <tr>
+                            <td class="fw-bold text-dark">#${s.urutan || 0}</td>
+                            <td>
+                                <img src="${s.gambar}" alt="${s.judul}" style="width: 140px; height: 35px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/slide1.png'">
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">${s.judul}</div>
+                                <div class="text-muted small">${s.subjudul || '-'}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 font-monospace">
+                                    ${s.link_url || '/produk'}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" ${s.is_active === 1 ? 'checked' : ''} onchange="toggleSlideActive(${s.id_slide})" style="cursor: pointer;">
+                                    <label class="form-check-label small fw-bold ${s.is_active === 1 ? 'text-success' : 'text-muted'}">
+                                        ${s.is_active === 1 ? 'Aktif' : 'Non-Aktif'}
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    <button class="btn btn-outline-custom btn-sm p-1 px-2" onclick='openEditSlideModal(${JSON.stringify(s)})'>
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-danger-custom btn-sm p-1 px-2" onclick="deleteSlide(${s.id_slide})">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada slide promosi yang dibuat.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-danger">Gagal memuat daftar slide.</td></tr>';
+            }
+        }
+
+        function openCreateSlideModal() {
+            document.getElementById('slideModalTitle').innerText = 'Tambah Slide Promosi Baru';
+            document.getElementById('formSlideId').value = '';
+            document.getElementById('formSlideJudul').value = '';
+            document.getElementById('formSlideSubjudul').value = '';
+            document.getElementById('formSlideGambar').value = '/images/banners/slide1.png';
+            document.getElementById('formSlideLink').value = '/produk';
+            document.getElementById('formSlideUrutan').value = (allSlides.length + 1);
+            document.getElementById('formSlideActive').checked = true;
+            slideFormModal.show();
+        }
+
+        function openEditSlideModal(s) {
+            document.getElementById('slideModalTitle').innerText = `Edit Slide: ${s.judul}`;
+            document.getElementById('formSlideId').value = s.id_slide;
+            document.getElementById('formSlideJudul').value = s.judul;
+            document.getElementById('formSlideSubjudul').value = s.subjudul || '';
+            document.getElementById('formSlideGambar').value = s.gambar;
+            document.getElementById('formSlideLink').value = s.link_url || '/produk';
+            document.getElementById('formSlideUrutan').value = s.urutan || 0;
+            document.getElementById('formSlideActive').checked = s.is_active === 1;
+            slideFormModal.show();
+        }
+
+        async function toggleSlideActive(id) {
+            try {
+                const res = await fetch(`/api/slides/${id}/toggle`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminSlides();
+                }
+            } catch (e) {
+                showToast('Terjadi kesalahan.', 'danger');
+            }
+        }
+
+        async function deleteSlide(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus slide promosi ini?')) return;
+            try {
+                const res = await fetch(`/api/slides/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminSlides();
+                } else {
+                    showToast(data.message || 'Gagal menghapus slide.', 'danger');
+                }
+            } catch (e) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

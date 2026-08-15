@@ -17,7 +17,7 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                     <h3 class="fw-bold text-dark mb-1">Riwayat Pesanan Belanja</h3>
-                    <p class="text-muted small mb-0">Pantau status pengiriman dan transaksi belanja kebutuhan anabul Anda.</p>
+                    <p class="text-muted small mb-0">Pantau status pesanan, instruksi ambil di toko, kurir pengantaran, dan konfirmasi penerimaan.</p>
                 </div>
                 <a href="/produk" class="btn btn-primary-custom btn-sm">
                     <img src="/images/icons/plus.svg" alt="Tambah" width="14" height="14">
@@ -33,11 +33,11 @@
                             <tr>
                                 <th>No. Order</th>
                                 <th>Produk</th>
-                                <th>Jumlah</th>
+                                <th>Metode & Alamat</th>
                                 <th>Total Bayar</th>
-                                <th>Tanggal Pesan</th>
                                 <th>Status Pesanan</th>
-                                <th>Aksi</th>
+                                <th>Keterangan Toko</th>
+                                <th>Aksi Pelanggan</th>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody">
@@ -51,6 +51,33 @@
         </div>
     </main>
 
+    <!-- Complaint Modal -->
+    <div class="modal fade" id="complaintModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-danger text-white p-3 border-bottom border-2 border-dark">
+                    <h5 class="modal-title fw-bold">Ajukan Komplain / Keluhan Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="small text-muted mb-3">
+                        Mohon jelaskan kendala pesanan Anda (contoh: barang salah varian, kemasan cacat, pesanan belum sampai, dll). Admin kami akan segera memeriksa.
+                    </p>
+                    <form id="complaintForm">
+                        <input type="hidden" id="complaintOrderId">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Deskripsi Keluhan <span class="text-danger">*</span></label>
+                            <textarea id="complaintText" class="form-control form-control-custom" rows="4" placeholder="Tuliskan kendala Anda secara detail..." required></textarea>
+                        </div>
+                        <button type="submit" id="submitComplaintBtn" class="btn btn-danger-custom w-100 justify-content-center py-2">
+                            <span>Kirimkan Komplain ke Admin</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="footer-root"></div>
 
     <script src="/js/vendor/bootstrap.bundle.min.js"></script>
@@ -59,7 +86,11 @@
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
     <script>
+        let complaintModal = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
+            complaintModal = new bootstrap.Modal(document.getElementById('complaintModal'));
+
             let currentUser = null;
             try {
                 const sessionRes = await fetch('/api/auth/session');
@@ -70,6 +101,37 @@
             initNavbar('pesanan', currentUser);
             initFooter();
             loadMyOrders();
+
+            document.getElementById('complaintForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('complaintOrderId').value;
+                const komplain_text = document.getElementById('complaintText').value.trim();
+
+                const btn = document.getElementById('submitComplaintBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span>Mengirimkan...</span>';
+
+                try {
+                    const res = await fetch(`/api/orders/${id}/complaint`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ komplain_text })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        complaintModal.hide();
+                        showToast(data.message, 'success');
+                        loadMyOrders();
+                    } else {
+                        showToast(data.message || 'Gagal mengajukan komplain.', 'danger');
+                    }
+                } catch (err) {
+                    showToast('Terjadi kesalahan jaringan.', 'danger');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Kirimkan Komplain ke Admin</span>';
+                }
+            });
         });
 
         async function loadMyOrders() {
@@ -80,38 +142,81 @@
 
                 if (result.success && result.data.length > 0) {
                     tbody.innerHTML = result.data.map(o => {
-                        let badgeClass = 'badge-status-pending';
-                        if (o.status === 'selesai') badgeClass = 'badge-status-success';
-                        else if (o.status === 'diproses') badgeClass = 'badge-status-info';
-                        else if (o.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+                        let statusBadge = '';
+                        if (o.status === 'selesai') {
+                            statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai Diterima</span>';
+                        } else if (o.status === 'disiapkan_di_toko') {
+                            statusBadge = '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold">🏪 Siap Diambil di Toko</span>';
+                        } else if (o.status === 'dalam_pengantaran') {
+                            statusBadge = '<span class="badge bg-info text-dark border border-1 border-dark px-2 py-1 fw-bold">🚚 Dalam Pengantaran</span>';
+                        } else if (o.status === 'komplain') {
+                            statusBadge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-1 fw-bold">⚠️ Komplain Diproses</span>';
+                        } else if (o.status === 'dibatalkan') {
+                            statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Dibatalkan</span>';
+                        } else {
+                            statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+                        }
+
+                        const methodBadge = o.metode_pengambilan === 'diantar' 
+                            ? `<span class="badge bg-light text-dark border border-1 border-dark py-1 px-2 fw-bold">🚚 Diantar Kurir</span>` 
+                            : `<span class="badge bg-light text-dark border border-1 border-dark py-1 px-2 fw-bold">🏪 Ambil di Toko</span>`;
+
+                        // Customer actions
+                        let actionButtons = '';
+                        if (o.status === 'disiapkan_di_toko' || o.status === 'dalam_pengantaran') {
+                            actionButtons = `
+                                <div class="d-flex flex-column gap-1">
+                                    <button class="btn btn-primary-custom btn-sm py-1 px-2 text-nowrap" onclick="confirmReceived(${o.id_pesanan})">
+                                        ✓ Konfirmasi Diterima
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm py-1 px-2 border-2 border-dark text-nowrap fw-bold" onclick="openComplaintModal(${o.id_pesanan})">
+                                        ⚠️ Ajukan Komplain
+                                    </button>
+                                </div>
+                            `;
+                        } else if (o.status === 'menunggu_konfirmasi' || o.status === 'menunggu pembayaran') {
+                            actionButtons = `
+                                <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="cancelOrder(${o.id_pesanan})">
+                                    Batalkan
+                                </button>
+                            `;
+                        } else if (o.status === 'selesai') {
+                            actionButtons = `<span class="text-success small fw-bold">Pesanan Selesai</span>`;
+                        } else if (o.status === 'komplain') {
+                            actionButtons = `<span class="text-danger small fw-bold">Menunggu Respon</span>`;
+                        } else {
+                            actionButtons = `-`;
+                        }
+
+                        // Notes section
+                        let notesHtml = `<div class="small text-muted">Belum ada catatan.</div>`;
+                        if (o.catatan_admin) {
+                            notesHtml = `<div class="p-2 bg-yellow-light border border-1 border-dark rounded-1 small fw-bold text-dark mb-1">📢 Admin: ${o.catatan_admin}</div>`;
+                        }
+                        if (o.komplain_tanggapan) {
+                            notesHtml += `<div class="p-2 bg-light border border-1 border-danger rounded-1 small text-dark mt-1"><strong>Tanggapan Komplain:</strong> ${o.komplain_tanggapan}</div>`;
+                        }
 
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#ORD-${o.id_pesanan}</td>
                                 <td>
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center gap-2">
                                         <img src="/uploads/${o.gambar || 'default_product.png'}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #fafafa; border: 1px solid var(--border-dark);" onerror="this.src='/images/placeholders/default_product.png'">
                                         <div>
                                             <div class="fw-bold text-dark">${o.nama_produk}</div>
-                                            <div class="text-muted small">Kategori: ${o.kategori}</div>
+                                            <div class="text-muted small">${o.jumlah} unit &bull; ${formatRupiah(o.harga)}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="fw-semibold">${o.jumlah} unit</td>
+                                <td>
+                                    <div class="mb-1">${methodBadge}</div>
+                                    ${o.metode_pengambilan === 'diantar' && o.alamat_pengiriman ? `<div class="small text-muted text-truncate" style="max-width: 180px;" title="${o.alamat_pengiriman}">📍 ${o.alamat_pengiriman}</div>` : ''}
+                                </td>
                                 <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
-                                <td class="text-muted small">${formatTanggalIndo(o.tgl_pesanan)}</td>
-                                <td>
-                                    <span class="badge-status ${badgeClass} text-capitalize">
-                                        ● ${o.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    ${o.status === 'menunggu pembayaran' ? `
-                                        <button class="btn btn-danger-custom btn-sm" onclick="cancelOrder(${o.id_pesanan})">
-                                            Batalkan
-                                        </button>
-                                    ` : '-'}
-                                </td>
+                                <td>${statusBadge}</td>
+                                <td style="max-width: 220px;">${notesHtml}</td>
+                                <td>${actionButtons}</td>
                             </tr>
                         `;
                     }).join('');
@@ -121,6 +226,29 @@
             } catch (err) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-danger">Gagal memuat data pesanan.</td></tr>';
             }
+        }
+
+        async function confirmReceived(id_pesanan) {
+            if (!confirm('Apakah Anda yakin pesanan telah diterima dengan baik dan lengkap?')) return;
+
+            try {
+                const res = await fetch(`/api/orders/${id_pesanan}/confirm-received`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadMyOrders();
+                } else {
+                    showToast(data.message || 'Gagal konfirmasi penerimaan.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        function openComplaintModal(id_pesanan) {
+            document.getElementById('complaintOrderId').value = id_pesanan;
+            document.getElementById('complaintText').value = '';
+            complaintModal.show();
         }
 
         async function cancelOrder(id_pesanan) {

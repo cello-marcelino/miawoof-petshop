@@ -58,11 +58,13 @@ function initializeTables() {
                 nama_paket TEXT NOT NULL,
                 jenis_hewan TEXT NOT NULL CHECK(jenis_hewan IN ('kucing', 'anjing')),
                 harga INTEGER NOT NULL CHECK(harga >= 0),
-                keterangan_grooming TEXT NOT NULL
+                durasi_menit INTEGER DEFAULT 60,
+                keterangan_grooming TEXT NOT NULL,
+                gambar TEXT
             )
         `);
 
-        // 4. Pesanan Table (Orders)
+        // 4. Pesanan Table (Orders with Pickup/Delivery, Workflow & Complaints)
         db.run(`
             CREATE TABLE IF NOT EXISTS pesanan (
                 id_pesanan INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,8 +72,16 @@ function initializeTables() {
                 id_pembeli INTEGER NOT NULL,
                 jumlah INTEGER NOT NULL CHECK(jumlah > 0),
                 total INTEGER NOT NULL CHECK(total >= 0),
+                metode_pengambilan TEXT NOT NULL DEFAULT 'ambil_ditoko',
+                alamat_pengiriman TEXT,
+                no_hp_penerima TEXT,
+                catatan_pelanggan TEXT,
+                catatan_admin TEXT,
+                komplain_text TEXT,
+                komplain_tanggapan TEXT,
                 tgl_pesanan TEXT DEFAULT CURRENT_TIMESTAMP,
-                status TEXT NOT NULL DEFAULT 'menunggu pembayaran',
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                status TEXT NOT NULL DEFAULT 'menunggu_konfirmasi',
                 FOREIGN KEY (id_produk) REFERENCES produk(id_produk) ON DELETE CASCADE,
                 FOREIGN KEY (id_pembeli) REFERENCES users(id) ON DELETE CASCADE
             )
@@ -83,13 +93,81 @@ function initializeTables() {
                 id_booking INTEGER PRIMARY KEY AUTOINCREMENT,
                 id_paket INTEGER NOT NULL,
                 id_customer INTEGER NOT NULL,
+                nama_hewan TEXT,
+                jenis_hewan TEXT,
                 tgl_booking TEXT NOT NULL,
                 waktu TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'menunggu konfirmasi',
+                catatan TEXT,
+                catatan_admin TEXT,
+                status TEXT NOT NULL DEFAULT 'menunggu_konfirmasi',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (id_paket) REFERENCES paket_grooming(id_paket) ON DELETE CASCADE,
                 FOREIGN KEY (id_customer) REFERENCES users(id) ON DELETE CASCADE
             )
         `);
+
+        // 6. Slides Table (Content Management for Homepage Promotional Banners)
+        db.run(`
+            CREATE TABLE IF NOT EXISTS slides (
+                id_slide INTEGER PRIMARY KEY AUTOINCREMENT,
+                judul TEXT NOT NULL,
+                subjudul TEXT,
+                gambar TEXT NOT NULL,
+                link_url TEXT DEFAULT '/produk',
+                urutan INTEGER DEFAULT 0,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Run Safe Column Migrations for Existing Databases
+        runMigrations();
+    });
+}
+
+function runMigrations() {
+    const alterStatements = [
+        // Pesanan columns
+        `ALTER TABLE pesanan ADD COLUMN metode_pengambilan TEXT NOT NULL DEFAULT 'ambil_ditoko'`,
+        `ALTER TABLE pesanan ADD COLUMN alamat_pengiriman TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN no_hp_penerima TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN catatan_pelanggan TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN catatan_admin TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN komplain_text TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN komplain_tanggapan TEXT`,
+        `ALTER TABLE pesanan ADD COLUMN updated_at TEXT DEFAULT CURRENT_TIMESTAMP`,
+        // Booking columns
+        `ALTER TABLE booking ADD COLUMN nama_hewan TEXT`,
+        `ALTER TABLE booking ADD COLUMN jenis_hewan TEXT`,
+        `ALTER TABLE booking ADD COLUMN catatan TEXT`,
+        `ALTER TABLE booking ADD COLUMN catatan_admin TEXT`,
+        `ALTER TABLE booking ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP`,
+        // Paket Grooming columns
+        `ALTER TABLE paket_grooming ADD COLUMN durasi_menit INTEGER DEFAULT 60`,
+        `ALTER TABLE paket_grooming ADD COLUMN gambar TEXT`
+    ];
+
+    alterStatements.forEach(sql => {
+        db.run(sql, (err) => {
+            // Ignore error if column already exists
+        });
+    });
+
+    // Seed default slides if table is empty
+    db.get('SELECT COUNT(*) as count FROM slides', [], (err, row) => {
+        if (!err && row && row.count === 0) {
+            const defaultSlides = [
+                ['Promo Nutrisi Anabul Premium', 'Diskon Spesial hingga 30% untuk varian Royal Canin & ProPlan', '/images/banners/slide1.png', '/produk', 1],
+                ['Salon & Spa Higienis Berlisensi', 'Treatment anti-kutu & jamur dengan peralatan steril medis', '/images/banners/slide2.png', '/grooming', 2],
+                ['Snack & Vitamin Berkualitas', 'Dukung daya tahan tubuh dan keindahan bulu anabul kesayangan', '/images/banners/slide3.png', '/produk', 3],
+                ['Layanan Cepat Ambil di Toko / Diantar', 'Pesan praktis dari rumah, siap dikirim atau diambil langsung', '/images/banners/slide4.png', '/produk', 4]
+            ];
+
+            const insertStmt = db.prepare('INSERT INTO slides (judul, subjudul, gambar, link_url, urutan, is_active) VALUES (?, ?, ?, ?, ?, 1)');
+            defaultSlides.forEach(slide => insertStmt.run(slide));
+            insertStmt.finalize();
+            console.log('✅ Seeded default promotional slides.');
+        }
     });
 }
 
