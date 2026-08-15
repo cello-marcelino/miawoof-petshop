@@ -16,6 +16,7 @@ class AuthController {
                 success: true, 
                 message: 'Login berhasil!', 
                 user, 
+                redirectUrl: redirectUrl,
                 redirect: redirectUrl 
             }));
         } catch (err) {

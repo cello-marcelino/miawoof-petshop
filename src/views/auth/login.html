@@ -97,9 +97,10 @@
 
                 if (data.success) {
                     showToast(data.message || 'Login berhasil!', 'success');
+                    const target = data.redirectUrl || data.redirect || (data.user && data.user.role === 'admin' ? '/admin/dashboard' : '/');
                     setTimeout(() => {
-                        window.location.href = data.redirectUrl || '/';
-                    }, 600);
+                        window.location.href = target;
+                    }, 500);
                 } else {
                     showToast(data.message || 'Username atau password salah.', 'danger');
                     btn.disabled = false;

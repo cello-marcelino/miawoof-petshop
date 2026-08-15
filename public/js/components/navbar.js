@@ -18,12 +18,18 @@ function initNavbar(activePage = 'home', user = null) {
         );
     }
 
+    if (user && user.role === 'admin') {
+        navItems.push(
+            { key: 'admin_panel', label: '⚡ Panel Admin', url: '/admin/dashboard', iconDark: '/images/icons/dashboard.svg', iconLight: '/images/icons/dashboard.svg' }
+        );
+    }
+
     const navLinksHtml = navItems.map(item => {
         const isActive = activePage === item.key;
         return `
             <li class="nav-item">
-                <a class="header-nav-link ${isActive ? 'active' : ''}" href="${item.url}">
-                    <img src="${isActive ? item.iconDark : item.iconLight}" alt="${item.label}" width="16" height="16">
+                <a class="header-nav-link ${isActive ? 'active' : ''} ${item.key === 'admin_panel' ? 'border border-2 border-dark' : ''}" href="${item.url}" style="${item.key === 'admin_panel' ? 'background-color: var(--accent-yellow); color: #000000 !important;' : ''}">
+                    <img src="${isActive || item.key === 'admin_panel' ? item.iconDark : item.iconLight}" alt="${item.label}" width="16" height="16">
                     <span>${item.label}</span>
                 </a>
             </li>
@@ -32,17 +38,34 @@ function initNavbar(activePage = 'home', user = null) {
 
     let authSectionHtml = '';
     if (user) {
-        authSectionHtml = `
-            <div class="d-flex align-items-center gap-2">
-                <a href="/profil" class="header-user-pill" title="Profil Saya">
-                    <img src="/images/icons/user.svg" alt="User" width="16" height="16">
-                    <span>${user.full_name || user.username}</span>
-                </a>
-                <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm" title="Keluar" style="height: 38px; padding: 0 12px;">
-                    <img src="/images/icons/logout.svg" alt="Logout" width="16" height="16">
-                </button>
-            </div>
-        `;
+        if (user.role === 'admin') {
+            authSectionHtml = `
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/admin/dashboard" class="btn btn-yellow-custom btn-sm px-3 fw-bold" style="height: 38px;">
+                        <span>⚡ Dashboard Admin &rarr;</span>
+                    </a>
+                    <a href="/admin/profil" class="header-user-pill" title="Profil Admin">
+                        <img src="/images/icons/user.svg" alt="User" width="16" height="16">
+                        <span>${user.full_name || 'Admin'}</span>
+                    </a>
+                    <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm" title="Keluar" style="height: 38px; padding: 0 12px;">
+                        <img src="/images/icons/logout.svg" alt="Logout" width="16" height="16">
+                    </button>
+                </div>
+            `;
+        } else {
+            authSectionHtml = `
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/profil" class="header-user-pill" title="Profil Saya">
+                        <img src="/images/icons/user.svg" alt="User" width="16" height="16">
+                        <span>${user.full_name || user.username}</span>
+                    </a>
+                    <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm" title="Keluar" style="height: 38px; padding: 0 12px;">
+                        <img src="/images/icons/logout.svg" alt="Logout" width="16" height="16">
+                    </button>
+                </div>
+            `;
+        }
     } else {
         authSectionHtml = `
             <div class="d-flex align-items-center gap-2">
