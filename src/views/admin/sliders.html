@@ -191,9 +191,14 @@
 
                             <div class="row g-2 mb-4">
                                 <div class="col-md-6 col-12">
-                                    <div class="search-input-wrapper">
-                                        <img src="/images/icons/search.svg" alt="Search" width="16" height="16">
-                                        <input type="text" id="filterAssetSearch" class="form-control form-control-custom" placeholder="Cari nama file asset..." oninput="filterAssets()">
+                                    <div class="search-input-group">
+                                        <div class="search-input-icon">
+                                            <img src="/images/icons/search.svg" alt="Search" width="18" height="18">
+                                        </div>
+                                        <input type="text" id="filterAssetSearch" class="search-input-field" placeholder="Cari nama file asset..." oninput="filterAssets()">
+                                        <button type="button" class="search-submit-btn" style="height: 42px; padding: 0 1.25rem;" onclick="filterAssets()">
+                                            <span>Cari</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

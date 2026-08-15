@@ -47,11 +47,14 @@
                         <div class="card-modern p-3 mb-4">
                             <div class="row g-3 align-items-center">
                                 <div class="col-lg-5">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-2 border-dark border-end-0">
-                                            <img src="/images/icons/search.svg" alt="Cari" width="16" height="16">
-                                        </span>
-                                        <input type="text" id="filterBookingSearch" class="form-control form-control-custom border-start-0" placeholder="Cari nama pelanggan, nama anabul, atau paket...">
+                                    <div class="search-input-group">
+                                        <div class="search-input-icon">
+                                            <img src="/images/icons/search.svg" alt="Cari" width="18" height="18">
+                                        </div>
+                                        <input type="text" id="filterBookingSearch" class="search-input-field" placeholder="Cari nama pelanggan, nama anabul, atau paket...">
+                                        <button type="button" class="search-submit-btn" style="height: 42px; padding: 0 1.25rem;" onclick="loadAdminBookings()">
+                                            <span>Cari</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">

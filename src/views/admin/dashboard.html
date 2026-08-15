@@ -34,6 +34,30 @@
             </header>
 
             <div class="admin-content-body">
+                <!-- Neo-Brutalist Search & Command Bar (Catalog Style) -->
+                <div class="card-modern p-3 mb-4">
+                    <div class="row align-items-center g-3">
+                        <div class="col-lg-5">
+                            <span class="badge bg-yellow text-dark border border-2 border-dark px-2 py-0 fw-bold mb-1 d-inline-block" style="font-size: 0.7rem; box-shadow: 1.5px 1.5px 0px #000000; border-radius: 4px;">PENCARIAN CEPAT ADMIN</span>
+                            <h5 class="fw-bold text-dark mb-0">Cari Data Transaksi & Layanan</h5>
+                            <small class="text-muted">Cari pesanan, jadwal grooming, produk, atau data pelanggan.</small>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="search-input-group">
+                                <div class="search-input-icon">
+                                    <img src="/images/icons/search.svg" alt="Cari" width="18" height="18">
+                                </div>
+                                <input type="text" id="dashboardSearchInput" class="search-input-field" placeholder="Cari nama pembeli, no order, anabul, atau produk...">
+                                <button type="button" id="dashboardSearchClearBtn" class="search-clear-btn" title="Hapus pencarian">&times;</button>
+                                <button type="button" id="dashboardSearchBtn" class="search-submit-btn">
+                                    <span>Cari</span>
+                                    <span>&rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Active Complaint Notification Banner (Dynamically shown if complaints > 0) -->
                 <div id="complaintAlertBanner" style="display: none;" class="card-modern p-3 mb-4 bg-danger text-white border-dark d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-3">
@@ -188,7 +212,124 @@
 
             initSidebar('dashboard', user);
             loadDashboardData();
+            initDashboardSearch();
         });
+
+        let rawOrders = [];
+        let rawBookings = [];
+
+        function initDashboardSearch() {
+            const input = document.getElementById('dashboardSearchInput');
+            const clearBtn = document.getElementById('dashboardSearchClearBtn');
+            const submitBtn = document.getElementById('dashboardSearchBtn');
+
+            input.addEventListener('input', () => {
+                const val = input.value.trim();
+                clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+                filterDashboardContent(val.toLowerCase());
+            });
+
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                clearBtn.style.display = 'none';
+                filterDashboardContent('');
+                input.focus();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    executeDashboardSearch();
+                }
+            });
+
+            submitBtn.addEventListener('click', () => {
+                executeDashboardSearch();
+            });
+        }
+
+        function executeDashboardSearch() {
+            const query = document.getElementById('dashboardSearchInput').value.trim();
+            if (!query) return;
+            // Navigate to orders management with search query as priority
+            window.location.href = `/admin/pesanan?search=${encodeURIComponent(query)}`;
+        }
+
+        function filterDashboardContent(query) {
+            // Filter Orders
+            const filteredOrders = query ? rawOrders.filter(o => 
+                (o.customer_name && o.customer_name.toLowerCase().includes(query)) ||
+                (o.nama_produk && o.nama_produk.toLowerCase().includes(query)) ||
+                (o.id_pesanan && String(o.id_pesanan).includes(query))
+            ) : rawOrders;
+            renderOrdersTable(filteredOrders.slice(0, 5));
+
+            // Filter Bookings
+            const filteredBookings = query ? rawBookings.filter(b =>
+                (b.customer_name && b.customer_name.toLowerCase().includes(query)) ||
+                (b.nama_hewan && b.nama_hewan.toLowerCase().includes(query)) ||
+                (b.nama_paket && b.nama_paket.toLowerCase().includes(query))
+            ) : rawBookings;
+            renderBookingsTable(filteredBookings.slice(0, 5));
+        }
+
+        function renderOrdersTable(orders) {
+            const ordersBody = document.getElementById('recentOrdersBody');
+            if (orders && orders.length > 0) {
+                ordersBody.innerHTML = orders.map(o => {
+                    let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Pending</span>';
+                    if (o.status === 'disiapkan_di_toko') badge = '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0">🏪 Di Toko</span>';
+                    else if (o.status === 'dalam_pengantaran') badge = '<span class="badge bg-info text-dark border border-1 border-dark px-2 py-0">🚚 Kurir</span>';
+                    else if (o.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
+                    else if (o.status === 'komplain') badge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-0">⚠️ Komplain</span>';
+                    else if (o.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">${o.customer_name}</div>
+                                <div class="text-muted small text-truncate" style="max-width: 140px;">${o.nama_produk} (${o.jumlah}x)</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold">
+                                    ${o.metode_pengambilan === 'diantar' ? '🚚 Diantar' : '🏪 Ambil'}
+                                </span>
+                            </td>
+                            <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
+                            <td>${badge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                ordersBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Tidak ada pesanan yang sesuai.</td></tr>';
+            }
+        }
+
+        function renderBookingsTable(bookings) {
+            const bookingsBody = document.getElementById('recentBookingsBody');
+            if (bookings && bookings.length > 0) {
+                bookingsBody.innerHTML = bookings.map(b => {
+                    let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Menunggu</span>';
+                    if (b.status === 'dikonfirmasi') badge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-0">📅 Dikonfirmasi</span>';
+                    else if (b.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
+                    else if (b.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">${b.customer_name}</div>
+                                <div class="text-muted small">🐾 ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan || 'hewan'})</div>
+                            </td>
+                            <td class="fw-semibold text-dark">${b.nama_paket}</td>
+                            <td class="small text-muted">${formatTanggalIndo(b.tgl_booking)}<br><strong class="text-dark">${b.waktu}</strong></td>
+                            <td>${badge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                bookingsBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Tidak ada jadwal booking yang sesuai.</td></tr>';
+            }
+        }
 
         async function loadDashboardData() {
             try {
@@ -214,63 +355,17 @@
                 // 2. Fetch Orders
                 const ordersRes = await fetch('/api/orders');
                 const ordersData = await ordersRes.json();
-                const ordersBody = document.getElementById('recentOrdersBody');
-                if (ordersData.success && ordersData.data.length > 0) {
-                    const recent = ordersData.data.slice(0, 5);
-                    ordersBody.innerHTML = recent.map(o => {
-                        let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Pending</span>';
-                        if (o.status === 'disiapkan_di_toko') badge = '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0">🏪 Di Toko</span>';
-                        else if (o.status === 'dalam_pengantaran') badge = '<span class="badge bg-info text-dark border border-1 border-dark px-2 py-0">🚚 Kurir</span>';
-                        else if (o.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
-                        else if (o.status === 'komplain') badge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-0">⚠️ Komplain</span>';
-                        else if (o.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
-
-                        return `
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark">${o.customer_name}</div>
-                                    <div class="text-muted small text-truncate" style="max-width: 140px;">${o.nama_produk} (${o.jumlah}x)</div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold">
-                                        ${o.metode_pengambilan === 'diantar' ? '🚚 Diantar' : '🏪 Ambil'}
-                                    </span>
-                                </td>
-                                <td class="fw-bold text-blue">${formatRupiah(o.total)}</td>
-                                <td>${badge}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    ordersBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada pesanan masuk.</td></tr>';
+                if (ordersData.success && ordersData.data) {
+                    rawOrders = ordersData.data;
+                    renderOrdersTable(rawOrders.slice(0, 5));
                 }
 
                 // 3. Fetch Bookings
                 const bookingsRes = await fetch('/api/bookings');
                 const bookingsData = await bookingsRes.json();
-                const bookingsBody = document.getElementById('recentBookingsBody');
-                if (bookingsData.success && bookingsData.data.length > 0) {
-                    const recent = bookingsData.data.slice(0, 5);
-                    bookingsBody.innerHTML = recent.map(b => {
-                        let badge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-0">⏳ Menunggu</span>';
-                        if (b.status === 'dikonfirmasi') badge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-0">📅 Dikonfirmasi</span>';
-                        else if (b.status === 'selesai') badge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0">✅ Selesai</span>';
-                        else if (b.status === 'dibatalkan') badge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-0">❌ Batal</span>';
-
-                        return `
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark">${b.customer_name}</div>
-                                    <div class="text-muted small">🐾 ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan || 'hewan'})</div>
-                                </td>
-                                <td class="fw-semibold text-dark">${b.nama_paket}</td>
-                                <td class="small text-muted">${formatTanggalIndo(b.tgl_booking)}<br><strong class="text-dark">${b.waktu}</strong></td>
-                                <td>${badge}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    bookingsBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada booking grooming.</td></tr>';
+                if (bookingsData.success && bookingsData.data) {
+                    rawBookings = bookingsData.data;
+                    renderBookingsTable(rawBookings.slice(0, 5));
                 }
             } catch (err) {
                 console.error(err);
