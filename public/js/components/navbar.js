@@ -18,18 +18,12 @@ function initNavbar(activePage = 'home', user = null) {
         );
     }
 
-    if (user && user.role === 'admin') {
-        navItems.push(
-            { key: 'admin_panel', label: '⚡ Panel Admin', url: '/admin/dashboard', iconDark: '/images/icons/dashboard.svg', iconLight: '/images/icons/dashboard.svg' }
-        );
-    }
-
     const navLinksHtml = navItems.map(item => {
         const isActive = activePage === item.key;
         return `
             <li class="nav-item">
-                <a class="header-nav-link ${isActive ? 'active' : ''} ${item.key === 'admin_panel' ? 'border border-2 border-dark' : ''}" href="${item.url}" style="${item.key === 'admin_panel' ? 'background-color: var(--accent-yellow); color: #000000 !important;' : ''}">
-                    <img src="${isActive || item.key === 'admin_panel' ? item.iconDark : item.iconLight}" alt="${item.label}" width="16" height="16">
+                <a class="header-nav-link ${isActive ? 'active' : ''}" href="${item.url}">
+                    <img src="${isActive ? item.iconDark : item.iconLight}" alt="${item.label}" width="16" height="16">
                     <span>${item.label}</span>
                 </a>
             </li>
@@ -37,20 +31,42 @@ function initNavbar(activePage = 'home', user = null) {
     }).join('');
 
     let authSectionHtml = '';
+    let mobileAuthHtml = '';
+
     if (user) {
         if (user.role === 'admin') {
             authSectionHtml = `
                 <div class="d-flex align-items-center gap-2">
-                    <a href="/admin/dashboard" class="btn btn-yellow-custom btn-sm px-3 fw-bold" style="height: 38px;">
-                        <span>⚡ Dashboard Admin &rarr;</span>
+                    <span class="badge bg-yellow text-dark border border-2 border-dark px-2 py-1 fw-bold" style="font-size: 0.72rem; box-shadow: 2px 2px 0px #000;">
+                        ⚡ Mode Admin
+                    </span>
+                    <a href="/admin/dashboard" class="btn btn-yellow-custom btn-sm px-3 fw-bold" style="height: 38px;" title="Kembali ke Dashboard Manajemen Admin">
+                        <span>Panel Admin &rarr;</span>
                     </a>
-                    <a href="/admin/profil" class="header-user-pill" title="Profil Admin">
-                        <img src="/images/icons/user.svg" alt="User" width="16" height="16">
-                        <span>${user.full_name || 'Admin'}</span>
+                    <a href="/admin/profil" class="header-user-pill" title="Profil Administrator">
+                        <img src="/images/icons/user.svg" alt="Admin" width="16" height="16">
+                        <span class="d-none d-xl-inline">${user.full_name || 'Admin'}</span>
                     </a>
-                    <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm" title="Keluar" style="height: 38px; padding: 0 12px;">
+                    <button onclick="handleLogout()" class="btn btn-outline-custom btn-sm" title="Keluar dari Akun" style="height: 38px; padding: 0 12px;">
                         <img src="/images/icons/logout.svg" alt="Logout" width="16" height="16">
                     </button>
+                </div>
+            `;
+
+            mobileAuthHtml = `
+                <div class="d-flex flex-column gap-2">
+                    <a href="/admin/dashboard" class="btn btn-yellow-custom w-100 justify-content-center py-2 fw-bold">
+                        <span>⚡ Buka Dashboard Admin &rarr;</span>
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="/admin/profil" class="header-user-pill flex-fill justify-content-center" style="height: 38px;">
+                            <img src="/images/icons/user.svg" alt="Admin" width="16" height="16">
+                            <span>Profil Admin</span>
+                        </a>
+                        <button onclick="handleLogout()" class="btn btn-danger-custom flex-fill justify-content-center" style="height: 38px;">
+                            <span>Keluar</span>
+                        </button>
+                    </div>
                 </div>
             `;
         } else {
@@ -65,12 +81,31 @@ function initNavbar(activePage = 'home', user = null) {
                     </button>
                 </div>
             `;
+
+            mobileAuthHtml = `
+                <div class="d-flex gap-2">
+                    <a href="/profil" class="header-user-pill flex-fill justify-content-center" style="height: 38px;">
+                        <img src="/images/icons/user.svg" alt="User" width="16" height="16">
+                        <span>Profil Saya</span>
+                    </a>
+                    <button onclick="handleLogout()" class="btn btn-outline-custom flex-fill justify-content-center" style="height: 38px;">
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            `;
         }
     } else {
         authSectionHtml = `
             <div class="d-flex align-items-center gap-2">
                 <a href="/login" class="btn btn-outline-custom btn-sm px-3">Masuk</a>
                 <a href="/register" class="btn btn-yellow-custom btn-sm px-3">Daftar</a>
+            </div>
+        `;
+
+        mobileAuthHtml = `
+            <div class="d-flex gap-2">
+                <a href="/login" class="btn btn-outline-custom flex-fill justify-content-center py-2">Masuk</a>
+                <a href="/register" class="btn btn-yellow-custom flex-fill justify-content-center py-2">Daftar</a>
             </div>
         `;
     }
@@ -109,7 +144,7 @@ function initNavbar(activePage = 'home', user = null) {
                         ${navLinksHtml}
                     </ul>
                     <div class="pt-2 border-top border-1 border-dark">
-                        ${authSectionHtml}
+                        ${mobileAuthHtml}
                     </div>
                 </div>
             </div>
