@@ -16,21 +16,25 @@ class SlideService {
     }
 
     static async createSlide(data) {
-        if (!data.judul || !data.gambar) {
-            throw new Error('Judul slide dan gambar banner wajib diisi.');
+        if (!data.gambar) {
+            throw new Error('Gambar banner wajib diisi atau diunggah.');
         }
+        data.judul = data.judul || 'Banner Slide';
+        data.subjudul = data.subjudul || '';
         return await SlideRepo.createSlide(data);
     }
 
     static async updateSlide(id, data) {
         await this.getSlideById(id);
-        if (!data.judul) throw new Error('Judul slide wajib diisi.');
+        data.judul = data.judul || 'Banner Slide';
+        data.subjudul = data.subjudul || '';
         return await SlideRepo.updateSlide(id, data);
     }
 
     static async updateSlideWithUpload(id, fields, newFilename, delete_old_image = false) {
         const existingSlide = await this.getSlideById(id);
-        if (!fields.judul) throw new Error('Judul slide wajib diisi.');
+        fields.judul = fields.judul || existingSlide.judul || 'Banner Slide';
+        fields.subjudul = fields.subjudul || existingSlide.subjudul || '';
 
         if (newFilename) {
             const newImagePath = `/uploads/${newFilename}`;

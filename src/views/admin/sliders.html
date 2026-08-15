@@ -156,14 +156,13 @@
                                         <tr>
                                             <th>Urutan</th>
                                             <th>Banner Pratinjau</th>
-                                            <th>Judul & Subjudul</th>
-                                            <th>Target Link</th>
+                                            <th>Target Tautan (Link URL)</th>
                                             <th>Status Banner</th>
                                             <th>Aksi Pengaturan</th>
                                         </tr>
                                     </thead>
                                     <tbody id="adminSlidesTable">
-                                        <tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>
+                                        <tr><td colspan="5" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -215,29 +214,13 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold" id="slideModalTitle">Upload Slide Promosi Baru</h5>
+                    <h5 class="modal-title fw-bold" id="slideModalTitle">Upload Banner Promosi Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="slideForm">
                         <input type="hidden" id="formSlideId">
                         <input type="hidden" id="formSlideExistingGambar">
-                        
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-7 col-12">
-                                <label class="form-label-custom">Judul Promosi / Slide <span class="text-danger">*</span></label>
-                                <input type="text" id="formSlideJudul" class="form-control form-control-custom" placeholder="Contoh: Promo Spesial Weekend 25% Off" required>
-                            </div>
-                            <div class="col-md-5 col-12">
-                                <label class="form-label-custom">Urutan Tampil (No)</label>
-                                <input type="number" id="formSlideUrutan" class="form-control form-control-custom" value="1" min="0">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label-custom">Subjudul / Deskripsi Promo</label>
-                            <input type="text" id="formSlideSubjudul" class="form-control form-control-custom" placeholder="Contoh: Diskon khusus semua makanan basah & snack anabul">
-                        </div>
 
                         <!-- Upload File Banner & Asset Picker -->
                         <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-3">
@@ -356,9 +339,7 @@
             document.getElementById('slideForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('formSlideId').value;
-                const judul = document.getElementById('formSlideJudul').value.trim();
-                const subjudul = document.getElementById('formSlideSubjudul').value.trim();
-                const link_url = document.getElementById('formSlideLink').value.trim();
+                const link_url = document.getElementById('formSlideLink').value.trim() || '/';
                 const urutan = parseInt(document.getElementById('formSlideUrutan').value, 10) || 0;
                 const is_active = document.getElementById('formSlideActive').checked ? 1 : 0;
                 const existingGambar = document.getElementById('formSlideExistingGambar').value;
@@ -370,8 +351,8 @@
 
                 try {
                     const formData = new FormData();
-                    formData.append('judul', judul);
-                    formData.append('subjudul', subjudul);
+                    formData.append('judul', 'Banner Promosi #' + urutan);
+                    formData.append('subjudul', '');
                     formData.append('link_url', link_url);
                     formData.append('urutan', urutan);
                     formData.append('is_active', is_active);
@@ -400,7 +381,7 @@
                         loadAdminSlides();
                         loadAdminAssets();
                     } else {
-                        showToast(data.message || 'Gagal menyimpan slide.', 'danger');
+                        showToast(data.message || 'Gagal menyimpan banner slide.', 'danger');
                     }
                 } catch (err) {
                     showToast('Terjadi kesalahan jaringan.', 'danger');
@@ -416,7 +397,7 @@
         async function loadAdminSlides() {
             const tbody = document.getElementById('adminSlidesTable');
             const previewInner = document.getElementById('adminPreviewInner');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>';
 
             try {
                 const res = await fetch('/api/slides');
@@ -431,7 +412,7 @@
                     if (activeSlides.length > 0) {
                         previewInner.innerHTML = activeSlides.map((s, idx) => `
                             <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                                <img src="${s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/banner1.jpg'">
+                                <img src="${s.gambar}" class="d-block w-100" alt="Banner #${s.urutan}" onerror="this.src='/images/banners/banner1.jpg'">
                             </div>
                         `).join('');
                     } else {
@@ -444,11 +425,7 @@
                             <tr>
                                 <td class="fw-bold text-dark">#${s.urutan || 0}</td>
                                 <td>
-                                    <img src="${s.gambar}" alt="${s.judul}" style="width: 150px; height: 42px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/banner1.jpg'">
-                                </td>
-                                <td>
-                                    <div class="fw-bold text-dark">${s.judul}</div>
-                                    <div class="text-muted small">${s.subjudul || '-'}</div>
+                                    <img src="${s.gambar}" alt="Banner #${s.urutan}" style="width: 220px; height: 55px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/banner1.jpg'">
                                 </td>
                                 <td>
                                     <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 font-monospace">
@@ -465,10 +442,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-action-group">
-                                         <button class="btn-table-action btn-action-white" onclick='openEditSlideModal(${JSON.stringify(s)})' title="Edit Slide">
+                                         <button class="btn-table-action btn-action-white" onclick='openEditSlideModal(${JSON.stringify(s)})' title="Edit Banner">
                                              <span>Edit</span>
                                          </button>
-                                         <button class="btn-table-action btn-action-danger" onclick="deleteSlide(${s.id_slide})" title="Hapus Slide">
+                                         <button class="btn-table-action btn-action-danger" onclick="deleteSlide(${s.id_slide})" title="Hapus Banner">
                                              <span>Hapus</span>
                                          </button>
                                      </div>
@@ -478,10 +455,10 @@
                     }).join('');
                 } else {
                     document.getElementById('badgeSlideCount').innerText = '0';
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada slide promosi yang dibuat.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Belum ada slide promosi yang dibuat.</td></tr>';
                 }
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-danger">Gagal memuat daftar slide.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-danger">Gagal memuat daftar slide.</td></tr>';
             }
         }
 
@@ -503,10 +480,8 @@
         function openCreateSlideModal(prefillImage = null) {
             isEditing = false;
             isImageChanged = false;
-            document.getElementById('slideModalTitle').innerText = 'Upload Slide Promosi Baru';
+            document.getElementById('slideModalTitle').innerText = 'Upload Banner Promosi Baru';
             document.getElementById('formSlideId').value = '';
-            document.getElementById('formSlideJudul').value = '';
-            document.getElementById('formSlideSubjudul').value = '';
             document.getElementById('formSlideLink').value = '/produk';
             document.getElementById('formSlideUrutan').value = (allSlides.length + 1);
             document.getElementById('formSlideActive').checked = true;
@@ -523,10 +498,8 @@
         function openEditSlideModal(s) {
             isEditing = true;
             isImageChanged = false;
-            document.getElementById('slideModalTitle').innerText = `Edit Slide: ${s.judul}`;
+            document.getElementById('slideModalTitle').innerText = `Edit Banner Slide #${s.urutan || ''}`;
             document.getElementById('formSlideId').value = s.id_slide;
-            document.getElementById('formSlideJudul').value = s.judul;
-            document.getElementById('formSlideSubjudul').value = s.subjudul || '';
             document.getElementById('formSlideLink').value = s.link_url || '/produk';
             document.getElementById('formSlideUrutan').value = s.urutan || 0;
             document.getElementById('formSlideActive').checked = s.is_active === 1;
