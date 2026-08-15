@@ -21,6 +21,8 @@ class SlideService {
         }
         data.judul = data.judul || 'Banner Slide';
         data.subjudul = data.subjudul || '';
+        data.urutan = data.urutan !== undefined ? parseInt(data.urutan, 10) : 0;
+        data.is_active = data.is_active !== undefined ? (data.is_active === '1' || data.is_active === 1 || data.is_active === 'true' || data.is_active === true ? 1 : 0) : 1;
         return await SlideRepo.createSlide(data);
     }
 
@@ -28,6 +30,8 @@ class SlideService {
         await this.getSlideById(id);
         data.judul = data.judul || 'Banner Slide';
         data.subjudul = data.subjudul || '';
+        data.urutan = data.urutan !== undefined ? parseInt(data.urutan, 10) : 0;
+        data.is_active = data.is_active !== undefined ? (data.is_active === '1' || data.is_active === 1 || data.is_active === 'true' || data.is_active === true ? 1 : 0) : 1;
         return await SlideRepo.updateSlide(id, data);
     }
 
@@ -35,6 +39,8 @@ class SlideService {
         const existingSlide = await this.getSlideById(id);
         fields.judul = fields.judul || existingSlide.judul || 'Banner Slide';
         fields.subjudul = fields.subjudul || existingSlide.subjudul || '';
+        fields.urutan = fields.urutan !== undefined ? parseInt(fields.urutan, 10) : existingSlide.urutan;
+        fields.is_active = fields.is_active !== undefined ? (fields.is_active === '1' || fields.is_active === 1 || fields.is_active === 'true' || fields.is_active === true ? 1 : 0) : existingSlide.is_active;
 
         if (newFilename) {
             const newImagePath = `/uploads/${newFilename}`;
