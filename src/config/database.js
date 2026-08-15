@@ -135,13 +135,13 @@ function runMigrations() {
         `ALTER TABLE pesanan ADD COLUMN catatan_admin TEXT`,
         `ALTER TABLE pesanan ADD COLUMN komplain_text TEXT`,
         `ALTER TABLE pesanan ADD COLUMN komplain_tanggapan TEXT`,
-        `ALTER TABLE pesanan ADD COLUMN updated_at TEXT DEFAULT CURRENT_TIMESTAMP`,
+        `ALTER TABLE pesanan ADD COLUMN updated_at TEXT`,
         // Booking columns
         `ALTER TABLE booking ADD COLUMN nama_hewan TEXT`,
         `ALTER TABLE booking ADD COLUMN jenis_hewan TEXT`,
         `ALTER TABLE booking ADD COLUMN catatan TEXT`,
         `ALTER TABLE booking ADD COLUMN catatan_admin TEXT`,
-        `ALTER TABLE booking ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP`,
+        `ALTER TABLE booking ADD COLUMN created_at TEXT`,
         // Paket Grooming columns
         `ALTER TABLE paket_grooming ADD COLUMN durasi_menit INTEGER DEFAULT 60`,
         `ALTER TABLE paket_grooming ADD COLUMN gambar TEXT`
