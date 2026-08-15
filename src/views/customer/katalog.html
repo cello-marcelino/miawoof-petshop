@@ -44,13 +44,13 @@
                 <div class="pt-3 border-top border-1 border-dark d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <div class="d-flex align-items-center gap-2 overflow-auto pb-1">
                         <span class="small fw-bold text-dark me-1 d-none d-sm-inline">Kategori:</span>
-                        <button class="btn btn-yellow-custom btn-sm px-3 category-filter active" data-category="all">
+                        <button class="category-filter-btn category-filter active" data-category="all">
                             <span>🐾 Semua Produk</span>
                         </button>
-                        <button class="btn btn-outline-custom btn-sm px-3 category-filter" data-category="kucing">
+                        <button class="category-filter-btn category-filter" data-category="kucing">
                             <span>🐱 Khusus Kucing</span>
                         </button>
-                        <button class="btn btn-outline-custom btn-sm px-3 category-filter" data-category="anjing">
+                        <button class="category-filter-btn category-filter" data-category="anjing">
                             <span>🐶 Khusus Anjing</span>
                         </button>
                     </div>
@@ -143,11 +143,9 @@
             // Set active category tab
             document.querySelectorAll('.category-filter').forEach(btn => {
                 if (btn.dataset.category === initialCategory) {
-                    btn.classList.remove('btn-outline-custom');
-                    btn.classList.add('btn-yellow-custom', 'active');
+                    btn.classList.add('active');
                 } else {
-                    btn.classList.remove('btn-yellow-custom', 'active');
-                    btn.classList.add('btn-outline-custom');
+                    btn.classList.remove('active');
                 }
             });
 
@@ -156,12 +154,8 @@
             // Category Filter Events
             document.querySelectorAll('.category-filter').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.category-filter').forEach(b => {
-                        b.classList.remove('btn-yellow-custom', 'active');
-                        b.classList.add('btn-outline-custom');
-                    });
-                    btn.classList.remove('btn-outline-custom');
-                    btn.classList.add('btn-yellow-custom', 'active');
+                    document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
 
                     const category = btn.dataset.category === 'all' ? null : btn.dataset.category;
                     loadProducts(category, document.getElementById('searchInput').value);
