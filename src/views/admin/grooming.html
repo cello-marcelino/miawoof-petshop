@@ -139,25 +139,8 @@
                         <input type="text" id="actionAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Harap datang 10 menit lebih awal / Bawa buku vaksin">
                     </div>
 
-                    <div class="p-3 bg-light rounded-2 border border-1 border-dark">
-                        <label class="form-label-custom mb-2">Tindakan Status Reservasi:</label>
-                        <div class="row g-2">
-                            <div class="col-sm-6 col-12">
-                                <button type="button" class="btn btn-action-modal btn-modal-confirm w-100" onclick="submitBookingStatus('dikonfirmasi')">
-                                    <span>📅 Konfirmasi Jadwal</span>
-                                </button>
-                            </div>
-                            <div class="col-sm-6 col-12">
-                                <button type="button" class="btn btn-action-modal btn-modal-success w-100" onclick="submitBookingStatus('selesai')">
-                                    <span>✅ Tandai Selesai</span>
-                                </button>
-                            </div>
-                            <div class="col-12 mt-1">
-                                <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="submitBookingStatus('dibatalkan')">
-                                    <span>❌ Batalkan Reservasi</span>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark" id="bookingActionButtonsContainer">
+                        <!-- Dynamically populated based on progressive booking workflow status -->
                     </div>
                 </div>
             </div>
@@ -377,6 +360,69 @@
             document.getElementById('actionBookingSchedule').innerText = `Jadwal: ${formatTanggalIndo(b.tgl_booking)} | ${b.waktu} WIB`;
             document.getElementById('actionBookingNotes').innerText = b.catatan || 'Tidak ada catatan khusus dari pelanggan.';
             document.getElementById('actionAdminNotes').value = b.catatan_admin || '';
+
+            const btnContainer = document.getElementById('bookingActionButtonsContainer');
+            const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
+            const isConfirmed = b.status === 'dikonfirmasi';
+            const isCompleted = b.status === 'selesai';
+            const isCancelled = b.status === 'dibatalkan';
+
+            let actionsHtml = '';
+            if (isPending) {
+                // Step 1: Pesanan/Booking baru dibuat -> Hanya "Konfirmasi Jadwal" dan "Batalkan"
+                actionsHtml = `
+                    <label class="form-label-custom mb-2">Tindakan Alur (Tahap 1 - Konfirmasi Jadwal):</label>
+                    <div class="row g-2">
+                        <div class="col-sm-8 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-confirm w-100" onclick="submitBookingStatus('dikonfirmasi')">
+                                <span>📅 Konfirmasi Jadwal Sesi</span>
+                            </button>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="submitBookingStatus('dibatalkan')">
+                                <span>❌ Batalkan</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (isConfirmed) {
+                // Step 2: Jadwal sudah dikonfirmasi -> Hanya "Tandai Selesai" dan "Batalkan"
+                actionsHtml = `
+                    <label class="form-label-custom mb-2">Tindakan Alur (Tahap 2 - Perawatan Berjalan):</label>
+                    <div class="row g-2">
+                        <div class="col-sm-8 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-success w-100" onclick="submitBookingStatus('selesai')">
+                                <span>✅ Selesai Treatment & Perawatan</span>
+                            </button>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="submitBookingStatus('dibatalkan')">
+                                <span>❌ Batalkan</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (isCompleted) {
+                // Step 3: Selesai
+                actionsHtml = `
+                    <div class="p-3 bg-success-subtle border border-1 border-success rounded-2 text-center">
+                        <span class="fs-5">✅</span>
+                        <div class="fw-bold text-success mt-1">Perawatan Grooming Telah Selesai</div>
+                        <small class="text-muted">Jadwal reservasi ini telah tuntas dilayani.</small>
+                    </div>
+                `;
+            } else if (isCancelled) {
+                // Step 4: Dibatalkan
+                actionsHtml = `
+                    <div class="p-3 bg-danger-subtle border border-1 border-danger rounded-2 text-center">
+                        <span class="fs-5">❌</span>
+                        <div class="fw-bold text-danger mt-1">Jadwal Reservasi Telah Dibatalkan</div>
+                        <small class="text-muted">Jadwal ini telah dibatalkan dan slot waktu telah dilepas.</small>
+                    </div>
+                `;
+            }
+
+            btnContainer.innerHTML = actionsHtml;
             bookingActionModal.show();
         }
 
