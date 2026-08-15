@@ -299,6 +299,74 @@
   color: #9b2c2c !important;
 }
 
+/* Unified Modal Pop-up Action Buttons */
+.btn-action-modal {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  border-radius: var(--radius-sm);
+  border: 2px solid #000000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+  box-shadow: 2.5px 2.5px 0px #000000;
+  line-height: 1.2;
+}
+
+.btn-action-modal:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3.5px 3.5px 0px #000000;
+}
+
+.btn-action-modal:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.btn-action-modal.btn-modal-confirm,
+.btn-action-modal.btn-modal-yellow {
+  background-color: var(--accent-yellow);
+  color: #000000 !important;
+}
+.btn-action-modal.btn-modal-confirm:hover,
+.btn-action-modal.btn-modal-yellow:hover {
+  background-color: #ffd700;
+}
+
+.btn-action-modal.btn-modal-primary,
+.btn-action-modal.btn-modal-blue {
+  background-color: var(--primary);
+  color: #ffffff !important;
+}
+.btn-action-modal.btn-modal-primary:hover,
+.btn-action-modal.btn-modal-blue:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-action-modal.btn-modal-success {
+  background-color: #10B981;
+  color: #ffffff !important;
+}
+.btn-action-modal.btn-modal-success:hover {
+  background-color: #059669;
+}
+
+.btn-action-modal.btn-modal-cancel,
+.btn-action-modal.btn-modal-danger {
+  background-color: #fee2e2;
+  color: #b91c1c !important;
+}
+.btn-action-modal.btn-modal-cancel:hover,
+.btn-action-modal.btn-modal-danger:hover {
+  background-color: #fecaca;
+  color: #991b1b !important;
+}
+
 /* ================= 3. Decorative Badges ================= */
 .badge-accent-yellow {
   background-color: var(--accent-yellow);
