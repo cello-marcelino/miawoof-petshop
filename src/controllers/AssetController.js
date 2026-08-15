@@ -1,0 +1,143 @@
+const fs = require('fs');
+const path = require('path');
+const UploadHandler = require('../utils/UploadHandler');
+const SessionManager = require('../utils/SessionManager');
+
+const UPLOADS_DIR = path.resolve(__dirname, '../../public/uploads');
+const BANNERS_DIR = path.resolve(__dirname, '../../public/images/banners');
+
+class AssetController {
+    static formatBytes(bytes, decimals = 1) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    static async handleGetAssets(req, res) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
+        }
+
+        try {
+            const assets = [];
+
+            // 1. Scan uploads directory
+            if (fs.existsSync(UPLOADS_DIR)) {
+                const uploadFiles = fs.readdirSync(UPLOADS_DIR);
+                for (const file of uploadFiles) {
+                    const filePath = path.join(UPLOADS_DIR, file);
+                    try {
+                        const stat = fs.statSync(filePath);
+                        if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
+                            assets.push({
+                                filename: file,
+                                url: `/uploads/${file}`,
+                                path: filePath,
+                                size: stat.size,
+                                sizeFormatted: AssetController.formatBytes(stat.size),
+                                mtime: stat.mtime,
+                                isDeletable: true,
+                                folder: 'uploads'
+                            });
+                        }
+                    } catch (statErr) {}
+                }
+            }
+
+            // 2. Scan preset banners directory
+            if (fs.existsSync(BANNERS_DIR)) {
+                const bannerFiles = fs.readdirSync(BANNERS_DIR);
+                for (const file of bannerFiles) {
+                    const filePath = path.join(BANNERS_DIR, file);
+                    try {
+                        const stat = fs.statSync(filePath);
+                        if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
+                            assets.push({
+                                filename: file,
+                                url: `/images/banners/${file}`,
+                                path: filePath,
+                                size: stat.size,
+                                sizeFormatted: AssetController.formatBytes(stat.size),
+                                mtime: stat.mtime,
+                                isDeletable: false, // Preset banners are protected
+                                folder: 'banners'
+                            });
+                        }
+                    } catch (statErr) {}
+                }
+            }
+
+            // Sort newest first
+            assets.sort((a, b) => new Date(b.mtime) - new Date(a.mtime));
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, data: assets }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Gagal memuat galeri aset: ' + err.message }));
+        }
+    }
+
+    static async handleUploadAsset(req, res) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
+        }
+
+        try {
+            const { filename } = await UploadHandler.parseForm(req);
+            if (!filename) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Tidak ada file gambar yang diunggah.' }));
+            }
+
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                message: 'File gambar berhasil diunggah ke Galeri Asset.',
+                data: {
+                    filename,
+                    url: `/uploads/${filename}`
+                }
+            }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+
+    static async handleDeleteAsset(req, res, filename) {
+        const session = SessionManager.getSession(req);
+        if (!session || session.role !== 'admin') {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
+        }
+
+        try {
+            // Prevent Directory Traversal Attack
+            const safeFilename = path.basename(filename);
+            const targetPath = path.join(UPLOADS_DIR, safeFilename);
+
+            if (!fs.existsSync(targetPath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'File aset tidak ditemukan di server.' }));
+            }
+
+            fs.unlinkSync(targetPath);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: `File asset "${safeFilename}" berhasil dihapus dari server.` }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Gagal menghapus file: ' + err.message }));
+        }
+    }
+}
+
+module.exports = AssetController;

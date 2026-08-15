@@ -10,6 +10,7 @@ const BookingController = require('./src/controllers/BookingController');
 const OrderController = require('./src/controllers/OrderController');
 const SlideController = require('./src/controllers/SlideController');
 const UserController = require('./src/controllers/UserController');
+const AssetController = require('./src/controllers/AssetController');
 const SessionManager = require('./src/utils/SessionManager');
 
 const PORT = process.env.PORT || 3000;
@@ -122,22 +123,32 @@ const server = http.createServer(async (req, res) => {
             return SlideController.handleGetSlides(req, res, queryParams);
         }
         if (pathname === '/api/slides' && method === 'POST') {
-            const body = await parseJsonBody(req);
-            return SlideController.handleCreateSlide(req, res, body);
+            return SlideController.handleCreateSlide(req, res);
         }
         const slideMatch = pathname.match(/^\/api\/slides\/(\d+)$/);
         if (slideMatch) {
             const id = slideMatch[1];
             if (method === 'GET') return SlideController.handleGetSlideById(req, res, id);
             if (method === 'POST' || method === 'PUT') {
-                const body = await parseJsonBody(req);
-                return SlideController.handleUpdateSlide(req, res, id, body);
+                return SlideController.handleUpdateSlide(req, res, id);
             }
-            if (method === 'DELETE') return SlideController.handleDeleteSlide(req, res, id);
+            if (method === 'DELETE') return SlideController.handleDeleteSlide(req, res, id, queryParams);
         }
         const slideToggleMatch = pathname.match(/^\/api\/slides\/(\d+)\/toggle$/);
         if (slideToggleMatch && method === 'POST') {
             return SlideController.handleToggleActive(req, res, slideToggleMatch[1]);
+        }
+
+        // --- Asset / Media Library APIs ---
+        if (pathname === '/api/assets' && method === 'GET') {
+            return AssetController.handleGetAssets(req, res);
+        }
+        if ((pathname === '/api/assets' || pathname === '/api/assets/upload') && method === 'POST') {
+            return AssetController.handleUploadAsset(req, res);
+        }
+        const assetMatch = pathname.match(/^\/api\/assets\/(.+)$/);
+        if (assetMatch && method === 'DELETE') {
+            return AssetController.handleDeleteAsset(req, res, decodeURIComponent(assetMatch[1]));
         }
 
         // --- Paket Grooming APIs ---

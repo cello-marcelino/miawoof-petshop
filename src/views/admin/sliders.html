@@ -3,11 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Slider Promosi - Admin MiaWoof</title>
+    <title>Kelola Slider Promosi & Galeri Asset - Admin MiaWoof</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/components.css">
+    <style>
+        .asset-card {
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 3px 3px 0 #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .asset-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 #000000;
+        }
+        .asset-img-container {
+            width: 100%;
+            height: 140px;
+            background: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #000000;
+            position: relative;
+            overflow: hidden;
+        }
+        .asset-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+        .asset-card:hover .asset-img-container img {
+            transform: scale(1.04);
+        }
+        .asset-picker-card {
+            cursor: pointer;
+            border: 2px solid #000000;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+            transition: all 0.15s ease;
+        }
+        .asset-picker-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.4);
+            transform: translateY(-2px);
+        }
+        .nav-tabs-custom {
+            border-bottom: 2px solid #000000;
+            gap: 8px;
+        }
+        .nav-tabs-custom .nav-link {
+            border: 2px solid #000000;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-weight: 700;
+            color: #000000;
+            background: #e9ecef;
+            padding: 10px 20px;
+            margin-bottom: -2px;
+            transition: all 0.15s ease;
+        }
+        .nav-tabs-custom .nav-link:hover {
+            background: #fff9db;
+        }
+        .nav-tabs-custom .nav-link.active {
+            background: var(--color-primary);
+            border-color: #000000;
+            border-bottom-color: var(--color-primary);
+            box-shadow: none;
+        }
+    </style>
 </head>
 <body>
     <div class="app-wrapper">
@@ -20,122 +91,204 @@
                         <img src="/images/icons/paw.svg" alt="Menu" width="16" height="16">
                     </button>
                     <div>
-                        <h5 class="fw-bold text-white mb-0">Manajemen Slider & Banner Promosi</h5>
-                        <small class="text-light opacity-90">Atur banner promosi, diskon, dan pengumuman yang tampil di halaman beranda pelanggan.</small>
+                        <h5 class="fw-bold text-white mb-0">Manajemen Slider Promosi & Galeri Asset</h5>
+                        <small class="text-light opacity-90">Upload banner promosi, kelola asset gambar, dan atur tampilan beranda toko.</small>
                     </div>
                 </div>
-                <button class="btn btn-yellow-custom btn-sm" onclick="openCreateSlideModal()">
-                    <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
-                    <span>Tambah Slide Baru</span>
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-yellow-custom btn-sm" onclick="openCreateSlideModal()">
+                        <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
+                        <span>Upload Slide Baru</span>
+                    </button>
+                </div>
             </header>
 
             <div class="admin-content-body">
-                <!-- Live Preview of Carousel -->
-                <div class="card-modern p-4 mb-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div>
-                            <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold">PREVIEW LIVE</span>
-                            <h5 class="fw-bold text-dark mb-0 mt-1">Pratinjau Slider Beranda</h5>
-                        </div>
-                        <small class="text-muted">Ukuran standar proporsional (1200 &times; 300 px)</small>
-                    </div>
+                <!-- Navigation Tabs -->
+                <ul class="nav nav-tabs nav-tabs-custom mb-4" id="sliderTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active d-flex align-items-center gap-2" id="slides-tab" data-bs-toggle="tab" data-bs-target="#tab-slides" type="button" role="tab">
+                            <span>🎠 Daftar Slide Promosi</span>
+                            <span class="badge bg-dark text-white rounded-pill px-2" id="badgeSlideCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link d-flex align-items-center gap-2" id="assets-tab" data-bs-toggle="tab" data-bs-target="#tab-assets" type="button" role="tab" onclick="loadAdminAssets()">
+                            <span>🖼️ Galeri Asset Media</span>
+                            <span class="badge bg-dark text-white rounded-pill px-2" id="badgeAssetCount">0</span>
+                        </button>
+                    </li>
+                </ul>
 
-                    <div id="adminPreviewCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel">
-                        <div class="carousel-inner" id="adminPreviewInner">
-                            <div class="carousel-item active">
-                                <img src="/images/banners/banner1.jpg" class="d-block w-100" alt="Preview" onerror="this.src='/images/banners/banner1.jpg'">
+                <div class="tab-content" id="sliderTabContent">
+                    <!-- Tab 1: Slide Promosi -->
+                    <div class="tab-pane fade show active" id="tab-slides" role="tabpanel">
+                        <!-- Live Preview of Carousel -->
+                        <div class="card-modern p-4 mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                <div>
+                                    <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold">PREVIEW LIVE</span>
+                                    <h5 class="fw-bold text-dark mb-0 mt-1">Pratinjau Slider Beranda</h5>
+                                </div>
+                                <small class="text-muted">Ukuran standar proporsional (1200 &times; 300 px)</small>
+                            </div>
+
+                            <div id="adminPreviewCarousel" class="carousel slide promo-slider-container" data-bs-ride="carousel">
+                                <div class="carousel-inner" id="adminPreviewInner">
+                                    <div class="carousel-item active">
+                                        <img src="/images/banners/banner1.jpg" class="d-block w-100" alt="Preview" onerror="this.src='/images/banners/banner1.jpg'">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                </button>
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#adminPreviewCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Slides Table Container -->
-                <div class="table-custom-container">
-                    <div class="table-responsive">
-                        <table class="table table-custom">
-                            <thead>
-                                <tr>
-                                    <th>Urutan</th>
-                                    <th>Banner Pratinjau</th>
-                                    <th>Judul & Subjudul</th>
-                                    <th>Target Link</th>
-                                    <th>Status Banner</th>
-                                    <th>Aksi Pengaturan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminSlidesTable">
-                                <tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>
-                            </tbody>
-                        </table>
+                        <!-- Slides Table Container -->
+                        <div class="table-custom-container">
+                            <div class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Urutan</th>
+                                            <th>Banner Pratinjau</th>
+                                            <th>Judul & Subjudul</th>
+                                            <th>Target Link</th>
+                                            <th>Status Banner</th>
+                                            <th>Aksi Pengaturan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminSlidesTable">
+                                        <tr><td colspan="6" class="text-center py-5 text-muted">Memuat daftar slide...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Galeri Asset Media -->
+                    <div class="tab-pane fade" id="tab-assets" role="tabpanel">
+                        <div class="card-modern p-4 mb-4">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-1">Galeri Asset & Media Library</h5>
+                                    <p class="text-muted small mb-0">Kelola semua file gambar banner dan produk yang telah diunggah ke sistem MiaWoof.</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="file" id="assetGalleryUploadInput" class="d-none" accept="image/*" onchange="uploadDirectAsset(this.files[0])">
+                                    <button class="btn btn-primary-custom btn-sm" onclick="document.getElementById('assetGalleryUploadInput').click()">
+                                        <img src="/images/icons/plus.svg" alt="Upload" width="14" height="14">
+                                        <span>Unggah Gambar Baru</span>
+                                    </button>
+                                    <button class="btn btn-outline-custom btn-sm" onclick="loadAdminAssets()">
+                                        <span>🔄 Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-4">
+                                <div class="col-md-6 col-12">
+                                    <div class="search-input-wrapper">
+                                        <img src="/images/icons/search.svg" alt="Search" width="16" height="16">
+                                        <input type="text" id="filterAssetSearch" class="form-control form-control-custom" placeholder="Cari nama file asset..." oninput="filterAssets()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Assets Grid Container -->
+                            <div class="row g-3" id="assetsGridContainer">
+                                <div class="col-12 text-center py-5 text-muted">Memuat galeri asset...</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Slide Form Modal (Create & Edit) -->
+    <!-- Slide Form Modal (Create & Edit with Upload & Old Image Options) -->
     <div class="modal fade" id="slideFormModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold" id="slideModalTitle">Tambah Slide Baru</h5>
+                    <h5 class="modal-title fw-bold" id="slideModalTitle">Upload Slide Promosi Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="slideForm">
                         <input type="hidden" id="formSlideId">
+                        <input type="hidden" id="formSlideExistingGambar">
                         
-                        <div class="mb-3">
-                            <label class="form-label-custom">Judul Promosi / Slide <span class="text-danger">*</span></label>
-                            <input type="text" id="formSlideJudul" class="form-control form-control-custom" placeholder="Contoh: Promo Diskon 30% Makanan Kucing" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label-custom">Subjudul / Deskripsi Pendek</label>
-                            <input type="text" id="formSlideSubjudul" class="form-control form-control-custom" placeholder="Contoh: Berlaku khusus untuk varian Royal Canin & ProPlan">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label-custom">Pilih Banner Template / File Gambar <span class="text-danger">*</span></label>
-                            <select id="selectBannerTemplate" class="form-select form-select-custom mb-2" onchange="applyBannerTemplate(this.value)">
-                                <option value="/images/banners/banner1.jpg">Banner 1: Nutrisi Premium (banner1.jpg)</option>
-                                <option value="/images/banners/banner2.jpg">Banner 2: Salon & Spa Grooming (banner2.jpg)</option>
-                                <option value="/images/banners/banner3.jpg">Banner 3: Snack & Treats (banner3.jpg)</option>
-                                <option value="/images/banners/petAds1.jpg">Banner Promo 1 (petAds1.jpg)</option>
-                                <option value="/images/banners/petAds2.jpg">Banner Promo 2 (petAds2.jpg)</option>
-                                <option value="/images/banners/petAds3.jpg">Banner Promo 3 (petAds3.jpg)</option>
-                                <option value="/images/banners/petAds4.jpg">Banner Promo 4 (petAds4.jpg)</option>
-                                <option value="custom">Ketik Path / URL Khusus...</option>
-                            </select>
-                            <input type="text" id="formSlideGambar" class="form-control form-control-custom" value="/images/banners/banner1.jpg" placeholder="/images/banners/banner1.jpg" required>
-                        </div>
-
                         <div class="row g-3 mb-3">
-                            <div class="col-md-8">
-                                <label class="form-label-custom">Target Tautan Halaman (Link URL)</label>
-                                <input type="text" id="formSlideLink" class="form-control form-control-custom" value="/produk" placeholder="/produk atau /grooming">
+                            <div class="col-md-7 col-12">
+                                <label class="form-label-custom">Judul Promosi / Slide <span class="text-danger">*</span></label>
+                                <input type="text" id="formSlideJudul" class="form-control form-control-custom" placeholder="Contoh: Promo Spesial Weekend 25% Off" required>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label-custom">Urutan (No)</label>
+                            <div class="col-md-5 col-12">
+                                <label class="form-label-custom">Urutan Tampil (No)</label>
                                 <input type="number" id="formSlideUrutan" class="form-control form-control-custom" value="1" min="0">
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="form-check form-switch p-2 border border-1 border-dark rounded-2 bg-light d-flex align-items-center justify-content-between">
-                                <label class="form-check-label fw-bold text-dark" for="formSlideActive">Status Aktif di Halaman Utama</label>
-                                <input class="form-check-input ms-0 me-2" type="checkbox" id="formSlideActive" checked style="cursor: pointer;">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Subjudul / Deskripsi Promo</label>
+                            <input type="text" id="formSlideSubjudul" class="form-control form-control-custom" placeholder="Contoh: Diskon khusus semua makanan basah & snack anabul">
+                        </div>
+
+                        <!-- Upload File Banner & Asset Picker -->
+                        <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-3">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                <label class="form-label-custom mb-0">File Gambar Banner <span class="text-danger">*</span></label>
+                                <button type="button" class="btn btn-outline-custom btn-sm py-1 px-2" onclick="openAssetPickerModal()">
+                                    <span>🖼️ Pilih dari Galeri Asset</span>
+                                </button>
+                            </div>
+
+                            <input type="file" id="formSlideFileInput" class="form-control form-control-custom mb-2" accept="image/jpeg,image/png,image/webp,image/jpg" onchange="handleSlideFileChange(this)">
+                            <small class="text-muted d-block mb-2">Format: JPG, PNG, WEBP (Maksimal 2MB). Rekomendasi rasio banner 4:1 (1200 &times; 300 px).</small>
+
+                            <!-- Live Image Preview in Modal -->
+                            <div class="p-2 bg-white rounded-2 border border-1 border-dark text-center" id="slidePreviewBox" style="min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <img id="slideImgPreviewEl" src="/images/banners/banner1.jpg" alt="Preview Banner" style="max-height: 140px; width: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #000;">
+                            </div>
+
+                            <!-- Old Image Replacement Options (Visible only on Edit) -->
+                            <div id="oldImageOptionBox" class="mt-3 p-3 bg-yellow-light border border-1 border-dark rounded-2" style="display: none;">
+                                <div class="fw-bold text-dark small mb-2">⚙️ Pengaturan Pergantian Gambar:</div>
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="radio" name="oldImageAction" id="radioDeleteOld" value="delete" checked>
+                                    <label class="form-check-label small fw-bold text-danger" for="radioDeleteOld">
+                                        🗑️ Hapus file gambar lama dari server (Hemat kapasitas penyimpanan)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="oldImageAction" id="radioKeepOld" value="keep">
+                                    <label class="form-check-label small text-dark" for="radioKeepOld">
+                                        💾 Simpan gambar lama di Galeri Asset (Bisa digunakan kembali)
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8 col-12">
+                                <label class="form-label-custom">Target Tautan Halaman (Link URL)</label>
+                                <input type="text" id="formSlideLink" class="form-control form-control-custom" value="/produk" placeholder="/produk atau /grooming">
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <label class="form-label-custom">Status Tayang</label>
+                                <div class="form-check form-switch p-2 border border-1 border-dark rounded-2 bg-light d-flex align-items-center justify-content-between" style="height: 42px;">
+                                    <label class="form-check-label small fw-bold text-dark ms-1" for="formSlideActive">Aktif</label>
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" id="formSlideActive" checked style="cursor: pointer;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-2 border-top border-1 border-dark">
                             <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" id="btnSaveSlide" class="btn btn-primary-custom px-4">
                                 <span>Simpan Slide Promosi</span>
@@ -147,63 +300,105 @@
         </div>
     </div>
 
+    <!-- Asset Picker Modal -->
+    <div class="modal fade" id="assetPickerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-5">🖼️</span>
+                        <h5 class="modal-title fw-bold">Pilih Gambar dari Galeri Asset</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <input type="text" id="pickerSearch" class="form-control form-control-custom" placeholder="Cari file gambar..." oninput="filterPickerAssets()">
+                    </div>
+                    <div class="row g-2 overflow-auto" id="pickerGridContainer" style="max-height: 380px;">
+                        <div class="col-12 text-center py-4 text-muted">Memuat galeri...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
     <script src="/js/vendor/bootstrap.bundle.min.js"></script>
     <script src="/js/utils/formatters.js"></script>
     <script src="/js/components/sidebar.js"></script>
     <script src="/js/app.js"></script>
     <script>
-        let slideFormModal = null;
         let allSlides = [];
+        let allAssets = [];
+        let slideFormModal = null;
+        let assetPickerModal = null;
+        let isEditing = false;
+        let isImageChanged = false;
 
         document.addEventListener('DOMContentLoaded', async () => {
             slideFormModal = new bootstrap.Modal(document.getElementById('slideFormModal'));
+            assetPickerModal = new bootstrap.Modal(document.getElementById('assetPickerModal'));
 
-            // Check Session
-            let user = null;
+            let currentUser = null;
             try {
                 const sessionRes = await fetch('/api/auth/session');
                 const sessionData = await sessionRes.json();
-                if (sessionData.authenticated && sessionData.user.role === 'admin') {
-                    user = sessionData.user;
-                } else {
-                    window.location.href = '/login';
-                    return;
-                }
-            } catch (e) {
-                window.location.href = '/login';
-                return;
-            }
+                if (sessionData.authenticated) currentUser = sessionData.user;
+            } catch (e) {}
 
-            initSidebar('sliders', user);
+            initAdminSidebar('sliders', currentUser);
             loadAdminSlides();
+            loadAdminAssets();
 
-            // Slide Form Submit
+            // Submit Form Slide (Multipart Upload)
             document.getElementById('slideForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('formSlideId').value;
                 const judul = document.getElementById('formSlideJudul').value.trim();
                 const subjudul = document.getElementById('formSlideSubjudul').value.trim();
-                const gambar = document.getElementById('formSlideGambar').value.trim();
                 const link_url = document.getElementById('formSlideLink').value.trim();
                 const urutan = parseInt(document.getElementById('formSlideUrutan').value, 10) || 0;
                 const is_active = document.getElementById('formSlideActive').checked ? 1 : 0;
+                const existingGambar = document.getElementById('formSlideExistingGambar').value;
+                const fileInput = document.getElementById('formSlideFileInput');
 
                 const btn = document.getElementById('btnSaveSlide');
                 btn.disabled = true;
                 btn.innerHTML = '<span>Menyimpan...</span>';
 
                 try {
+                    const formData = new FormData();
+                    formData.append('judul', judul);
+                    formData.append('subjudul', subjudul);
+                    formData.append('link_url', link_url);
+                    formData.append('urutan', urutan);
+                    formData.append('is_active', is_active);
+
+                    if (fileInput.files && fileInput.files[0]) {
+                        formData.append('gambar', fileInput.files[0]);
+                    } else if (existingGambar) {
+                        formData.append('existing_gambar_url', existingGambar);
+                    }
+
+                    if (id) {
+                        const deleteOld = document.getElementById('radioDeleteOld').checked;
+                        formData.append('delete_old_image', deleteOld ? 'true' : 'false');
+                    }
+
                     const url = id ? `/api/slides/${id}` : '/api/slides';
                     const res = await fetch(url, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ judul, subjudul, gambar, link_url, urutan, is_active })
+                        body: formData
                     });
+
                     const data = await res.json();
                     if (data.success) {
                         showToast(data.message, 'success');
                         slideFormModal.hide();
                         loadAdminSlides();
+                        loadAdminAssets();
                     } else {
                         showToast(data.message || 'Gagal menyimpan slide.', 'danger');
                     }
@@ -216,11 +411,7 @@
             });
         });
 
-        function applyBannerTemplate(val) {
-            if (val !== 'custom') {
-                document.getElementById('formSlideGambar').value = val;
-            }
-        }
+        // ------------------ SLIDES MANAGEMENT ------------------
 
         async function loadAdminSlides() {
             const tbody = document.getElementById('adminSlidesTable');
@@ -233,13 +424,14 @@
 
                 if (data.success && data.data.length > 0) {
                     allSlides = data.data;
-                    
+                    document.getElementById('badgeSlideCount').innerText = allSlides.filter(s => s.is_active === 1).length;
+
                     // Render preview carousel
                     const activeSlides = data.data.filter(s => s.is_active === 1);
                     if (activeSlides.length > 0) {
                         previewInner.innerHTML = activeSlides.map((s, idx) => `
                             <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                                <img src="${s.gambar.startsWith('/') ? s.gambar : '/uploads/' + s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/banner1.jpg'">
+                                <img src="${s.gambar}" class="d-block w-100" alt="${s.judul}" onerror="this.src='/images/banners/banner1.jpg'">
                             </div>
                         `).join('');
                     } else {
@@ -248,12 +440,11 @@
 
                     // Render Table
                     tbody.innerHTML = data.data.map(s => {
-                        const imgSrc = s.gambar.startsWith('/') ? s.gambar : '/uploads/' + s.gambar;
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#${s.urutan || 0}</td>
                                 <td>
-                                    <img src="${imgSrc}" alt="${s.judul}" style="width: 150px; height: 42px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/banner1.jpg'">
+                                    <img src="${s.gambar}" alt="${s.judul}" style="width: 150px; height: 42px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/banners/banner1.jpg'">
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">${s.judul}</div>
@@ -261,7 +452,7 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 font-monospace">
-                                        ${s.link_url || '/produk'}
+                                        ${s.link_url || '/'}
                                     </span>
                                 </td>
                                 <td>
@@ -286,6 +477,7 @@
                         `;
                     }).join('');
                 } else {
+                    document.getElementById('badgeSlideCount').innerText = '0';
                     tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada slide promosi yang dibuat.</td></tr>';
                 }
             } catch (err) {
@@ -293,39 +485,55 @@
             }
         }
 
-        function openCreateSlideModal() {
-            document.getElementById('slideModalTitle').innerText = 'Tambah Slide Promosi Baru';
+        function handleSlideFileChange(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('slideImgPreviewEl').src = e.target.result;
+                    isImageChanged = true;
+                    if (isEditing) {
+                        document.getElementById('oldImageOptionBox').style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openCreateSlideModal(prefillImage = null) {
+            isEditing = false;
+            isImageChanged = false;
+            document.getElementById('slideModalTitle').innerText = 'Upload Slide Promosi Baru';
             document.getElementById('formSlideId').value = '';
             document.getElementById('formSlideJudul').value = '';
             document.getElementById('formSlideSubjudul').value = '';
-            document.getElementById('selectBannerTemplate').value = '/images/banners/banner1.jpg';
-            document.getElementById('formSlideGambar').value = '/images/banners/banner1.jpg';
             document.getElementById('formSlideLink').value = '/produk';
             document.getElementById('formSlideUrutan').value = (allSlides.length + 1);
             document.getElementById('formSlideActive').checked = true;
+            document.getElementById('formSlideFileInput').value = '';
+            document.getElementById('oldImageOptionBox').style.display = 'none';
+
+            const defaultImg = prefillImage || '/images/banners/banner1.jpg';
+            document.getElementById('formSlideExistingGambar').value = defaultImg;
+            document.getElementById('slideImgPreviewEl').src = defaultImg;
+
             slideFormModal.show();
         }
 
         function openEditSlideModal(s) {
+            isEditing = true;
+            isImageChanged = false;
             document.getElementById('slideModalTitle').innerText = `Edit Slide: ${s.judul}`;
             document.getElementById('formSlideId').value = s.id_slide;
             document.getElementById('formSlideJudul').value = s.judul;
             document.getElementById('formSlideSubjudul').value = s.subjudul || '';
-            document.getElementById('formSlideGambar').value = s.gambar;
             document.getElementById('formSlideLink').value = s.link_url || '/produk';
             document.getElementById('formSlideUrutan').value = s.urutan || 0;
             document.getElementById('formSlideActive').checked = s.is_active === 1;
-
-            const sel = document.getElementById('selectBannerTemplate');
-            let found = false;
-            for (let opt of sel.options) {
-                if (opt.value === s.gambar) {
-                    sel.value = s.gambar;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) sel.value = 'custom';
+            document.getElementById('formSlideFileInput').value = '';
+            document.getElementById('formSlideExistingGambar').value = s.gambar;
+            document.getElementById('slideImgPreviewEl').src = s.gambar;
+            document.getElementById('oldImageOptionBox').style.display = 'none';
 
             slideFormModal.show();
         }
@@ -344,19 +552,194 @@
         }
 
         async function deleteSlide(id) {
-            if (!confirm('Apakah Anda yakin ingin menghapus slide promosi ini?')) return;
+            if (!confirm('Apakah Anda ingin menghapus slide promosi ini?')) return;
+            const deleteFile = confirm('Hapus juga file gambar dari penyimpanan server untuk menghemat ruang disk?');
+
             try {
-                const res = await fetch(`/api/slides/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/slides/${id}?delete_file=${deleteFile ? 'true' : 'false'}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (data.success) {
                     showToast(data.message, 'success');
                     loadAdminSlides();
+                    loadAdminAssets();
                 } else {
                     showToast(data.message || 'Gagal menghapus slide.', 'danger');
                 }
             } catch (e) {
                 showToast('Terjadi kesalahan jaringan.', 'danger');
             }
+        }
+
+        // ------------------ ASSET GALLERY LIBRARY ------------------
+
+        async function loadAdminAssets() {
+            const container = document.getElementById('assetsGridContainer');
+            container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Memuat galeri asset...</div>';
+
+            try {
+                const res = await fetch('/api/assets');
+                const data = await res.json();
+
+                if (data.success && data.data.length > 0) {
+                    allAssets = data.data;
+                    document.getElementById('badgeAssetCount').innerText = allAssets.length;
+                    renderAssetsGrid(allAssets);
+                } else {
+                    document.getElementById('badgeAssetCount').innerText = '0';
+                    container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada file media yang diunggah.</div>';
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat galeri aset.</div>';
+            }
+        }
+
+        function renderAssetsGrid(assets) {
+            const container = document.getElementById('assetsGridContainer');
+            if (assets.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file yang cocok dengan pencarian.</div>';
+                return;
+            }
+
+            container.innerHTML = assets.map(a => {
+                const isUpload = a.folder === 'uploads';
+                const folderBadge = isUpload 
+                    ? '<span class="badge bg-yellow text-dark border border-1 border-dark small">📁 /uploads</span>' 
+                    : '<span class="badge bg-light text-dark border border-1 border-dark small">🔒 Preset Banner</span>';
+
+                return `
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                        <div class="asset-card h-100 d-flex flex-column">
+                            <div class="asset-img-container">
+                                <img src="${a.url}" alt="${a.filename}" onerror="this.src='/images/placeholders/default_product.png'">
+                            </div>
+                            <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <div>
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        ${folderBadge}
+                                        <small class="text-muted fw-bold">${a.sizeFormatted}</small>
+                                    </div>
+                                    <div class="fw-bold text-dark text-truncate small mb-2" title="${a.filename}">${a.filename}</div>
+                                </div>
+                                <div class="pt-2 border-top border-1 border-dark d-flex gap-1 flex-wrap">
+                                    <button class="btn btn-outline-custom btn-sm flex-fill py-1 px-1 small" onclick="copyAssetUrl('${a.url}')" title="Salin URL Gambar">
+                                        <span>📋 Salin</span>
+                                    </button>
+                                    <button class="btn btn-yellow-custom btn-sm flex-fill py-1 px-1 small" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide">
+                                        <span>🎠 Jadikan Slide</span>
+                                    </button>
+                                    ${a.isDeletable ? `
+                                        <button class="btn btn-table-action btn-action-danger btn-sm py-1 px-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus Permanen">
+                                            <span>🗑️</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterAssets() {
+            const query = document.getElementById('filterAssetSearch').value.toLowerCase().trim();
+            const filtered = allAssets.filter(a => a.filename.toLowerCase().includes(query));
+            renderAssetsGrid(filtered);
+        }
+
+        async function uploadDirectAsset(file) {
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('gambar', file);
+
+            try {
+                const res = await fetch('/api/assets/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminAssets();
+                } else {
+                    showToast(data.message || 'Gagal mengunggah file.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        async function deleteAssetFile(filename) {
+            if (!confirm(`Hapus file asset "${filename}" secara permanen dari server?`)) return;
+
+            try {
+                const res = await fetch(`/api/assets/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAdminAssets();
+                } else {
+                    showToast(data.message || 'Gagal menghapus file aset.', 'danger');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        function copyAssetUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('URL Gambar disalin ke papan klip!', 'success');
+            }).catch(() => {
+                showToast(url, 'info');
+            });
+        }
+
+        function createSlideFromAsset(url) {
+            // Switch to tab slides and open modal
+            const slidesTab = new bootstrap.Tab(document.getElementById('slides-tab'));
+            slidesTab.show();
+            openCreateSlideModal(url);
+        }
+
+        // ------------------ ASSET PICKER MODAL ------------------
+
+        function openAssetPickerModal() {
+            renderPickerGrid(allAssets);
+            assetPickerModal.show();
+        }
+
+        function renderPickerGrid(assets) {
+            const container = document.getElementById('pickerGridContainer');
+            if (assets.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Tidak ada file gambar.</div>';
+                return;
+            }
+
+            container.innerHTML = assets.map(a => `
+                <div class="col-md-4 col-sm-6 col-12">
+                    <div class="asset-picker-card p-2 text-center" onclick="selectAssetForSlide('${a.url}')">
+                        <img src="${a.url}" alt="${a.filename}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #000;">
+                        <div class="small fw-bold text-dark text-truncate mt-1">${a.filename}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPickerAssets() {
+            const query = document.getElementById('pickerSearch').value.toLowerCase().trim();
+            const filtered = allAssets.filter(a => a.filename.toLowerCase().includes(query));
+            renderPickerGrid(filtered);
+        }
+
+        function selectAssetForSlide(url) {
+            document.getElementById('formSlideExistingGambar').value = url;
+            document.getElementById('formSlideFileInput').value = '';
+            document.getElementById('slideImgPreviewEl').src = url;
+            isImageChanged = true;
+            if (isEditing) {
+                document.getElementById('oldImageOptionBox').style.display = 'block';
+            }
+            assetPickerModal.hide();
+            showToast('Gambar banner dari Galeri dipilih!', 'success');
         }
     </script>
 </body>
