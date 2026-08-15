@@ -145,36 +145,8 @@
                     </div>
 
                     <!-- Workflow Status Action Center -->
-                    <div class="p-3 bg-light rounded-2 border border-1 border-dark">
-                        <h6 class="fw-bold text-dark mb-3">Tindakan Alur Status Pesanan:</h6>
-                        
-                        <div class="mb-3">
-                            <label class="form-label-custom">Catatan / Keterangan Toko ke Pelanggan</label>
-                            <input type="text" id="workflowAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Pesanan telah di-keep di kasir / Kurir Bpk. Rian sedang mengantar (08123...)">
-                        </div>
-
-                        <div class="row g-2">
-                            <div class="col-md-6 col-12">
-                                <button type="button" id="btnKeepStore" class="btn btn-action-modal btn-modal-confirm w-100">
-                                    <span>🏪 Siapkan & Di-Keep di Toko</span>
-                                </button>
-                            </div>
-                            <div class="col-md-6 col-12">
-                                <button type="button" id="btnOutForDelivery" class="btn btn-action-modal btn-modal-primary w-100">
-                                    <span>🚚 Kirim / Dalam Pengantaran</span>
-                                </button>
-                            </div>
-                            <div class="col-md-6 col-12">
-                                <button type="button" id="btnMarkComplete" class="btn btn-action-modal btn-modal-success w-100">
-                                    <span>✅ Tandai Selesai</span>
-                                </button>
-                            </div>
-                            <div class="col-md-6 col-12">
-                                <button type="button" id="btnCancelOrder" class="btn btn-action-modal btn-modal-cancel w-100">
-                                    <span>❌ Batalkan Pesanan</span>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark" id="workflowActionContainer">
+                        <!-- Dynamically populated based on progressive order status and fulfillment method -->
                     </div>
                 </div>
             </div>
@@ -277,32 +249,6 @@
             document.getElementById('filterMetode').addEventListener('change', loadAdminOrders);
             document.getElementById('filterSearch').addEventListener('input', debounce(loadAdminOrders, 300));
             document.getElementById('btnRefresh').addEventListener('click', loadAdminOrders);
-
-            // Modal Workflow Action Buttons
-            document.getElementById('btnKeepStore').addEventListener('click', () => {
-                if (!selectedOrder) return;
-                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Barang pesanan telah disiapkan dan di-keep di rak kasir khusus, silakan diambil dengan menunjukkan ID Pesanan.';
-                updateOrderStatusApi(selectedOrder.id_pesanan, 'disiapkan_di_toko', notes);
-            });
-
-            document.getElementById('btnOutForDelivery').addEventListener('click', () => {
-                if (!selectedOrder) return;
-                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan sedang dalam proses pengantaran oleh kurir toko kami.';
-                updateOrderStatusApi(selectedOrder.id_pesanan, 'dalam_pengantaran', notes);
-            });
-
-            document.getElementById('btnMarkComplete').addEventListener('click', () => {
-                if (!selectedOrder) return;
-                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan telah selesai diserahkan ke pelanggan.';
-                updateOrderStatusApi(selectedOrder.id_pesanan, 'selesai', notes);
-            });
-
-            document.getElementById('btnCancelOrder').addEventListener('click', () => {
-                if (!selectedOrder) return;
-                if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok produk akan otomatis dikembalikan.')) return;
-                const notes = document.getElementById('workflowAdminNotes').value.trim() || 'Pesanan dibatalkan oleh Admin.';
-                updateOrderStatusApi(selectedOrder.id_pesanan, 'dibatalkan', notes);
-            });
 
             document.getElementById('btnSubmitComplaintResponse').addEventListener('click', async () => {
                 if (!selectedOrder) return;
@@ -465,9 +411,7 @@
             document.getElementById('detailProductName').innerText = order.nama_produk;
             document.getElementById('detailProductPrice').innerText = `${order.jumlah} unit x ${formatRupiah(order.harga)}`;
             document.getElementById('detailTotalAmount').innerText = formatRupiah(order.total);
-            document.getElementById('detailProductImg').src = `/uploads/${order.gambar || 'default_product.png'}`;
-
-            document.getElementById('workflowAdminNotes').value = order.catatan_admin || '';
+            document.getElementById('detailProductImg').src = order.gambar || '/images/placeholders/default_product.png';
 
             // Handle Complaint Section Visibility
             const complaintSection = document.getElementById('complaintSection');
@@ -479,7 +423,129 @@
                 complaintSection.style.display = 'none';
             }
 
+            renderProgressiveWorkflowActions(order);
             detailModal.show();
+        }
+
+        function renderProgressiveWorkflowActions(order) {
+            const box = document.getElementById('workflowActionContainer');
+            const isPending = order.status === 'menunggu_konfirmasi' || order.status === 'menunggu konfirmasi' || order.status === 'menunggu pembayaran';
+            const isInProgress = order.status === 'disiapkan_di_toko' || order.status === 'dalam_pengantaran';
+            const isComplaint = order.status === 'komplain';
+            const isCompleted = order.status === 'selesai';
+            const isCancelled = order.status === 'dibatalkan';
+
+            let html = `
+                <h6 class="fw-bold text-dark mb-3">Tindakan Alur Status Pesanan:</h6>
+                <div class="mb-3">
+                    <label class="form-label-custom">Catatan / Keterangan Toko ke Pelanggan</label>
+                    <input type="text" id="workflowAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Pesanan telah di-keep di kasir / Kurir sedang mengantar...">
+                </div>
+            `;
+
+            if (isPending) {
+                // Step 1: Pesanan Baru Masuk -> Berdasarkan metode pengambilan
+                if (order.metode_pengambilan === 'diantar') {
+                    html += `
+                        <label class="form-label-custom mb-2">Tindakan Tahap 1 (Konfirmasi Pengantaran Kurir):</label>
+                        <div class="row g-2">
+                            <div class="col-sm-8 col-12">
+                                <button type="button" class="btn btn-action-modal btn-modal-primary w-100" onclick="handleWorkflowAction('dalam_pengantaran')">
+                                    <span>🚚 Konfirmasi & Kirim Kurir</span>
+                                </button>
+                            </div>
+                            <div class="col-sm-4 col-12">
+                                <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="handleWorkflowAction('dibatalkan')">
+                                    <span>❌ Batalkan</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <label class="form-label-custom mb-2">Tindakan Tahap 1 (Konfirmasi Ambil di Toko):</label>
+                        <div class="row g-2">
+                            <div class="col-sm-8 col-12">
+                                <button type="button" class="btn btn-action-modal btn-modal-confirm w-100" onclick="handleWorkflowAction('disiapkan_di_toko')">
+                                    <span>🏪 Siapkan & Di-Keep di Toko</span>
+                                </button>
+                            </div>
+                            <div class="col-sm-4 col-12">
+                                <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="handleWorkflowAction('dibatalkan')">
+                                    <span>❌ Batalkan</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else if (isInProgress) {
+                // Step 2: Sedang Di-Keep di Toko atau Sedang Diantar Kurir
+                const stageLabel = order.status === 'disiapkan_di_toko' ? 'Barang Sedang Di-Keep di Toko' : 'Barang Sedang Diantar Kurir';
+                html += `
+                    <label class="form-label-custom mb-2">Tindakan Tahap 2 (${stageLabel}):</label>
+                    <div class="row g-2">
+                        <div class="col-sm-8 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-success w-100" onclick="handleWorkflowAction('selesai')">
+                                <span>✅ Tandai Selesai / Diterima</span>
+                            </button>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="handleWorkflowAction('dibatalkan')">
+                                <span>❌ Batalkan</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (isComplaint) {
+                // Step 3: Komplain Aktif
+                html += `
+                    <div class="p-3 bg-danger-subtle border border-1 border-danger rounded-2 text-center">
+                        <div class="fw-bold text-danger">⚠️ Pesanan Memiliki Komplain Aktif</div>
+                        <small class="text-muted">Gunakan form tanggapan di atas untuk membalas komplain pelanggan.</small>
+                    </div>
+                `;
+            } else if (isCompleted) {
+                // Step 4: Selesai
+                html += `
+                    <div class="p-3 bg-success-subtle border border-1 border-success rounded-2 text-center">
+                        <span class="fs-5">✅</span>
+                        <div class="fw-bold text-success mt-1">Pesanan Telah Tuntas & Selesai</div>
+                        <small class="text-muted">Pesanan ini telah sukses diserahkan dan diterima oleh pelanggan.</small>
+                    </div>
+                `;
+            } else if (isCancelled) {
+                // Step 5: Dibatalkan
+                html += `
+                    <div class="p-3 bg-secondary-subtle border border-1 border-secondary rounded-2 text-center">
+                        <span class="fs-5">❌</span>
+                        <div class="fw-bold text-secondary mt-1">Pesanan Ini Telah Dibatalkan</div>
+                        <small class="text-muted">Stok produk telah dikembalikan otomatis ke inventori toko.</small>
+                    </div>
+                `;
+            }
+
+            box.innerHTML = html;
+            if (order.catatan_admin) {
+                const notesInput = document.getElementById('workflowAdminNotes');
+                if (notesInput) notesInput.value = order.catatan_admin;
+            }
+        }
+
+        function handleWorkflowAction(status) {
+            if (!selectedOrder) return;
+            if (status === 'dibatalkan') {
+                if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini? Stok produk akan otomatis dikembalikan ke inventori.')) return;
+            }
+
+            const notesInput = document.getElementById('workflowAdminNotes');
+            let defaultNotes = '';
+            if (status === 'disiapkan_di_toko') defaultNotes = 'Barang pesanan telah disiapkan dan di-keep di rak kasir khusus, silakan diambil dengan menunjukkan ID Pesanan.';
+            else if (status === 'dalam_pengantaran') defaultNotes = 'Pesanan sedang dalam proses pengantaran oleh kurir toko kami.';
+            else if (status === 'selesai') defaultNotes = 'Pesanan telah selesai diserahkan ke pelanggan.';
+            else if (status === 'dibatalkan') defaultNotes = 'Pesanan dibatalkan oleh Admin.';
+
+            const notes = (notesInput && notesInput.value.trim()) || defaultNotes;
+            updateOrderStatusApi(selectedOrder.id_pesanan, status, notes);
         }
 
         function openEditModal(order) {
