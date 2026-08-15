@@ -12,7 +12,7 @@
 <body>
     <div id="navbar-root"></div>
 
-    <main class="customer-main pt-4">
+    <main class="customer-main pt-4 pb-5">
         <div class="container">
             <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
                 <div>
@@ -34,16 +34,15 @@
                                 <th>No. Booking</th>
                                 <th>Hewan Peliharaan</th>
                                 <th>Paket Perawatan</th>
-                                <th>Jadwal Kedatangan</th>
+                                <th>Jadwal Sesi</th>
                                 <th>Tarif Biaya</th>
-                                <th>Status Konfirmasi</th>
-                                <th>Keterangan Admin / Groomer</th>
-                                <th>Aksi</th>
+                                <th>Status</th>
+                                <th class="text-center">Aksi / Detail</th>
                             </tr>
                         </thead>
                         <tbody id="bookingsTableBody">
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">Memuat jadwal reservasi...</td>
+                                <td colspan="7" class="text-center py-5 text-muted">Memuat jadwal reservasi...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -51,6 +50,72 @@
             </div>
         </div>
     </main>
+
+    <!-- Booking Detail Modal for Customer -->
+    <div class="modal fade" id="customerBookingDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-5">🐾</span>
+                        <h5 class="modal-title fw-bold" id="detailModalTicketTitle">Detail Tiket Reservasi Grooming</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Status & Pet Info Card -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-2 border border-1 border-dark h-100">
+                                <h6 class="fw-bold text-dark border-bottom border-1 border-dark pb-2 mb-2">Informasi Anabul & Pemilik</h6>
+                                <div class="small mb-1"><strong>Nama Pemilik:</strong> <span id="detailOwnerName">-</span></div>
+                                <div class="small mb-1"><strong>Nomor Kontak:</strong> <span id="detailOwnerPhone">-</span></div>
+                                <div class="small mb-1"><strong>Nama Anabul:</strong> <span id="detailPetName" class="fw-bold text-dark">-</span></div>
+                                <div class="small mb-1"><strong>Jenis Hewan:</strong> <span id="detailPetSpeciesBadge" class="badge-pet-cat text-capitalize" style="font-size: 0.75rem;">-</span></div>
+                                <div class="small mt-2"><strong>Catatan dari Anda:</strong></div>
+                                <div class="small text-muted p-2 bg-white rounded border border-1 border-dark mt-1" id="detailUserNotes">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-2 border border-1 border-dark h-100">
+                                <h6 class="fw-bold text-dark border-bottom border-1 border-dark pb-2 mb-2">Jadwal & Paket Perawatan</h6>
+                                <div class="small mb-1"><strong>Paket Treatment:</strong> <span id="detailPaketName" class="fw-bold text-dark">-</span></div>
+                                <div class="small text-muted mb-2" id="detailPaketDesc">-</div>
+                                <div class="small mb-1"><strong>Tanggal Kedatangan:</strong> <span id="detailScheduleDate" class="fw-bold text-dark">-</span></div>
+                                <div class="small mb-2"><strong>Pukul:</strong> <span id="detailScheduleTime" class="fw-bold text-blue fs-6">-</span></div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-1 border-dark">
+                                    <span class="small fw-bold text-dark">Status Reservasi:</span>
+                                    <span id="detailStatusBadge">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 mt-1 border-top border-1 border-dark">
+                                    <span class="fw-bold text-dark">Tarif Biaya:</span>
+                                    <span class="fw-bold text-blue fs-5" id="detailPrice">Rp 0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groomer & Admin Instructions Highlight Card -->
+                    <div class="p-3 bg-yellow-light border border-2 border-dark rounded-2 mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="fs-5">📢</span>
+                            <h6 class="fw-bold text-dark mb-0">Instruksi & Keterangan Groomer MiaWoof:</h6>
+                        </div>
+                        <div class="p-2 bg-white rounded-1 border border-1 border-dark small fw-bold text-dark" id="detailAdminInstructions">
+                            Belum ada instruksi atau catatan khusus dari tim salon MiaWoof.
+                        </div>
+                    </div>
+
+                    <!-- Cancellation Action (If still pending) -->
+                    <div id="cancelActionContainer" style="display: none;" class="pt-2 border-top border-1 border-dark d-flex justify-content-end">
+                        <button type="button" id="btnCancelFromModal" class="btn btn-action-modal btn-modal-cancel">
+                            <span>❌ Batalkan Reservasi Ini</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="footer-root"></div>
 
@@ -60,7 +125,12 @@
     <script src="/js/components/footer.js"></script>
     <script src="/js/app.js"></script>
     <script>
+        let myBookings = [];
+        let detailModal = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
+            detailModal = new bootstrap.Modal(document.getElementById('customerBookingDetailModal'));
+
             let currentUser = null;
             try {
                 const sessionRes = await fetch('/api/auth/session');
@@ -75,21 +145,24 @@
 
         async function loadMyBookings() {
             const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">Memuat jadwal reservasi...</td></tr>';
+
             try {
                 const res = await fetch('/api/bookings');
                 const result = await res.json();
 
                 if (result.success && result.data.length > 0) {
+                    myBookings = result.data;
                     tbody.innerHTML = result.data.map(b => {
                         let statusBadge = '';
                         if (b.status === 'dikonfirmasi') {
-                            statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi / Siap</span>';
+                            statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi</span>';
                         } else if (b.status === 'selesai') {
-                            statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai Perawatan</span>';
+                            statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai</span>';
                         } else if (b.status === 'dibatalkan') {
                             statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Dibatalkan</span>';
                         } else {
-                            statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+                            statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu</span>';
                         }
 
                         const speciesBadge = b.jenis_hewan === 'kucing' 
@@ -107,7 +180,7 @@
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">${b.nama_paket}</div>
-                                    <div class="text-muted small" style="max-width: 220px;">${b.keterangan_grooming || '-'}</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 200px;">${b.keterangan_grooming || '-'}</div>
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">${formatTanggalIndo(b.tgl_booking)}</div>
@@ -115,25 +188,80 @@
                                 </td>
                                 <td class="fw-bold text-dark">${formatRupiah(b.harga)}</td>
                                 <td>${statusBadge}</td>
-                                <td style="max-width: 200px;">
-                                    ${b.catatan_admin ? `<div class="p-2 bg-yellow-light border border-1 border-dark rounded-1 small fw-bold text-dark">📢 Groomer: ${b.catatan_admin}</div>` : '<span class="text-muted small">Belum ada catatan</span>'}
-                                </td>
-                                <td>
-                                    ${isPending ? `
-                                        <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="cancelBooking(${b.id_booking})">
-                                            Batalkan
+                                <td class="text-center">
+                                    <div class="btn-action-group justify-content-center">
+                                        <button class="btn-table-action btn-action-yellow" onclick='openCustomerDetailModal(${JSON.stringify(b)})' title="Lihat Detail & Instruksi Groomer">
+                                            <span>🔍 Detail</span>
                                         </button>
-                                    ` : '<span class="text-muted small">-</span>'}
+                                        ${isPending ? `
+                                            <button class="btn-table-action btn-action-danger" onclick="cancelBooking(${b.id_booking})" title="Batalkan Reservasi">
+                                                <span>Batal</span>
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </td>
                             </tr>
                         `;
                     }).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Anda belum memiliki jadwal reservasi grooming.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">Anda belum memiliki jadwal reservasi grooming.</td></tr>';
                 }
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat jadwal booking.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-danger">Gagal memuat jadwal booking.</td></tr>';
             }
+        }
+
+        function openCustomerDetailModal(b) {
+            document.getElementById('detailModalTicketTitle').innerText = `Tiket Reservasi Grooming #BKG-${b.id_booking}`;
+            document.getElementById('detailOwnerName').innerText = b.customer_name || '-';
+            document.getElementById('detailOwnerPhone').innerText = b.customer_phone || '-';
+            document.getElementById('detailPetName').innerText = b.nama_hewan || 'Anabul Kesayangan';
+            
+            const speciesEl = document.getElementById('detailPetSpeciesBadge');
+            speciesEl.innerText = b.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing';
+            speciesEl.className = b.jenis_hewan === 'kucing' ? 'badge-pet-cat text-capitalize' : 'badge-pet-dog text-capitalize';
+
+            document.getElementById('detailUserNotes').innerText = b.catatan || 'Tidak ada catatan khusus yang Anda sertakan.';
+            document.getElementById('detailPaketName').innerText = b.nama_paket || '-';
+            document.getElementById('detailPaketDesc').innerText = b.keterangan_grooming || '';
+            document.getElementById('detailScheduleDate').innerText = formatTanggalIndo(b.tgl_booking);
+            document.getElementById('detailScheduleTime').innerText = `${b.waktu} WIB`;
+            document.getElementById('detailPrice').innerText = formatRupiah(b.harga);
+
+            let statusBadge = '';
+            if (b.status === 'dikonfirmasi') {
+                statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi / Siap</span>';
+            } else if (b.status === 'selesai') {
+                statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai Perawatan</span>';
+            } else if (b.status === 'dibatalkan') {
+                statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Dibatalkan</span>';
+            } else {
+                statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+            }
+            document.getElementById('detailStatusBadge').innerHTML = statusBadge;
+
+            const adminNotesEl = document.getElementById('detailAdminInstructions');
+            if (b.catatan_admin && b.catatan_admin.trim() !== '') {
+                adminNotesEl.innerText = b.catatan_admin;
+                adminNotesEl.className = 'p-3 bg-white rounded-1 border border-1 border-dark small fw-bold text-dark lh-base';
+            } else {
+                adminNotesEl.innerText = 'Belum ada instruksi atau catatan khusus dari tim salon MiaWoof.';
+                adminNotesEl.className = 'p-3 bg-white rounded-1 border border-1 border-dark small text-muted fst-italic';
+            }
+
+            const cancelBlock = document.getElementById('cancelActionContainer');
+            const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
+            if (isPending) {
+                cancelBlock.style.display = 'flex';
+                document.getElementById('btnCancelFromModal').onclick = () => {
+                    detailModal.hide();
+                    cancelBooking(b.id_booking);
+                };
+            } else {
+                cancelBlock.style.display = 'none';
+            }
+
+            detailModal.show();
         }
 
         async function cancelBooking(id_booking) {
