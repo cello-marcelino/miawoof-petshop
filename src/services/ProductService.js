@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const ProductRepo = require('../repositories/ProductRepo');
 const Sanitizer = require('../utils/Sanitizer');
 
@@ -14,10 +16,14 @@ class ProductService {
         return product;
     }
 
-    static async createProduct({ nama, kategori, stock, harga, tgl_expired }, uploadedFilename = null) {
-        const cleanNama = Sanitizer.cleanInput(nama);
-        const numStock = parseInt(stock, 10);
-        const numHarga = parseInt(harga, 10);
+    static async createProduct(fields, uploadedFilename = null) {
+        const rawNama = fields.nama || fields.nama_produk || '';
+        const cleanNama = Sanitizer.cleanInput(rawNama);
+        const rawStock = fields.stock !== undefined ? fields.stock : fields.stok;
+        const numStock = parseInt(rawStock, 10);
+        const numHarga = parseInt(fields.harga, 10);
+        const kategori = (fields.kategori || 'kucing').toLowerCase();
+        const exp = fields.tgl_expired || fields.exp || null;
 
         if (!cleanNama || isNaN(numStock) || isNaN(numHarga)) {
             throw new Error('Nama produk, stok, dan harga wajib diisi secara valid.');
@@ -31,25 +37,58 @@ class ProductService {
             throw new Error('Kategori hewan harus berupa "kucing" atau "anjing".');
         }
 
+        // Determine image URL
+        let finalGambar = '/images/products/cat_food1.jpg';
+        if (uploadedFilename) {
+            finalGambar = `/uploads/${uploadedFilename}`;
+        } else if (fields.existing_gambar_url || fields.gambar) {
+            finalGambar = fields.existing_gambar_url || fields.gambar;
+        }
+
         return await ProductRepo.createProduct({
             nama: cleanNama,
             kategori,
             stock: numStock,
             harga: numHarga,
-            gambar: uploadedFilename || 'dummy_product.jpg',
-            tgl_expired: tgl_expired || null
+            gambar: finalGambar,
+            tgl_expired: exp
         });
     }
 
-    static async updateProduct(id, { nama, kategori, stock, harga, tgl_expired }, uploadedFilename = null) {
-        await this.getProductById(id); // Ensure product exists
+    static async updateProduct(id, fields, uploadedFilename = null) {
+        const existing = await this.getProductById(id); // Ensure product exists
 
-        const cleanNama = Sanitizer.cleanInput(nama);
-        const numStock = parseInt(stock, 10);
-        const numHarga = parseInt(harga, 10);
+        const rawNama = fields.nama || fields.nama_produk || existing.nama;
+        const cleanNama = Sanitizer.cleanInput(rawNama);
+        const rawStock = fields.stock !== undefined ? fields.stock : (fields.stok !== undefined ? fields.stok : existing.stock);
+        const numStock = parseInt(rawStock, 10);
+        const numHarga = fields.harga !== undefined ? parseInt(fields.harga, 10) : existing.harga;
+        const kategori = (fields.kategori || existing.kategori || 'kucing').toLowerCase();
+        const exp = fields.tgl_expired || fields.exp || existing.tgl_expired;
 
         if (!cleanNama || isNaN(numStock) || isNaN(numHarga)) {
             throw new Error('Nama produk, stok, dan harga wajib diisi secara valid.');
+        }
+
+        let newGambar = null;
+        if (uploadedFilename) {
+            newGambar = `/uploads/${uploadedFilename}`;
+        } else if (fields.existing_gambar_url) {
+            newGambar = fields.existing_gambar_url;
+        } else if (fields.gambar) {
+            newGambar = fields.gambar;
+        }
+
+        // Optional delete old image if requested and new image is provided
+        const deleteOld = fields.delete_old_image === true || fields.delete_old_image === 'true';
+        if (deleteOld && newGambar && existing.gambar && existing.gambar !== newGambar) {
+            if (existing.gambar.startsWith('/uploads/')) {
+                const oldFilename = path.basename(existing.gambar);
+                const oldPath = path.join(__dirname, '../../public/uploads', oldFilename);
+                if (fs.existsSync(oldPath)) {
+                    try { fs.unlinkSync(oldPath); } catch (e) {}
+                }
+            }
         }
 
         return await ProductRepo.updateProduct(id, {
@@ -57,8 +96,8 @@ class ProductService {
             kategori,
             stock: numStock,
             harga: numHarga,
-            gambar: uploadedFilename, // null if no new file uploaded
-            tgl_expired: tgl_expired || null
+            gambar: newGambar,
+            tgl_expired: exp
         });
     }
 

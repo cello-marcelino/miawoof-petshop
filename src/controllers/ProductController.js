@@ -36,7 +36,26 @@ class ProductController {
         }
 
         try {
-            const { fields, filename } = await UploadHandler.parseForm(req);
+            const contentType = req.headers['content-type'] || '';
+            let fields = {};
+            let filename = null;
+
+            if (contentType.includes('multipart/form-data')) {
+                const parsed = await UploadHandler.parseForm(req);
+                fields = parsed.fields;
+                filename = parsed.filename;
+            } else {
+                fields = await new Promise((resolve, reject) => {
+                    let body = '';
+                    req.on('data', chunk => { body += chunk.toString(); });
+                    req.on('end', () => {
+                        try { resolve(body ? JSON.parse(body) : {}); }
+                        catch (e) { resolve({}); }
+                    });
+                    req.on('error', reject);
+                });
+            }
+
             const newProduct = await ProductService.createProduct(fields, filename);
 
             res.writeHead(201, { 'Content-Type': 'application/json' });
@@ -55,7 +74,26 @@ class ProductController {
         }
 
         try {
-            const { fields, filename } = await UploadHandler.parseForm(req);
+            const contentType = req.headers['content-type'] || '';
+            let fields = {};
+            let filename = null;
+
+            if (contentType.includes('multipart/form-data')) {
+                const parsed = await UploadHandler.parseForm(req);
+                fields = parsed.fields;
+                filename = parsed.filename;
+            } else {
+                fields = await new Promise((resolve, reject) => {
+                    let body = '';
+                    req.on('data', chunk => { body += chunk.toString(); });
+                    req.on('end', () => {
+                        try { resolve(body ? JSON.parse(body) : {}); }
+                        catch (e) { resolve({}); }
+                    });
+                    req.on('error', reject);
+                });
+            }
+
             await ProductService.updateProduct(id, fields, filename);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });

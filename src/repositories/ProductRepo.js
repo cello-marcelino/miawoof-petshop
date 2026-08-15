@@ -3,7 +3,14 @@ const db = require('../config/database');
 class ProductRepo {
     static async getAllProducts(kategori = null, search = null) {
         return new Promise((resolve, reject) => {
-            let sql = 'SELECT * FROM produk WHERE 1=1';
+            let sql = `
+                SELECT id_produk, nama, nama as nama_produk,
+                       kategori, stock, stock as stok,
+                       harga, gambar, tgl_dibuat,
+                       tgl_expired, tgl_expired as exp
+                FROM produk
+                WHERE 1=1
+            `;
             const params = [];
 
             if (kategori && (kategori === 'kucing' || kategori === 'anjing')) {
@@ -12,22 +19,31 @@ class ProductRepo {
             }
 
             if (search && search.trim() !== '') {
-                sql += ' AND nama LIKE ?';
-                params.push(`%${search.trim()}%`);
+                sql += ' AND (nama LIKE ? OR kategori LIKE ?)';
+                const term = `%${search.trim()}%`;
+                params.push(term, term);
             }
 
             sql += ' ORDER BY id_produk DESC';
 
             db.all(sql, params, (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve(rows || []);
             });
         });
     }
 
     static async findById(id) {
         return new Promise((resolve, reject) => {
-            db.get('SELECT * FROM produk WHERE id_produk = ?', [id], (err, row) => {
+            const sql = `
+                SELECT id_produk, nama, nama as nama_produk,
+                       kategori, stock, stock as stok,
+                       harga, gambar, tgl_dibuat,
+                       tgl_expired, tgl_expired as exp
+                FROM produk
+                WHERE id_produk = ?
+            `;
+            db.get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 else resolve(row);
             });
