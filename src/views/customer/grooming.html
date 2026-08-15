@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paket Grooming & Spa - MiaWoof Petshop</title>
+    <title>Salon & Grooming - MiaWoof Petshop</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -14,56 +14,41 @@
 
     <main class="customer-main pt-4">
         <div class="container">
-            <!-- Header Title -->
-            <div class="text-center mb-5">
-                <span class="badge-accent-yellow mb-3">Salon & Perawatan Higienis</span>
-                <h2 class="fw-bold text-dark">Layanan Grooming Profesional MiaWoof</h2>
-                <p class="text-muted mx-auto" style="max-width: 650px;">
-                    Perawatan higienis menyeluruh dengan shampo anti kutu & jamur, air hangat bersuhu stabil, serta ditangani oleh perawat hewan berpengalaman.
-                </p>
+            <!-- Header Section -->
+            <div class="card-modern p-4 mb-4" style="background-color: var(--primary-light);">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-8">
+                        <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-1 fw-bold mb-2 d-inline-block" style="box-shadow: 2px 2px 0px #000000; font-size: 0.75rem;">LAYANAN SPA & SALON HEWAN</span>
+                        <h3 class="fw-bold text-dark mb-1">Paket Perawatan Salon & Grooming</h3>
+                        <p class="text-muted mb-0">Reservasi jadwal salon anabul Anda sekarang dengan perawatan steril medis, shampo anti-kutu berlisensi, dan terapis penyayang hewan.</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a href="/riwayat-booking" class="btn btn-outline-custom">
+                            <img src="/images/icons/calendar.svg" alt="Riwayat" width="16" height="16">
+                            <span>Lihat Jadwal Saya &rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Packages Filter -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="category-filter-btn active" data-filter="all" onclick="filterPaket('all', this)">
+                        <span>🐾 Semua Paket</span>
+                    </button>
+                    <button class="category-filter-btn" data-filter="kucing" onclick="filterPaket('kucing', this)">
+                        <span>🐱 Khusus Kucing</span>
+                    </button>
+                    <button class="category-filter-btn" data-filter="anjing" onclick="filterPaket('anjing', this)">
+                        <span>🐶 Khusus Anjing</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Packages Grid -->
             <div class="row g-4 mb-5" id="packagesGrid">
-                <div class="col-12 text-center py-5 text-muted">Memuat daftar paket grooming...</div>
-            </div>
-
-            <!-- Facility Highlights Banner -->
-            <div class="card-modern p-4 bg-white mt-5">
-                <div class="text-center mb-4">
-                    <span class="badge-accent-yellow mb-2">Standar Kualitas</span>
-                    <h5 class="fw-bold text-dark mb-0">Keunggulan Fasilitas & Pelayanan MiaWoof</h5>
-                </div>
-                <div class="row g-4 text-center">
-                    <div class="col-md-3 col-6">
-                        <div class="p-3 border border-2 border-dark rounded-2 bg-yellow mb-2 d-inline-block">
-                            <img src="/images/icons/paw.svg" alt="Air Hangat" width="24" height="24">
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Air Hangat Steril</h6>
-                        <p class="text-muted small mb-0">Mandi nyaman tanpa membuat anabul stres.</p>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="p-3 border border-2 border-dark rounded-2 bg-yellow mb-2 d-inline-block">
-                            <img src="/images/icons/scissors.svg" alt="Shampo" width="24" height="24">
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Shampo Organik</h6>
-                        <p class="text-muted small mb-0">Formula lembut untuk kulit & bulu sensitif.</p>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="p-3 border border-2 border-dark rounded-2 bg-yellow mb-2 d-inline-block">
-                            <img src="/images/icons/user.svg" alt="Groomer" width="24" height="24">
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Groomer Ahli</h6>
-                        <p class="text-muted small mb-0">Penanganan penuh kasih sayang dan terlatih.</p>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="p-3 border border-2 border-dark rounded-2 bg-yellow mb-2 d-inline-block">
-                            <img src="/images/icons/clock.svg" alt="Higienis" width="24" height="24">
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Ruangan Higienis</h6>
-                        <p class="text-muted small mb-0">Disinfeksi menyeluruh setiap selesai treatment.</p>
-                    </div>
-                </div>
+                <div class="col-12 text-center py-5 text-muted">Memuat paket perawatan grooming...</div>
             </div>
         </div>
     </main>
@@ -73,39 +58,63 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold">Reservasi Jadwal Grooming</h5>
+                    <h5 class="modal-title fw-bold">Formulir Reservasi Jadwal Grooming</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-4">
-                        <h6 class="fw-bold text-dark mb-1" id="modalPaketName">Paket Grooming</h6>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <h6 class="fw-bold text-dark mb-0" id="modalPaketName">Paket Grooming</h6>
+                            <span class="badge bg-white text-dark border border-1 border-dark px-2 py-0 fw-bold small" id="modalPaketDuration">⏱️ 60 Menit</span>
+                        </div>
                         <div class="text-blue fw-bold fs-5" id="modalPaketPrice">Rp 0</div>
                         <div class="text-muted small mt-1" id="modalPaketKet">Rincian perawatan...</div>
                     </div>
 
                     <form id="bookingForm">
                         <input type="hidden" id="modalPaketId">
+                        <input type="hidden" id="modalPaketSpecies">
 
-                        <div class="mb-3">
-                            <label class="form-label-custom">Pilih Tanggal Booking *</label>
-                            <input type="date" id="tgl_booking" class="form-control form-control-custom" required>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label-custom">Nama Hewan Peliharaan *</label>
+                                <input type="text" id="nama_hewan" class="form-control form-control-custom" placeholder="Contoh: Muezza / Bobby" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label-custom">Spesies *</label>
+                                <select id="jenis_hewan" class="form-select form-select-custom" required>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="anjing">Anjing</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Tanggal Booking *</label>
+                                <input type="date" id="tgl_booking" class="form-control form-control-custom" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Pilih Slot Jam *</label>
+                                <select id="waktu" class="form-select form-select-custom" required>
+                                    <option value="">-- Pilih Jam --</option>
+                                    <option value="09:00">09:00 WIB (Pagi)</option>
+                                    <option value="10:30">10:30 WIB (Pagi)</option>
+                                    <option value="13:00">13:00 WIB (Siang)</option>
+                                    <option value="14:30">14:30 WIB (Siang)</option>
+                                    <option value="16:00">16:00 WIB (Sore)</option>
+                                    <option value="17:30">17:30 WIB (Sore)</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label-custom">Pilih Slot Waktu Kedatangan *</label>
-                            <select id="waktu" class="form-select form-select-custom" required>
-                                <option value="">-- Pilih Jam --</option>
-                                <option value="09:00">09:00 WIB (Pagi)</option>
-                                <option value="10:30">10:30 WIB (Pagi)</option>
-                                <option value="13:00">13:00 WIB (Siang)</option>
-                                <option value="14:30">14:30 WIB (Siang)</option>
-                                <option value="16:00">16:00 WIB (Sore)</option>
-                                <option value="17:30">17:30 WIB (Sore)</option>
-                            </select>
+                            <label class="form-label-custom">Catatan Tambahan untuk Groomer (Opsional)</label>
+                            <input type="text" id="catatanBooking" class="form-control form-control-custom" placeholder="Contoh: Bulu leher agak gimbal / ada alergi sampo wangi">
                         </div>
 
                         <button type="submit" id="submitBookingBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
-                            <span>Konfirmasi Reservasi</span>
+                            <span>Konfirmasi & Buat Jadwal Reservasi</span>
                         </button>
                     </form>
                 </div>
@@ -123,6 +132,7 @@
     <script>
         let currentUser = null;
         let bookingModal = null;
+        let allPakets = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
             bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
@@ -157,14 +167,24 @@
                 btn.innerHTML = '<span>Memproses Reservasi...</span>';
 
                 const id_paket = document.getElementById('modalPaketId').value;
+                const nama_hewan = document.getElementById('nama_hewan').value.trim();
+                const jenis_hewan = document.getElementById('jenis_hewan').value;
                 const tgl_booking = document.getElementById('tgl_booking').value;
                 const waktu = document.getElementById('waktu').value;
+                const catatan = document.getElementById('catatanBooking').value.trim();
 
                 try {
                     const res = await fetch('/api/bookings', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id_paket, tgl_booking, waktu })
+                        body: JSON.stringify({ 
+                            id_paket, 
+                            nama_hewan, 
+                            jenis_hewan, 
+                            tgl_booking, 
+                            waktu, 
+                            catatan 
+                        })
                     });
                     const data = await res.json();
 
@@ -172,17 +192,17 @@
                         bookingModal.hide();
                         showToast('Reservasi grooming berhasil diajukan!', 'success');
                         setTimeout(() => {
-                            window.location.href = '/riwayat-booking?msg=Jadwal+reservasi+berhasil+dibuat!&status=success';
+                            window.location.href = '/riwayat-booking?msg=Jadwal+reservasi+berhasil+dibuat!+Admin+akan+segera+mengkonfirmasi&status=success';
                         }, 800);
                     } else {
                         showToast(data.message || 'Gagal mengajukan booking.', 'danger');
                         btn.disabled = false;
-                        btn.innerHTML = '<span>Konfirmasi Reservasi</span>';
+                        btn.innerHTML = '<span>Konfirmasi & Buat Jadwal Reservasi</span>';
                     }
                 } catch (err) {
                     showToast('Terjadi kesalahan jaringan.', 'danger');
                     btn.disabled = false;
-                    btn.innerHTML = '<span>Konfirmasi Reservasi</span>';
+                    btn.innerHTML = '<span>Konfirmasi & Buat Jadwal Reservasi</span>';
                 }
             });
         });
@@ -194,26 +214,8 @@
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
-                    grid.innerHTML = data.data.map(p => `
-                        <div class="col-lg-6">
-                            <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
-                                            ${p.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'}
-                                        </span>
-                                        <div class="fw-bold text-blue fs-4">${formatRupiah(p.harga)}</div>
-                                    </div>
-                                    <h4 class="fw-bold text-dark mb-2">${p.nama_paket}</h4>
-                                    <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
-                                </div>
-                                <button class="btn btn-primary-custom w-100 justify-content-center py-2" onclick='openBookingModal(${JSON.stringify(p)})'>
-                                    <img src="/images/icons/calendar.svg" alt="Reservasi" width="14" height="14">
-                                    <span>Reservasi Jadwal Ini</span>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
+                    allPakets = data.data;
+                    renderPaketsGrid(allPakets);
                 } else {
                     grid.innerHTML = '<div class="col-12 text-center text-muted">Belum ada paket grooming yang tersedia.</div>';
                 }
@@ -222,11 +224,62 @@
             }
         }
 
+        function renderPaketsGrid(pakets) {
+            const grid = document.getElementById('packagesGrid');
+            if (pakets.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-muted py-5">Tidak ada paket yang sesuai kategori.</div>';
+                return;
+            }
+
+            grid.innerHTML = pakets.map(p => `
+                <div class="col-lg-6">
+                    <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
+                                    ${p.jenis_hewan === 'kucing' ? 'Khusus Kucing' : 'Khusus Anjing'}
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 fw-bold small">
+                                        ⏱️ ${p.durasi_menit || 60} Menit
+                                    </span>
+                                    <div class="fw-bold text-blue fs-4">${formatRupiah(p.harga)}</div>
+                                </div>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-2">${p.nama_paket}</h4>
+                            <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
+                        </div>
+                        <button class="btn btn-primary-custom w-100 justify-content-center py-2" onclick='openBookingModal(${JSON.stringify(p)})'>
+                            <img src="/images/icons/calendar.svg" alt="Reservasi" width="14" height="14">
+                            <span>Reservasi Jadwal Paket Ini</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPaket(category, btnElement) {
+            document.querySelectorAll('.category-filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            if (category === 'all') {
+                renderPaketsGrid(allPakets);
+            } else {
+                const filtered = allPakets.filter(p => p.jenis_hewan === category);
+                renderPaketsGrid(filtered);
+            }
+        }
+
         function openBookingModal(paket) {
             document.getElementById('modalPaketId').value = paket.id_paket;
-            document.getElementById('modalPaketName').innerText = `${paket.nama_paket} (${paket.jenis_hewan.toUpperCase()})`;
+            document.getElementById('modalPaketSpecies').value = paket.jenis_hewan;
+            document.getElementById('modalPaketName').innerText = `${paket.nama_paket}`;
             document.getElementById('modalPaketPrice').innerText = formatRupiah(paket.harga);
-            document.getElementById('modalPaketKet').innerText = `Rincian: ${paket.keterangan_grooming}`;
+            document.getElementById('modalPaketDuration').innerText = `⏱️ ${paket.durasi_menit || 60} Menit`;
+            document.getElementById('modalPaketKet').innerText = `Perawatan: ${paket.keterangan_grooming}`;
+            document.getElementById('jenis_hewan').value = paket.jenis_hewan;
+            document.getElementById('nama_hewan').value = '';
+            document.getElementById('catatanBooking').value = '';
             bookingModal.show();
         }
     </script>

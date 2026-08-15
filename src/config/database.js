@@ -159,6 +159,9 @@ function runMigrations() {
     db.run("UPDATE slides SET gambar = '/images/banners/banner3.jpg' WHERE gambar LIKE '%slide3.png'");
     db.run("UPDATE slides SET gambar = '/images/banners/petAds1.jpg' WHERE gambar LIKE '%slide4.png'");
 
+    // Self-healing migration for booking status normalization
+    db.run("UPDATE booking SET status = 'menunggu_konfirmasi' WHERE status = 'menunggu konfirmasi'");
+
     // Seed default slides if table is empty
     db.get('SELECT COUNT(*) as count FROM slides', [], (err, row) => {
         if (!err && row && row.count === 0) {

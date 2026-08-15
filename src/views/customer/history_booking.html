@@ -14,14 +14,14 @@
 
     <main class="customer-main pt-4">
         <div class="container">
-            <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
                 <div>
                     <h3 class="fw-bold text-dark mb-1">Jadwal Booking Grooming Saya</h3>
-                    <p class="text-muted small mb-0">Pantau status konfirmasi dan jadwal kedatangan salon anabul Anda.</p>
+                    <p class="text-muted small mb-0">Pantau status konfirmasi antrean, jam kedatangan salon, dan instruksi dari groomer MiaWoof.</p>
                 </div>
                 <a href="/grooming" class="btn btn-primary-custom btn-sm">
                     <img src="/images/icons/plus.svg" alt="Booking" width="14" height="14">
-                    <span>Booking Jadwal Baru</span>
+                    <span>Reservasi Jadwal Baru</span>
                 </a>
             </div>
 
@@ -32,12 +32,12 @@
                         <thead>
                             <tr>
                                 <th>No. Booking</th>
+                                <th>Hewan Peliharaan</th>
                                 <th>Paket Perawatan</th>
-                                <th>Jenis Hewan</th>
-                                <th>Tanggal Booking</th>
-                                <th>Jam Kedatangan</th>
-                                <th>Tarif</th>
+                                <th>Jadwal Kedatangan</th>
+                                <th>Tarif Biaya</th>
                                 <th>Status Konfirmasi</th>
+                                <th>Keterangan Admin / Groomer</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -81,42 +81,55 @@
 
                 if (result.success && result.data.length > 0) {
                     tbody.innerHTML = result.data.map(b => {
-                        let badgeClass = 'badge-status-pending';
-                        if (b.status === 'dikonfirmasi' || b.status === 'selesai') badgeClass = 'badge-status-success';
-                        else if (b.status === 'dibatalkan') badgeClass = 'badge-status-danger';
+                        let statusBadge = '';
+                        if (b.status === 'dikonfirmasi') {
+                            statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi / Siap</span>';
+                        } else if (b.status === 'selesai') {
+                            statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai Perawatan</span>';
+                        } else if (b.status === 'dibatalkan') {
+                            statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Dibatalkan</span>';
+                        } else {
+                            statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+                        }
+
+                        const speciesBadge = b.jenis_hewan === 'kucing' 
+                            ? '<span class="badge-pet-cat text-capitalize" style="font-size: 0.7rem;">Kucing</span>'
+                            : '<span class="badge-pet-dog text-capitalize" style="font-size: 0.7rem;">Anjing</span>';
+
+                        const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
 
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#BKG-${b.id_booking}</td>
                                 <td>
+                                    <div class="fw-bold text-dark">🐾 ${b.nama_hewan || 'Anabul'}</div>
+                                    <div class="mt-1">${speciesBadge}</div>
+                                </td>
+                                <td>
                                     <div class="fw-bold text-dark">${b.nama_paket}</div>
-                                    <div class="text-muted small" style="max-width: 250px;">${b.keterangan_grooming}</div>
+                                    <div class="text-muted small" style="max-width: 220px;">${b.keterangan_grooming || '-'}</div>
                                 </td>
                                 <td>
-                                    <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
-                                        ${b.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'}
-                                    </span>
+                                    <div class="fw-bold text-dark">${formatTanggalIndo(b.tgl_booking)}</div>
+                                    <div class="fw-bold text-blue small">Pukul ${b.waktu} WIB</div>
                                 </td>
-                                <td class="fw-semibold text-dark">${formatTanggalIndo(b.tgl_booking)}</td>
-                                <td class="fw-bold text-blue">${b.waktu} WIB</td>
                                 <td class="fw-bold text-dark">${formatRupiah(b.harga)}</td>
-                                <td>
-                                    <span class="badge-status ${badgeClass} text-capitalize">
-                                        ● ${b.status}
-                                    </span>
+                                <td>${statusBadge}</td>
+                                <td style="max-width: 200px;">
+                                    ${b.catatan_admin ? `<div class="p-2 bg-yellow-light border border-1 border-dark rounded-1 small fw-bold text-dark">📢 Groomer: ${b.catatan_admin}</div>` : '<span class="text-muted small">Belum ada catatan</span>'}
                                 </td>
                                 <td>
-                                    ${b.status === 'menunggu konfirmasi' ? `
-                                        <button class="btn btn-danger-custom btn-sm" onclick="cancelBooking(${b.id_booking})">
+                                    ${isPending ? `
+                                        <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="cancelBooking(${b.id_booking})">
                                             Batalkan
                                         </button>
-                                    ` : '-'}
+                                    ` : '<span class="text-muted small">-</span>'}
                                 </td>
                             </tr>
                         `;
                     }).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Anda belum memiliki jadwal booking grooming.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Anda belum memiliki jadwal reservasi grooming.</td></tr>';
                 }
             } catch (err) {
                 tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat jadwal booking.</td></tr>';

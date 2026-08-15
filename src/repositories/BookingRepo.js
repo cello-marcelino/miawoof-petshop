@@ -6,7 +6,7 @@ class BookingRepo {
         return new Promise((resolve, reject) => {
             db.all('SELECT * FROM paket_grooming ORDER BY id_paket ASC', [], (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve(rows || []);
             });
         });
     }
@@ -61,19 +61,33 @@ class BookingRepo {
     static async getAllBookings(filters = {}) {
         return new Promise((resolve, reject) => {
             let sql = `
-                SELECT b.id_booking, b.nama_hewan, b.jenis_hewan, b.tgl_booking, b.waktu, b.catatan, b.catatan_admin, b.status, b.created_at,
-                       p.id_paket, p.nama_paket, p.harga, p.durasi_menit, p.keterangan_grooming,
-                       u.id as id_customer, u.full_name as customer_name, u.no_hp as customer_phone, u.email as customer_email
+                SELECT b.id_booking, 
+                       COALESCE(b.nama_hewan, 'Anabul') as nama_hewan, 
+                       COALESCE(b.jenis_hewan, p.jenis_hewan, 'kucing') as jenis_hewan, 
+                       b.tgl_booking, b.waktu, b.catatan, b.catatan_admin, b.status, b.created_at,
+                       p.id_paket, 
+                       COALESCE(p.nama_paket, 'Paket Grooming') as nama_paket, 
+                       COALESCE(p.harga, 0) as harga, 
+                       COALESCE(p.durasi_menit, 60) as durasi_menit, 
+                       COALESCE(p.keterangan_grooming, '') as keterangan_grooming,
+                       u.id as id_customer, 
+                       COALESCE(u.full_name, 'Pelanggan') as customer_name, 
+                       COALESCE(u.no_hp, '-') as customer_phone, 
+                       COALESCE(u.email, '-') as customer_email
                 FROM booking b
-                JOIN paket_grooming p ON b.id_paket = p.id_paket
-                JOIN users u ON b.id_customer = u.id
+                LEFT JOIN paket_grooming p ON b.id_paket = p.id_paket
+                LEFT JOIN users u ON b.id_customer = u.id
                 WHERE 1=1
             `;
             const params = [];
 
             if (filters.status && filters.status !== 'all') {
-                sql += ' AND b.status = ?';
-                params.push(filters.status);
+                if (filters.status === 'menunggu_konfirmasi') {
+                    sql += " AND (b.status = 'menunggu_konfirmasi' OR b.status = 'menunggu konfirmasi')";
+                } else {
+                    sql += ' AND b.status = ?';
+                    params.push(filters.status);
+                }
             }
             if (filters.search) {
                 sql += ' AND (u.full_name LIKE ? OR p.nama_paket LIKE ? OR b.nama_hewan LIKE ?)';
@@ -85,7 +99,7 @@ class BookingRepo {
 
             db.all(sql, params, (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve(rows || []);
             });
         });
     }
@@ -93,16 +107,23 @@ class BookingRepo {
     static async getBookingsByCustomer(id_customer) {
         return new Promise((resolve, reject) => {
             const sql = `
-                SELECT b.id_booking, b.nama_hewan, b.jenis_hewan, b.tgl_booking, b.waktu, b.catatan, b.catatan_admin, b.status, b.created_at,
-                       p.id_paket, p.nama_paket, p.harga, p.durasi_menit, p.keterangan_grooming
+                SELECT b.id_booking, 
+                       COALESCE(b.nama_hewan, 'Anabul') as nama_hewan, 
+                       COALESCE(b.jenis_hewan, p.jenis_hewan, 'kucing') as jenis_hewan, 
+                       b.tgl_booking, b.waktu, b.catatan, b.catatan_admin, b.status, b.created_at,
+                       p.id_paket, 
+                       COALESCE(p.nama_paket, 'Paket Grooming') as nama_paket, 
+                       COALESCE(p.harga, 0) as harga, 
+                       COALESCE(p.durasi_menit, 60) as durasi_menit, 
+                       COALESCE(p.keterangan_grooming, '') as keterangan_grooming
                 FROM booking b
-                JOIN paket_grooming p ON b.id_paket = p.id_paket
+                LEFT JOIN paket_grooming p ON b.id_paket = p.id_paket
                 WHERE b.id_customer = ?
                 ORDER BY b.id_booking DESC
             `;
             db.all(sql, [id_customer], (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve(rows || []);
             });
         });
     }
@@ -112,8 +133,8 @@ class BookingRepo {
             const sql = `
                 SELECT b.*, p.nama_paket, p.harga, p.durasi_menit, u.full_name as customer_name, u.no_hp as customer_phone, u.email as customer_email
                 FROM booking b
-                JOIN paket_grooming p ON b.id_paket = p.id_paket
-                JOIN users u ON b.id_customer = u.id
+                LEFT JOIN paket_grooming p ON b.id_paket = p.id_paket
+                LEFT JOIN users u ON b.id_customer = u.id
                 WHERE b.id_booking = ?
             `;
             db.get(sql, [id_booking], (err, row) => {
@@ -163,12 +184,21 @@ class BookingRepo {
         });
     }
 
+    static async cancelBookingByCustomer(id_booking, id_customer) {
+        return new Promise((resolve, reject) => {
+            db.run('UPDATE booking SET status = "dibatalkan" WHERE id_booking = ? AND id_customer = ?', [id_booking, id_customer], function (err) {
+                if (err) reject(err);
+                else resolve({ changes: this.changes });
+            });
+        });
+    }
+
     static async countBookings() {
         return new Promise((resolve, reject) => {
             db.get(`
                 SELECT 
                     COUNT(*) as total_booking,
-                    SUM(CASE WHEN status = 'menunggu_konfirmasi' THEN 1 ELSE 0 END) as pending_booking,
+                    SUM(CASE WHEN status = 'menunggu_konfirmasi' OR status = 'menunggu konfirmasi' THEN 1 ELSE 0 END) as pending_booking,
                     SUM(CASE WHEN status = 'dikonfirmasi' THEN 1 ELSE 0 END) as confirmed_booking,
                     SUM(CASE WHEN status = 'selesai' THEN 1 ELSE 0 END) as finished_booking
                 FROM booking
