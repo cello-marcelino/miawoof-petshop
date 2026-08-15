@@ -127,6 +127,7 @@ a:hover {
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  transition: transform 0.25s ease-in-out;
 }
 
 .admin-main-content {
@@ -136,16 +137,17 @@ a:hover {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-body);
+  transition: margin-left 0.25s ease-in-out;
 }
 
 .admin-topbar {
-  height: var(--topbar-height);
+  min-height: var(--topbar-height);
   background-color: var(--primary);
   border-bottom: var(--border-brutal);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0.75rem 2rem;
   position: sticky;
   top: 0;
   z-index: 990;
@@ -155,6 +157,40 @@ a:hover {
 .admin-content-body {
   padding: 2rem;
   flex: 1;
+}
+
+.admin-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+}
+
+@media (max-width: 991.98px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-brutal-xl);
+  }
+  .admin-sidebar.show {
+    transform: translateX(0);
+  }
+  .admin-main-content {
+    margin-left: 0;
+  }
+  .admin-topbar {
+    padding: 0.75rem 1rem;
+  }
+  .admin-content-body {
+    padding: 1rem;
+  }
+  .admin-sidebar-backdrop.show {
+    display: block;
+  }
 }
 
 /* Customer Layout */

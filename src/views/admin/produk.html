@@ -15,36 +15,44 @@
 
         <main class="admin-main-content">
             <header class="admin-topbar">
-                <div>
-                    <h5 class="fw-bold text-dark mb-0">Manajemen Produk & Stok</h5>
-                    <small class="text-muted">Tambah, perbarui, dan kontrol inventori produk petshop.</small>
-                </div>
-                <div>
-                    <button class="btn btn-primary-custom btn-sm" onclick="openAddModal()">
-                        <img src="/images/icons/plus-white.svg" alt="Tambah" width="14" height="14">
-                        <span>Tambah Produk Baru</span>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-yellow-custom btn-sm d-lg-none p-2 border-2 border-dark" onclick="toggleAdminSidebar()" title="Buka Menu">
+                        <img src="/images/icons/paw.svg" alt="Menu" width="16" height="16">
                     </button>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Manajemen Produk & Stok</h5>
+                        <small class="text-light opacity-90">Tambah, perbarui, dan kontrol inventori katalog petshop.</small>
+                    </div>
                 </div>
+                <button class="btn btn-yellow-custom btn-sm" onclick="openAddModal()">
+                    <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
+                    <span>Tambah Produk Baru</span>
+                </button>
             </header>
 
             <div class="admin-content-body">
-                <!-- Search & Filters -->
+                <!-- Search & Filters Toolbar -->
                 <div class="card-modern p-3 mb-4">
                     <div class="row g-3 align-items-center">
-                        <div class="col-md-5">
+                        <div class="col-lg-5 col-md-6">
                             <div class="input-group">
-                                <input type="text" id="adminSearchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
-                                <button class="btn btn-primary-custom px-3" id="adminSearchBtn">
-                                    <img src="/images/icons/search-white.svg" alt="Cari" width="16" height="16">
-                                </button>
+                                <span class="input-group-text bg-white border-2 border-dark border-end-0">
+                                    <img src="/images/icons/search.svg" alt="Search" width="16" height="16">
+                                </span>
+                                <input type="text" id="adminSearchInput" class="form-control form-control-custom border-start-0" placeholder="Cari nama produk...">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6">
                             <select id="adminCatFilter" class="form-select form-select-custom">
                                 <option value="">Semua Kategori Hewan</option>
                                 <option value="kucing">Khusus Kucing</option>
                                 <option value="anjing">Khusus Anjing</option>
                             </select>
+                        </div>
+                        <div class="col-lg-3 text-lg-end">
+                            <span class="badge bg-light text-dark border border-1 border-dark px-3 py-2 fw-bold" id="totalProductCounter">
+                                Total: 0 Produk
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -59,8 +67,8 @@
                                     <th>Gambar</th>
                                     <th>Nama Produk</th>
                                     <th>Kategori</th>
-                                    <th>Stok</th>
-                                    <th>Harga</th>
+                                    <th>Stok Inventori</th>
+                                    <th>Harga Jual</th>
                                     <th>Kedaluwarsa</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -79,9 +87,9 @@
     <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-3 border-bottom border-2 border-dark">
+                <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
                     <h5 class="modal-title fw-bold" id="productModalTitle">Tambah Produk Baru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="productForm">
@@ -102,29 +110,32 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label-custom">Stok Awal *</label>
-                                <input type="number" id="prodStock" class="form-control form-control-custom" min="0" required>
+                                <input type="number" id="prodStok" class="form-control form-control-custom" min="0" required>
                             </div>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label-custom">Harga Jual (Rp) *</label>
-                                <input type="number" id="prodHarga" class="form-control form-control-custom" min="0" required>
+                                <label class="form-label-custom">Harga (Rp) *</label>
+                                <input type="number" id="prodHarga" class="form-control form-control-custom" min="1000" step="500" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label-custom">Tanggal Expired</label>
-                                <input type="date" id="prodExpired" class="form-control form-control-custom">
+                                <input type="date" id="prodExp" class="form-control form-control-custom">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label-custom">Unggah Foto Produk (JPG/PNG/WEBP)</label>
-                            <input type="file" id="prodImage" class="form-control form-control-custom" accept="image/jpeg,image/png,image/webp">
+                            <label class="form-label-custom">Deskripsi & Kandungan Produk</label>
+                            <textarea id="prodDesc" class="form-control form-control-custom" rows="3" placeholder="Rincian nutrisi, berat bersih, cara pakai..."></textarea>
                         </div>
 
-                        <button type="submit" id="saveProductBtn" class="btn btn-primary-custom w-100 justify-content-center py-2">
-                            <span>Simpan Produk</span>
-                        </button>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" id="saveProdBtn" class="btn btn-primary-custom px-4">
+                                <span>Simpan Produk</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -137,7 +148,7 @@
     <script src="/js/app.js"></script>
     <script>
         let productModal = null;
-        let isEditMode = false;
+        let allProducts = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
             productModal = new bootstrap.Modal(document.getElementById('productModal'));
@@ -161,50 +172,43 @@
             initSidebar('produk', user);
             loadAdminProducts();
 
-            // Filter Event
-            document.getElementById('adminCatFilter').addEventListener('change', (e) => {
-                loadAdminProducts(e.target.value, document.getElementById('adminSearchInput').value);
-            });
+            // Search and Filter Listeners
+            document.getElementById('adminSearchInput').addEventListener('input', applyFilters);
+            document.getElementById('adminCatFilter').addEventListener('change', applyFilters);
 
-            document.getElementById('adminSearchBtn').addEventListener('click', () => {
-                loadAdminProducts(document.getElementById('adminCatFilter').value, document.getElementById('adminSearchInput').value);
-            });
-
-            // Form Submit Event
+            // Form Submit Listener
             document.getElementById('productForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const btn = document.getElementById('saveProductBtn');
+                const btn = document.getElementById('saveProdBtn');
                 btn.disabled = true;
                 btn.innerHTML = '<span>Menyimpan...</span>';
 
-                const formData = new FormData();
-                formData.append('nama', document.getElementById('prodNama').value);
-                formData.append('kategori', document.getElementById('prodKategori').value);
-                formData.append('stock', document.getElementById('prodStock').value);
-                formData.append('harga', document.getElementById('prodHarga').value);
-                formData.append('tgl_expired', document.getElementById('prodExpired').value);
+                const id = document.getElementById('editProductId').value;
+                const nama_produk = document.getElementById('prodNama').value.trim();
+                const kategori = document.getElementById('prodKategori').value;
+                const stok = parseInt(document.getElementById('prodStok').value, 10);
+                const harga = parseInt(document.getElementById('prodHarga').value, 10);
+                const exp = document.getElementById('prodExp').value;
+                const deskripsi = document.getElementById('prodDesc').value.trim();
 
-                const fileInput = document.getElementById('prodImage');
-                if (fileInput.files.length > 0) {
-                    formData.append('gambar', fileInput.files[0]);
-                }
-
-                const editId = document.getElementById('editProductId').value;
-                const endpoint = isEditMode ? `/api/products/${editId}` : '/api/products';
+                const payload = { nama_produk, kategori, stok, harga, exp, deskripsi };
+                const url = id ? `/api/products/${id}` : '/api/products';
+                const method = id ? 'PUT' : 'POST';
 
                 try {
-                    const res = await fetch(endpoint, {
-                        method: 'POST',
-                        body: formData
+                    const res = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
-                    const result = await res.json();
+                    const data = await res.json();
 
-                    if (result.success) {
+                    if (data.success) {
+                        showToast(data.message, 'success');
                         productModal.hide();
-                        showToast(result.message, 'success');
                         loadAdminProducts();
                     } else {
-                        showToast(result.message || 'Gagal menyimpan produk.', 'danger');
+                        showToast(data.message || 'Gagal menyimpan produk.', 'danger');
                     }
                 } catch (err) {
                     showToast('Terjadi kesalahan jaringan.', 'danger');
@@ -215,75 +219,117 @@
             });
         });
 
-        async function loadAdminProducts(kategori = null, search = null) {
+        async function loadAdminProducts() {
             const tbody = document.getElementById('adminProductsTable');
-            try {
-                let url = '/api/products?';
-                if (kategori) url += `kategori=${kategori}&`;
-                if (search) url += `search=${encodeURIComponent(search)}&`;
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Memuat data produk...</td></tr>';
 
-                const res = await fetch(url);
+            try {
+                const res = await fetch('/api/products');
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
-                    tbody.innerHTML = data.data.map(p => `
-                        <tr>
-                            <td class="fw-bold">#${p.id_produk}</td>
-                            <td>
-                                <img src="/uploads/${p.gambar || 'default_product.png'}" alt="${p.nama}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: #fafafa; border: 1px solid var(--border-dark);" onerror="this.src='/images/placeholders/default_product.png'">
-                            </td>
-                            <td class="fw-bold text-dark">${p.nama}</td>
-                            <td>
-                                <span class="${p.kategori === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
-                                    ${p.kategori}
-                                </span>
-                            </td>
-                            <td class="fw-bold ${p.stock <= 5 ? 'text-danger' : 'text-dark'}">${p.stock}</td>
-                            <td class="fw-bold text-primary">${formatRupiah(p.harga)}</td>
-                            <td class="text-muted small">${p.tgl_expired || '-'}</td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-custom p-1 px-2" onclick='openEditModal(${JSON.stringify(p)})' title="Edit">
-                                        <img src="/images/icons/edit.svg" alt="Edit" width="14" height="14">
-                                    </button>
-                                    <button class="btn btn-sm btn-danger-custom p-1 px-2" onclick="deleteProduct(${p.id_produk})" title="Hapus">
-                                        <img src="/images/icons/trash.svg" alt="Hapus" width="14" height="14">
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `).join('');
+                    allProducts = data.data;
+                    document.getElementById('totalProductCounter').innerText = `Total: ${allProducts.length} Produk`;
+                    applyFilters();
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada data produk.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Belum ada produk terdaftar.</td></tr>';
                 }
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat data produk.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-danger">Gagal memuat produk.</td></tr>';
             }
         }
 
+        function applyFilters() {
+            const search = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+            const cat = document.getElementById('adminCatFilter').value;
+
+            let filtered = allProducts;
+            if (search) {
+                filtered = filtered.filter(p => p.nama_produk.toLowerCase().includes(search));
+            }
+            if (cat) {
+                filtered = filtered.filter(p => p.kategori === cat);
+            }
+
+            renderProductsTable(filtered);
+        }
+
+        function renderProductsTable(products) {
+            const tbody = document.getElementById('adminProductsTable');
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Tidak ada produk yang cocok dengan pencarian.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => {
+                let stockBadge = '';
+                if (p.stok <= 0) {
+                    stockBadge = '<span class="badge bg-danger text-white border border-1 border-dark px-2 py-1 fw-bold">Habis (0)</span>';
+                } else if (p.stok <= 5) {
+                    stockBadge = `<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">Sisa ${p.stok}</span>`;
+                } else {
+                    stockBadge = `<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">${p.stok} pcs</span>`;
+                }
+
+                return `
+                    <tr>
+                        <td class="fw-bold text-dark">#${p.id_produk}</td>
+                        <td>
+                            <img src="${p.gambar || '/images/placeholders/default_product.png'}" alt="${p.nama_produk}" style="width: 44px; height: 44px; object-fit: cover; border: 1.5px solid #000; border-radius: 4px;" onerror="this.src='/images/placeholders/default_product.png'">
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">${p.nama_produk}</div>
+                            <div class="text-muted small text-truncate" style="max-width: 220px;">${p.deskripsi || '-'}</div>
+                        </td>
+                        <td>
+                            <span class="${p.kategori === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize" style="font-size: 0.75rem;">
+                                ${p.kategori === 'kucing' ? 'Kucing' : 'Anjing'}
+                            </span>
+                        </td>
+                        <td>${stockBadge}</td>
+                        <td class="fw-bold text-dark">${formatRupiah(p.harga)}</td>
+                        <td class="small text-muted">${p.exp ? formatTanggalIndo(p.exp) : '-'}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-1">
+                                <button class="btn btn-outline-custom btn-sm py-1 px-2" onclick='openEditModal(${JSON.stringify(p)})'>
+                                    Edit
+                                </button>
+                                <button class="btn btn-danger-custom btn-sm py-1 px-2" onclick="deleteProduct(${p.id_produk})">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function openAddModal() {
-            isEditMode = false;
-            document.getElementById('productForm').reset();
-            document.getElementById('editProductId').value = '';
             document.getElementById('productModalTitle').innerText = 'Tambah Produk Baru';
+            document.getElementById('editProductId').value = '';
+            document.getElementById('prodNama').value = '';
+            document.getElementById('prodKategori').value = 'kucing';
+            document.getElementById('prodStok').value = '10';
+            document.getElementById('prodHarga').value = '';
+            document.getElementById('prodExp').value = '';
+            document.getElementById('prodDesc').value = '';
             productModal.show();
         }
 
         function openEditModal(p) {
-            isEditMode = true;
+            document.getElementById('productModalTitle').innerText = `Edit Produk: ${p.nama_produk}`;
             document.getElementById('editProductId').value = p.id_produk;
-            document.getElementById('prodNama').value = p.nama;
+            document.getElementById('prodNama').value = p.nama_produk;
             document.getElementById('prodKategori').value = p.kategori;
-            document.getElementById('prodStock').value = p.stock;
+            document.getElementById('prodStok').value = p.stok;
             document.getElementById('prodHarga').value = p.harga;
-            document.getElementById('prodExpired').value = p.tgl_expired || '';
-            document.getElementById('productModalTitle').innerText = `Edit Produk #${p.id_produk}`;
+            document.getElementById('prodExp').value = p.exp || '';
+            document.getElementById('prodDesc').value = p.deskripsi || '';
             productModal.show();
         }
 
         async function deleteProduct(id) {
-            if (!confirm('Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.')) return;
-
+            if (!confirm('Apakah Anda yakin ingin menghapus produk ini dari database?')) return;
             try {
                 const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
                 const data = await res.json();
@@ -293,7 +339,7 @@
                 } else {
                     showToast(data.message || 'Gagal menghapus produk.', 'danger');
                 }
-            } catch (err) {
+            } catch (e) {
                 showToast('Terjadi kesalahan jaringan.', 'danger');
             }
         }

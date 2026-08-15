@@ -15,11 +15,16 @@
 
         <main class="admin-main-content">
             <header class="admin-topbar">
-                <div>
-                    <h5 class="fw-bold text-white mb-0">Manajemen Slider & Banner Promosi</h5>
-                    <small class="text-light opacity-90">Atur banner promosi, diskon, dan pengumuman yang tampil di halaman beranda pelanggan.</small>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-yellow-custom btn-sm d-lg-none p-2 border-2 border-dark" onclick="toggleAdminSidebar()" title="Buka Menu">
+                        <img src="/images/icons/paw.svg" alt="Menu" width="16" height="16">
+                    </button>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Manajemen Slider & Banner Promosi</h5>
+                        <small class="text-light opacity-90">Atur banner promosi, diskon, dan pengumuman yang tampil di halaman beranda pelanggan.</small>
+                    </div>
                 </div>
-                <button class="btn btn-yellow-custom" onclick="openCreateSlideModal()">
+                <button class="btn btn-yellow-custom btn-sm" onclick="openCreateSlideModal()">
                     <img src="/images/icons/plus.svg" alt="Tambah" width="16" height="16">
                     <span>Tambah Slide Baru</span>
                 </button>

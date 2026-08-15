@@ -16,9 +16,14 @@
         <main class="admin-main-content">
             <!-- Topbar -->
             <header class="admin-topbar">
-                <div>
-                    <h5 class="fw-bold text-white mb-0">Dashboard Manajemen Petshop</h5>
-                    <small class="text-light opacity-90">Pantau pesanan belanja, reservasi grooming, dan penanganan layanan pelanggan.</small>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-yellow-custom btn-sm d-lg-none p-2 border-2 border-dark" onclick="toggleAdminSidebar()" title="Buka Menu">
+                        <img src="/images/icons/paw.svg" alt="Menu" width="16" height="16">
+                    </button>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Dashboard Manajemen Petshop</h5>
+                        <small class="text-light opacity-90">Pantau pesanan belanja, reservasi grooming, dan penanganan layanan pelanggan.</small>
+                    </div>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-2 fw-bold d-flex align-items-center gap-2" id="todayDateBadge">
