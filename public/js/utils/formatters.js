@@ -55,3 +55,10 @@ function showToast(message, type = 'success') {
         if (toast.parentElement) toast.remove();
     }, 4000);
 }
+
+// Format Product & Asset Image URL helper
+function formatProductImg(img) {
+    if (!img) return '/images/placeholders/default_product.png';
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/')) return img;
+    return '/uploads/' + img;
+}

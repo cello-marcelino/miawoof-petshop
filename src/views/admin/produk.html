@@ -351,7 +351,7 @@
                 const stok = p.stock !== undefined ? p.stock : (p.stok !== undefined ? p.stok : 0);
                 const harga = p.harga || 0;
                 const exp = p.tgl_expired || p.exp || null;
-                const gambar = p.gambar || '/images/placeholders/default_product.png';
+                const gambar = formatProductImg(p.gambar);
 
                 let stockBadge = '';
                 if (stok <= 0) {
@@ -420,7 +420,7 @@
             document.getElementById('formProdFileInput').value = '';
             document.getElementById('prodOldImageOptionBox').style.display = 'none';
 
-            const defaultImg = prefillImage || '/images/products/cat_food1.jpg';
+            const defaultImg = prefillImage ? formatProductImg(prefillImage) : '/images/placeholders/default_product.png';
             document.getElementById('formProdExistingGambar').value = defaultImg;
             document.getElementById('prodImgPreviewEl').src = defaultImg;
 
@@ -433,7 +433,7 @@
             const stok = p.stock !== undefined ? p.stock : (p.stok !== undefined ? p.stok : 0);
             const harga = p.harga || 0;
             const exp = p.tgl_expired || p.exp || '';
-            const gambar = p.gambar || '/images/placeholders/default_product.png';
+            const gambar = formatProductImg(p.gambar);
 
             document.getElementById('productModalTitle').innerText = `Edit Produk: ${nama}`;
             document.getElementById('editProductId').value = p.id_produk;

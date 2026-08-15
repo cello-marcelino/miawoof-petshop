@@ -28,9 +28,23 @@ class ProductRepo {
 
             db.all(sql, params, (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows || []);
+                else resolve((rows || []).map(r => ProductRepo.normalizeProductRow(r)));
             });
         });
+    }
+
+    static normalizeProductRow(row) {
+        if (!row) return null;
+        let gambar = row.gambar;
+        if (gambar && !gambar.startsWith('/') && !gambar.startsWith('http://') && !gambar.startsWith('https://')) {
+            gambar = '/uploads/' + gambar;
+        } else if (!gambar) {
+            gambar = '/images/placeholders/default_product.png';
+        }
+        return {
+            ...row,
+            gambar
+        };
     }
 
     static async findById(id) {
@@ -45,7 +59,7 @@ class ProductRepo {
             `;
             db.get(sql, [id], (err, row) => {
                 if (err) reject(err);
-                else resolve(row);
+                else resolve(row ? ProductRepo.normalizeProductRow(row) : null);
             });
         });
     }
