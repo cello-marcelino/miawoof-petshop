@@ -533,3 +533,90 @@
 .promo-slider-container .carousel-indicators button.active {
   background-color: var(--accent-yellow);
 }
+
+/* ================= 10. Catalog Search & Filter Panel ================= */
+.catalog-search-panel {
+  background-color: #ffffff;
+  border: var(--border-brutal);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal-lg);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.search-input-group {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0px #000000;
+  overflow: hidden;
+  transition: all 0.15s ease;
+}
+
+.search-input-group:focus-within {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #000000;
+  border-color: #000000;
+}
+
+.search-input-icon {
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-field {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background: transparent;
+}
+
+.search-input-field::placeholder {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.search-submit-btn {
+  border: none !important;
+  border-left: 2px solid #000000 !important;
+  background-color: var(--accent-yellow);
+  color: var(--text-main);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0 1.35rem;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.search-submit-btn:hover {
+  background-color: var(--accent-yellow-hover);
+}
+
+.search-clear-btn {
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  padding: 0 0.6rem;
+  cursor: pointer;
+  display: none;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.search-clear-btn:hover {
+  color: #000000;
+}
+

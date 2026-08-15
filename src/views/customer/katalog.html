@@ -14,30 +14,53 @@
 
     <main class="customer-main pt-4">
         <div class="container">
-            <!-- Header Title -->
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
-                <div>
-                    <span class="badge-accent-yellow mb-2">Belanja Online</span>
-                    <h2 class="fw-bold text-dark mb-1">Katalog Produk Peliharaan</h2>
-                    <p class="text-muted small mb-0">Temukan nutrisi sehat dan perlengkapan higienis terbaik untuk kucing & anjing.</p>
-                </div>
+            <!-- Neo-Brutalist Search & Filter Control Center -->
+            <div class="catalog-search-panel">
+                <div class="row align-items-center g-3 mb-3">
+                    <!-- Title Section -->
+                    <div class="col-lg-6">
+                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold mb-2 d-inline-block" style="font-size: 0.72rem; letter-spacing: 0.4px;">BELANJA PRODUK RESMI</span>
+                        <h3 class="fw-bold text-dark mb-1">Katalog Produk Pilihan</h3>
+                        <p class="text-muted small mb-0">Temukan nutrisi sehat, biskuit lezat, dan perlengkapan higienis terbaik untuk anabul kesayangan.</p>
+                    </div>
 
-                <!-- Search & Filters -->
-                <div class="d-flex flex-wrap align-items-center gap-2">
-                    <div class="input-group" style="max-width: 320px;">
-                        <input type="text" id="searchInput" class="form-control form-control-custom" placeholder="Cari nama produk...">
-                        <button class="btn btn-blue-custom px-3" id="searchBtn">
-                            <img src="/images/icons/search-white.svg" alt="Cari" width="16" height="16">
-                        </button>
+                    <!-- Search Input Bar -->
+                    <div class="col-lg-6">
+                        <div class="search-input-group">
+                            <div class="search-input-icon">
+                                <img src="/images/icons/search.svg" alt="Cari" width="18" height="18">
+                            </div>
+                            <input type="text" id="searchInput" class="search-input-field" placeholder="Cari makanan kucing, biskuit anjing, vitamin, shampo...">
+                            <button type="button" id="searchClearBtn" class="search-clear-btn" title="Hapus pencarian">&times;</button>
+                            <button type="button" id="searchBtn" class="search-submit-btn">
+                                <span>Cari</span>
+                                <span>&rarr;</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Filter Category Tabs -->
-            <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
-                <button class="btn btn-primary-custom btn-sm rounded-pill px-4 category-filter active" data-category="all">Semua Produk</button>
-                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="kucing">Khusus Kucing</button>
-                <button class="btn btn-outline-custom btn-sm rounded-pill px-4 category-filter" data-category="anjing">Khusus Anjing</button>
+                <!-- Bottom Filter Bar & Live Counters -->
+                <div class="pt-3 border-top border-1 border-dark d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-2 overflow-auto pb-1">
+                        <span class="small fw-bold text-dark me-1 d-none d-sm-inline">Kategori:</span>
+                        <button class="btn btn-yellow-custom btn-sm px-3 category-filter active" data-category="all">
+                            <span>🐾 Semua Produk</span>
+                        </button>
+                        <button class="btn btn-outline-custom btn-sm px-3 category-filter" data-category="kucing">
+                            <span>🐱 Khusus Kucing</span>
+                        </button>
+                        <button class="btn btn-outline-custom btn-sm px-3 category-filter" data-category="anjing">
+                            <span>🐶 Khusus Anjing</span>
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="productCountBadge" class="badge bg-white text-dark border border-2 border-dark px-3 py-2 fw-bold" style="box-shadow: 2px 2px 0px #000000; font-size: 0.78rem;">
+                            Memuat produk...
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <!-- Products Grid -->
@@ -121,9 +144,9 @@
             document.querySelectorAll('.category-filter').forEach(btn => {
                 if (btn.dataset.category === initialCategory) {
                     btn.classList.remove('btn-outline-custom');
-                    btn.classList.add('btn-primary-custom', 'active');
+                    btn.classList.add('btn-yellow-custom', 'active');
                 } else {
-                    btn.classList.remove('btn-primary-custom', 'active');
+                    btn.classList.remove('btn-yellow-custom', 'active');
                     btn.classList.add('btn-outline-custom');
                 }
             });
@@ -134,11 +157,11 @@
             document.querySelectorAll('.category-filter').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.category-filter').forEach(b => {
-                        b.classList.remove('btn-primary-custom', 'active');
+                        b.classList.remove('btn-yellow-custom', 'active');
                         b.classList.add('btn-outline-custom');
                     });
                     btn.classList.remove('btn-outline-custom');
-                    btn.classList.add('btn-primary-custom', 'active');
+                    btn.classList.add('btn-yellow-custom', 'active');
 
                     const category = btn.dataset.category === 'all' ? null : btn.dataset.category;
                     loadProducts(category, document.getElementById('searchInput').value);
@@ -146,13 +169,28 @@
             });
 
             // Search Filter Events
+            const searchInput = document.getElementById('searchInput');
+            const searchClearBtn = document.getElementById('searchClearBtn');
+
+            searchInput.addEventListener('input', () => {
+                searchClearBtn.style.display = searchInput.value.trim() ? 'block' : 'none';
+            });
+
+            searchClearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchClearBtn.style.display = 'none';
+                const activeCatBtn = document.querySelector('.category-filter.active');
+                const category = activeCatBtn && activeCatBtn.dataset.category !== 'all' ? activeCatBtn.dataset.category : null;
+                loadProducts(category, '');
+            });
+
             document.getElementById('searchBtn').addEventListener('click', () => {
                 const activeCatBtn = document.querySelector('.category-filter.active');
                 const category = activeCatBtn && activeCatBtn.dataset.category !== 'all' ? activeCatBtn.dataset.category : null;
-                loadProducts(category, document.getElementById('searchInput').value);
+                loadProducts(category, searchInput.value);
             });
 
-            document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            searchInput.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') {
                     document.getElementById('searchBtn').click();
                 }
@@ -211,6 +249,7 @@
 
         async function loadProducts(kategori = null, search = null) {
             const grid = document.getElementById('productsGrid');
+            const countBadge = document.getElementById('productCountBadge');
             grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Memuat data produk...</div>';
 
             try {
@@ -222,6 +261,7 @@
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
+                    countBadge.innerText = `Menampilkan ${data.data.length} Produk`;
                     grid.innerHTML = data.data.map(p => `
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <div class="card-product">
@@ -238,7 +278,7 @@
                                     <h6 class="fw-bold text-dark mb-1 text-truncate" title="${p.nama}">${p.nama}</h6>
                                     <div class="fw-bold text-blue mb-3 fs-5">${formatRupiah(p.harga)}</div>
                                     <button class="btn btn-primary-custom btn-sm w-100 justify-content-center mt-auto" onclick='openCheckoutModal(${JSON.stringify(p)})' ${p.stock <= 0 ? 'disabled' : ''}>
-                                        <img src="/images/icons/cart.svg" alt="Beli" width="14" height="14">
+                                        <img src="/images/icons/cart-white.svg" alt="Beli" width="14" height="14">
                                         <span>${p.stock > 0 ? 'Beli Sekarang' : 'Stok Habis'}</span>
                                     </button>
                                 </div>
@@ -246,9 +286,11 @@
                         </div>
                     `).join('');
                 } else {
+                    countBadge.innerText = `0 Produk Ditemukan`;
                     grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada produk yang sesuai dengan pencarian Anda.</div>';
                 }
             } catch (err) {
+                countBadge.innerText = `Error`;
                 grid.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat produk.</div>';
             }
         }
