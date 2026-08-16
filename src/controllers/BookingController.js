@@ -149,15 +149,27 @@ class BookingController {
 
     static async handleDeleteBooking(req, res, id) {
         const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
+        if (!session) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
         }
 
         try {
+            const booking = await BookingService.getBookingById(id);
+            if (session.role !== 'admin') {
+                if (booking.id_customer !== session.userId) {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ success: false, message: 'Akses ditolak.' }));
+                }
+                if (booking.status !== 'dibatalkan' && booking.status !== 'selesai') {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ success: false, message: 'Hanya riwayat yang dibatalkan atau selesai yang dapat dihapus.' }));
+                }
+            }
+
             await BookingService.deleteBooking(id);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, message: 'Data booking grooming berhasil dihapus.' }));
+            res.end(JSON.stringify({ success: true, message: 'Riwayat booking grooming berhasil dihapus.' }));
         } catch (err) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: err.message }));
