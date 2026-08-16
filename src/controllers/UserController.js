@@ -6,11 +6,7 @@ const SessionManager = require('../utils/SessionManager');
 
 class UserController {
     static async handleGetUsers(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             const users = await UserRepo.getAllUsers();
@@ -23,11 +19,7 @@ class UserController {
     }
 
     static async handleDeleteUser(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             await UserRepo.deleteUser(id);
@@ -40,11 +32,7 @@ class UserController {
     }
 
     static async handleGetDashboardStats(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             const [totalUsers, productStats, orderStats, bookingStats] = await Promise.all([
@@ -80,3 +68,4 @@ class UserController {
 }
 
 module.exports = UserController;
+

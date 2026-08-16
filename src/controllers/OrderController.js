@@ -3,11 +3,8 @@ const SessionManager = require('../utils/SessionManager');
 
 class OrderController {
     static async handleGetOrders(req, res, queryParams) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             let orders;
@@ -31,11 +28,8 @@ class OrderController {
     }
 
     static async handleGetOrderById(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             const order = await OrderService.getOrderById(id);
@@ -53,11 +47,8 @@ class OrderController {
     }
 
     static async handleCheckout(req, res, body) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu untuk checkout pesanan.' }));
-        }
+        const session = SessionManager.requireAuth(req, res, 'Silakan login terlebih dahulu untuk checkout pesanan.');
+        if (!session) return;
 
         try {
             const order = await OrderService.checkoutOrder({
@@ -79,11 +70,7 @@ class OrderController {
     }
 
     static async handleUpdateOrderStatus(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             await OrderService.updateOrderStatus(id, body.status, body.catatan_admin);
@@ -96,11 +83,7 @@ class OrderController {
     }
 
     static async handleEditOrder(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             await OrderService.updateOrderDetails(id, body);
@@ -113,11 +96,7 @@ class OrderController {
     }
 
     static async handleDeleteOrder(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             await OrderService.deleteOrder(id);
@@ -130,11 +109,8 @@ class OrderController {
     }
 
     static async handleConfirmReceived(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             await OrderService.confirmReceivedByCustomer(id, session.userId);
@@ -147,11 +123,8 @@ class OrderController {
     }
 
     static async handleSubmitComplaint(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             await OrderService.submitComplaint(id, session.userId, body.komplain_text);
@@ -164,11 +137,7 @@ class OrderController {
     }
 
     static async handleRespondComplaint(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             await OrderService.respondComplaint(id, body.komplain_tanggapan, body.status || 'selesai');
@@ -181,11 +150,8 @@ class OrderController {
     }
 
     static async handleCancelOrder(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             await OrderService.cancelOrderByCustomer(id, session.userId);
@@ -199,3 +165,4 @@ class OrderController {
 }
 
 module.exports = OrderController;
+

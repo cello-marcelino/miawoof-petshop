@@ -1,14 +1,8 @@
 const db = require('../../src/config/database');
-const crypto = require('crypto');
+const AuthService = require('../../src/services/AuthService');
 
-function hashPassword(password) {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
-    return `${salt}:${hash}`;
-}
-
-const adminPassword = hashPassword('admin123');
-const customerPassword = hashPassword('customer123');
+const adminPassword = AuthService.hashPassword('admin123');
+const customerPassword = AuthService.hashPassword('customer123');
 
 console.log('🔄 Memulai proses seeding MiaWoof Petshop database...');
 

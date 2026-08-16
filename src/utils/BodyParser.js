@@ -1,3 +1,5 @@
+const UploadHandler = require('./UploadHandler');
+
 /**
  * Utility helper to parse JSON body from incoming HTTP request stream
  */
@@ -16,4 +18,17 @@ function parseJsonBody(req) {
     });
 }
 
-module.exports = { parseJsonBody };
+/**
+ * Unified request payload parser (transparently handles multipart form or JSON)
+ */
+async function parseRequestPayload(req) {
+    const contentType = req.headers['content-type'] || '';
+    if (contentType.includes('multipart/form-data')) {
+        const { fields, filename } = await UploadHandler.parseForm(req);
+        return { fields, filename, isMultipart: true };
+    }
+    const fields = await parseJsonBody(req);
+    return { fields, filename: null, isMultipart: false };
+}
+
+module.exports = { parseJsonBody, parseRequestPayload };

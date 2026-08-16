@@ -1,7 +1,6 @@
 const ProductService = require('../services/ProductService');
-const UploadHandler = require('../utils/UploadHandler');
 const SessionManager = require('../utils/SessionManager');
-const { parseJsonBody } = require('../utils/BodyParser');
+const { parseRequestPayload } = require('../utils/BodyParser');
 
 class ProductController {
     static async handleGetProducts(req, res, queryParams) {
@@ -30,25 +29,10 @@ class ProductController {
     }
 
     static async handleCreateProduct(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin yang dapat menambah produk.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin yang dapat menambah produk.')) return;
 
         try {
-            const contentType = req.headers['content-type'] || '';
-            let fields = {};
-            let filename = null;
-
-            if (contentType.includes('multipart/form-data')) {
-                const parsed = await UploadHandler.parseForm(req);
-                fields = parsed.fields;
-                filename = parsed.filename;
-            } else {
-                fields = await parseJsonBody(req);
-            }
-
+            const { fields, filename } = await parseRequestPayload(req);
             const newProduct = await ProductService.createProduct(fields, filename);
 
             res.writeHead(201, { 'Content-Type': 'application/json' });
@@ -60,25 +44,10 @@ class ProductController {
     }
 
     static async handleUpdateProduct(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin yang dapat mengubah produk.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin yang dapat mengubah produk.')) return;
 
         try {
-            const contentType = req.headers['content-type'] || '';
-            let fields = {};
-            let filename = null;
-
-            if (contentType.includes('multipart/form-data')) {
-                const parsed = await UploadHandler.parseForm(req);
-                fields = parsed.fields;
-                filename = parsed.filename;
-            } else {
-                fields = await parseJsonBody(req);
-            }
-
+            const { fields, filename } = await parseRequestPayload(req);
             await ProductService.updateProduct(id, fields, filename);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -90,11 +59,7 @@ class ProductController {
     }
 
     static async handleDeleteProduct(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin yang dapat menghapus produk.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin yang dapat menghapus produk.')) return;
 
         try {
             await ProductService.deleteProduct(id);
@@ -108,3 +73,4 @@ class ProductController {
 }
 
 module.exports = ProductController;
+

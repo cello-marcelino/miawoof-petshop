@@ -83,16 +83,3 @@ function toggleAdminSidebar() {
     if (sidebar) sidebar.classList.toggle('show');
     if (backdrop) backdrop.classList.toggle('show');
 }
-
-async function handleLogout() {
-    try {
-        const res = await fetch('/api/auth/logout', { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const data = await res.json();
-        window.location.href = data.redirectUrl || '/login?msg=Anda+telah+berhasil+keluar&status=info';
-    } catch (e) {
-        window.location.href = '/logout';
-    }
-}

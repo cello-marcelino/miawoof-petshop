@@ -1,7 +1,6 @@
 const SlideService = require('../services/SlideService');
 const SessionManager = require('../utils/SessionManager');
-const UploadHandler = require('../utils/UploadHandler');
-const { parseJsonBody } = require('../utils/BodyParser');
+const { parseRequestPayload } = require('../utils/BodyParser');
 
 class SlideController {
     static async handleGetSlides(req, res, queryParams) {
@@ -28,26 +27,16 @@ class SlideController {
     }
 
     static async handleCreateSlide(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
-            const contentType = req.headers['content-type'] || '';
-            let payload = {};
+            const { fields, filename } = await parseRequestPayload(req);
+            const payload = { ...fields };
 
-            if (contentType.includes('multipart/form-data')) {
-                const { fields, filename } = await UploadHandler.parseForm(req);
-                payload = { ...fields };
-                if (filename) {
-                    payload.gambar = `/uploads/${filename}`;
-                } else if (fields.existing_gambar_url) {
-                    payload.gambar = fields.existing_gambar_url;
-                }
-            } else {
-                payload = await parseJsonBody(req);
+            if (filename) {
+                payload.gambar = `/uploads/${filename}`;
+            } else if (fields.existing_gambar_url) {
+                payload.gambar = fields.existing_gambar_url;
             }
 
             if (!payload.gambar) {
@@ -65,27 +54,11 @@ class SlideController {
     }
 
     static async handleUpdateSlide(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
-            const contentType = req.headers['content-type'] || '';
-            let fields = {};
-            let filename = null;
-            let delete_old_image = false;
-
-            if (contentType.includes('multipart/form-data')) {
-                const parsed = await UploadHandler.parseForm(req);
-                fields = parsed.fields;
-                filename = parsed.filename;
-                delete_old_image = fields.delete_old_image === 'true' || fields.delete_old_image === '1';
-            } else {
-                fields = await parseJsonBody(req);
-                delete_old_image = fields.delete_old_image === true;
-            }
+            const { fields, filename } = await parseRequestPayload(req);
+            const delete_old_image = fields.delete_old_image === 'true' || fields.delete_old_image === true || fields.delete_old_image === '1';
 
             await SlideService.updateSlideWithUpload(id, fields, filename, delete_old_image);
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -97,11 +70,7 @@ class SlideController {
     }
 
     static async handleToggleActive(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             await SlideService.toggleActive(id);
@@ -114,11 +83,7 @@ class SlideController {
     }
 
     static async handleDeleteSlide(req, res, id, queryParams) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             const deleteFile = queryParams ? queryParams.get('delete_file') === 'true' : false;
@@ -133,3 +98,4 @@ class SlideController {
 }
 
 module.exports = SlideController;
+

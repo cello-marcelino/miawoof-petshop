@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "seed": "node database/seeders/dummy_seeder.js",
-    "test": "node test_booking.js"
+    "seed": "node database/seeders/dummy_seeder.js"
   },
   "keywords": ["petshop", "cms", "booking", "layered-architecture", "vanilla-js"],
   "author": "Christian Marcelino",

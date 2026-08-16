@@ -26,15 +26,6 @@ class SlideService {
         return await SlideRepo.createSlide(data);
     }
 
-    static async updateSlide(id, data) {
-        await this.getSlideById(id);
-        data.judul = data.judul || 'Banner Slide';
-        data.subjudul = data.subjudul || '';
-        data.urutan = data.urutan !== undefined ? parseInt(data.urutan, 10) : 0;
-        data.is_active = data.is_active !== undefined ? (data.is_active === '1' || data.is_active === 1 || data.is_active === 'true' || data.is_active === true ? 1 : 0) : 1;
-        return await SlideRepo.updateSlide(id, data);
-    }
-
     static async updateSlideWithUpload(id, fields, newFilename, delete_old_image = false) {
         const existingSlide = await this.getSlideById(id);
         fields.judul = fields.judul || existingSlide.judul || 'Banner Slide';

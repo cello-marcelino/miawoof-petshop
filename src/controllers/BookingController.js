@@ -26,11 +26,7 @@ class BookingController {
     }
 
     static async handleCreatePaket(req, res, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             const result = await BookingService.createPaket(body);
@@ -43,11 +39,7 @@ class BookingController {
     }
 
     static async handleUpdatePaket(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             await BookingService.updatePaket(id, body);
@@ -60,11 +52,7 @@ class BookingController {
     }
 
     static async handleDeletePaket(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             await BookingService.deletePaket(id);
@@ -78,11 +66,8 @@ class BookingController {
 
     // ================= Customer Bookings =================
     static async handleGetBookings(req, res, queryParams) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             let bookings;
@@ -105,11 +90,8 @@ class BookingController {
     }
 
     static async handleCreateBooking(req, res, body) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu untuk booking grooming.' }));
-        }
+        const session = SessionManager.requireAuth(req, res, 'Silakan login terlebih dahulu untuk booking grooming.');
+        if (!session) return;
 
         try {
             const booking = await BookingService.createBooking({
@@ -131,11 +113,7 @@ class BookingController {
     }
 
     static async handleUpdateBookingStatus(req, res, id, body) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses ditolak: Hanya Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses ditolak: Hanya Admin.')) return;
 
         try {
             await BookingService.updateBookingStatus(id, body.status, body.catatan_admin);
@@ -148,11 +126,8 @@ class BookingController {
     }
 
     static async handleDeleteBooking(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             const booking = await BookingService.getBookingById(id);
@@ -177,11 +152,8 @@ class BookingController {
     }
 
     static async handleCancelBooking(req, res, id) {
-        const session = SessionManager.getSession(req);
-        if (!session) {
-            res.writeHead(401, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Silakan login terlebih dahulu.' }));
-        }
+        const session = SessionManager.requireAuth(req, res);
+        if (!session) return;
 
         try {
             await BookingService.cancelBookingByCustomer(id, session.userId);
@@ -195,3 +167,4 @@ class BookingController {
 }
 
 module.exports = BookingController;
+

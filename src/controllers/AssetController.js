@@ -17,11 +17,7 @@ class AssetController {
     }
 
     static async handleGetAssets(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             const assets = [];
@@ -84,11 +80,7 @@ class AssetController {
     }
 
     static async handleUploadAsset(req, res) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             const { filename } = await UploadHandler.parseForm(req);
@@ -113,11 +105,7 @@ class AssetController {
     }
 
     static async handleDeleteAsset(req, res, filename) {
-        const session = SessionManager.getSession(req);
-        if (!session || session.role !== 'admin') {
-            res.writeHead(403, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: false, message: 'Akses khusus Admin.' }));
-        }
+        if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
             // Prevent Directory Traversal Attack

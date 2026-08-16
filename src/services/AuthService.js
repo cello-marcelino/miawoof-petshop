@@ -22,6 +22,14 @@ function verifyPassword(password, storedPassword) {
 }
 
 class AuthService {
+    static hashPassword(password) {
+        return hashPassword(password);
+    }
+
+    static verifyPassword(password, storedPassword) {
+        return verifyPassword(password, storedPassword);
+    }
+
     static async register({ username, password, confirm_password, full_name, email, no_hp, alamat }) {
         const cleanUsername = username ? String(username).trim() : '';
         const cleanFullName = full_name ? String(full_name).trim() : '';
