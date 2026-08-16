@@ -1,6 +1,7 @@
 const SlideService = require('../services/SlideService');
 const SessionManager = require('../utils/SessionManager');
 const UploadHandler = require('../utils/UploadHandler');
+const { parseJsonBody } = require('../utils/BodyParser');
 
 class SlideController {
     static async handleGetSlides(req, res, queryParams) {
@@ -46,9 +47,7 @@ class SlideController {
                     payload.gambar = fields.existing_gambar_url;
                 }
             } else {
-                let body = '';
-                for await (const chunk of req) body += chunk;
-                payload = body ? JSON.parse(body) : {};
+                payload = await parseJsonBody(req);
             }
 
             if (!payload.gambar) {
@@ -84,9 +83,7 @@ class SlideController {
                 filename = parsed.filename;
                 delete_old_image = fields.delete_old_image === 'true' || fields.delete_old_image === '1';
             } else {
-                let body = '';
-                for await (const chunk of req) body += chunk;
-                fields = body ? JSON.parse(body) : {};
+                fields = await parseJsonBody(req);
                 delete_old_image = fields.delete_old_image === true;
             }
 

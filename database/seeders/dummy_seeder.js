@@ -1,8 +1,14 @@
 const db = require('../../src/config/database');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
-const adminPassword = bcrypt.hashSync('admin123', 10);
-const customerPassword = bcrypt.hashSync('customer123', 10);
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return `${salt}:${hash}`;
+}
+
+const adminPassword = hashPassword('admin123');
+const customerPassword = hashPassword('customer123');
 
 console.log('🔄 Memulai proses seeding MiaWoof Petshop database...');
 

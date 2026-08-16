@@ -91,7 +91,7 @@
                                             <th>Aksi Konfirmasi</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="adminBookingsTable">
+                                    <tbody id="adminBookingsTableBody">
                                         <tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>
                                     </tbody>
                                 </table>
@@ -121,21 +121,40 @@
         </main>
     </div>
 
-    <!-- Booking Action Modal -->
+    <!-- Booking Action & Detail Modal -->
     <div class="modal fade" id="bookingActionModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border border-2 border-dark shadow-lg rounded-3 overflow-hidden">
                 <div class="modal-header bg-yellow text-dark p-3 border-bottom border-2 border-dark">
-                    <h5 class="modal-title fw-bold" id="bookingActionModalTitle">Kelola Reservasi Grooming</h5>
+                    <h5 class="modal-title fw-bold" id="bookingActionModalTitle">Detail & Kelola Reservasi Grooming</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-3">
-                        <div class="fw-bold text-dark fs-6" id="actionBookingCustomer">-</div>
-                        <div class="small text-muted" id="actionBookingPet">-</div>
-                        <div class="small text-muted" id="actionBookingPaket">-</div>
-                        <div class="small fw-bold text-primary mt-1" id="actionBookingSchedule">-</div>
-                        <div class="small text-muted mt-2"><strong>Catatan Pelanggan:</strong> <span id="actionBookingNotes">-</span></div>
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2 pb-2 border-bottom border-1 border-secondary">
+                            <div>
+                                <span class="badge bg-dark text-white font-monospace px-2 py-1" id="actionBookingCode">#BKG-0</span>
+                                <span id="actionBookingStatusBadge" class="ms-2"></span>
+                            </div>
+                            <div class="fw-bold text-blue fs-5" id="actionBookingPrice">Rp 0</div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Data Pelanggan:</small>
+                                <div class="fw-bold text-dark fs-6" id="actionBookingCustomer">-</div>
+                                <div class="small text-muted" id="actionBookingPhone">-</div>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Hewan Peliharaan & Paket:</small>
+                                <div class="fw-bold text-dark" id="actionBookingPet">-</div>
+                                <div class="small text-dark" id="actionBookingPaket">-</div>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-top border-1 border-secondary">
+                            <small class="text-muted d-block">Jadwal Sesi Perawatan:</small>
+                            <div class="fw-bold text-primary" id="actionBookingSchedule">-</div>
+                        </div>
+                        <div class="small text-muted mt-2"><strong>Catatan Khusus Pelanggan:</strong> <span id="actionBookingNotes">-</span></div>
                     </div>
 
                     <div class="mb-4">
@@ -143,8 +162,18 @@
                         <input type="text" id="actionAdminNotes" class="form-control form-control-custom" placeholder="Contoh: Harap datang 10 menit lebih awal / Bawa buku vaksin">
                     </div>
 
-                    <div class="p-3 bg-light rounded-2 border border-1 border-dark" id="bookingActionButtonsContainer">
+                    <div class="p-3 bg-light rounded-2 border border-1 border-dark mb-3" id="bookingActionButtonsContainer">
                         <!-- Dynamically populated based on progressive booking workflow status -->
+                    </div>
+
+                    <!-- Modal Danger Actions Area (Pindahkan tombol Hapus ke sini) -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top border-1 border-dark">
+                        <button type="button" class="btn btn-outline-danger btn-sm px-3" onclick="deleteBookingFromModal()">
+                            <span>🗑️ Hapus Riwayat Reservasi</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-custom btn-sm px-4" data-bs-dismiss="modal">
+                            <span>Tutup</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -284,8 +313,10 @@
             });
         });
 
+        let adminBookings = [];
+
         async function loadAdminBookings() {
-            const tbody = document.getElementById('adminBookingsTable');
+            const tbody = document.getElementById('adminBookingsTableBody');
             tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Memuat jadwal booking...</td></tr>';
 
             const status = document.getElementById('filterBookingStatus').value;
@@ -300,6 +331,7 @@
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
+                    adminBookings = data.data;
                     tbody.innerHTML = data.data.map(b => {
                         let statusBadge = '';
                         if (b.status === 'dikonfirmasi') statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi</span>';
@@ -311,17 +343,17 @@
                             <tr>
                                 <td class="fw-bold text-dark">#BKG-${b.id_booking}</td>
                                 <td>
-                                    <div class="fw-bold text-dark">${b.customer_name}</div>
-                                    <div class="small text-muted">${b.customer_phone || '-'}</div>
+                                    <div class="fw-bold text-dark">${escapeHtml(b.customer_name)}</div>
+                                    <div class="small text-muted">${escapeHtml(b.customer_phone || '-')}</div>
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">🐾 ${b.nama_hewan || 'Anabul'}</div>
+                                    <div class="fw-bold text-dark">🐾 ${escapeHtml(b.nama_hewan || 'Anabul')}</div>
                                     <span class="${b.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize" style="font-size: 0.7rem;">
-                                        ${b.jenis_hewan || 'hewan'}
+                                        ${escapeHtml(b.jenis_hewan || 'hewan')}
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">${b.nama_paket}</div>
+                                    <div class="fw-bold text-dark">${escapeHtml(b.nama_paket)}</div>
                                     <div class="small text-primary fw-bold">${formatRupiah(b.harga)}</div>
                                 </td>
                                 <td>
@@ -330,18 +362,24 @@
                                 </td>
                                 <td>${statusBadge}</td>
                                 <td style="max-width: 180px;">
-                                    <div class="small text-truncate" title="${b.catatan_admin || 'Belum ada catatan'}">
-                                        ${b.catatan_admin || '-'}
+                                    <div class="small text-truncate" title="${escapeHtml(b.catatan_admin || 'Belum ada catatan')}">
+                                        ${escapeHtml(b.catatan_admin || '-')}
                                     </div>
                                 </td>
                                 <td>
                                     <div class="btn-action-group">
-                                         <button class="btn-table-action btn-action-yellow" onclick='openBookingActionModal(${JSON.stringify(b)})' title="Kelola & Konfirmasi Jadwal">
-                                             <span>Kelola</span>
+                                         <button class="btn-table-action btn-action-yellow" onclick="openBookingActionModalById(${b.id_booking})" title="Lihat Detail & Kelola">
+                                             <span>Detail</span>
                                          </button>
-                                         <button class="btn-table-action btn-action-danger" onclick="deleteBooking(${b.id_booking})" title="Hapus Jadwal">
-                                             <span>Hapus</span>
-                                         </button>
+                                         ${(b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi') ? `
+                                             <button class="btn-table-action btn-action-danger" onclick="quickRejectBooking(${b.id_booking})" title="Tolak Reservasi">
+                                                 <span>Tolak</span>
+                                             </button>
+                                         ` : `
+                                             <button class="btn-table-action btn-action-secondary" disabled style="opacity: 0.45; cursor: not-allowed;" title="Reservasi ${b.status} tidak dapat ditolak">
+                                                 <span>Tolak</span>
+                                             </button>
+                                         `}
                                      </div>
                                 </td>
                             </tr>
@@ -355,15 +393,37 @@
             }
         }
 
-        function openBookingActionModal(b) {
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function openBookingActionModalById(id_booking) {
+            const b = adminBookings.find(item => item.id_booking === Number(id_booking));
+            if (!b) return;
             selectedBooking = b;
-            document.getElementById('bookingActionModalTitle').innerText = `Kelola Booking #BKG-${b.id_booking}`;
-            document.getElementById('actionBookingCustomer').innerText = `Pelanggan: ${b.customer_name} (${b.customer_phone || '-'})`;
-            document.getElementById('actionBookingPet').innerText = `Hewan: ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan})`;
-            document.getElementById('actionBookingPaket').innerText = `Paket: ${b.nama_paket} - ${formatRupiah(b.harga)}`;
-            document.getElementById('actionBookingSchedule').innerText = `Jadwal: ${formatTanggalIndo(b.tgl_booking)} | ${b.waktu} WIB`;
+            document.getElementById('bookingActionModalTitle').innerText = `Detail & Kelola Reservasi #BKG-${b.id_booking}`;
+            document.getElementById('actionBookingCode').innerText = `#BKG-${b.id_booking}`;
+            document.getElementById('actionBookingPrice').innerText = formatRupiah(b.harga);
+            document.getElementById('actionBookingCustomer').innerText = b.customer_name || '-';
+            document.getElementById('actionBookingPhone').innerText = `📞 ${b.customer_phone || '-'}`;
+            document.getElementById('actionBookingPet').innerText = `🐾 ${b.nama_hewan || 'Anabul'} (${b.jenis_hewan === 'kucing' ? 'Kucing' : 'Anjing'})`;
+            document.getElementById('actionBookingPaket').innerText = `📦 ${b.nama_paket}`;
+            document.getElementById('actionBookingSchedule').innerText = `📅 ${formatTanggalIndo(b.tgl_booking)} | ⏰ Pukul ${b.waktu} WIB`;
             document.getElementById('actionBookingNotes').innerText = b.catatan || 'Tidak ada catatan khusus dari pelanggan.';
             document.getElementById('actionAdminNotes').value = b.catatan_admin || '';
+
+            let statusBadge = '';
+            if (b.status === 'dikonfirmasi') statusBadge = '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-1 fw-bold">📅 Dikonfirmasi</span>';
+            else if (b.status === 'selesai') statusBadge = '<span class="badge bg-success text-white border border-1 border-dark px-2 py-1 fw-bold">✅ Selesai</span>';
+            else if (b.status === 'dibatalkan') statusBadge = '<span class="badge bg-secondary text-white border border-1 border-dark px-2 py-1 fw-bold">❌ Dibatalkan</span>';
+            else statusBadge = '<span class="badge bg-warning text-dark border border-1 border-dark px-2 py-1 fw-bold">⏳ Menunggu Konfirmasi</span>';
+            document.getElementById('actionBookingStatusBadge').innerHTML = statusBadge;
 
             const btnContainer = document.getElementById('bookingActionButtonsContainer');
             const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
@@ -373,9 +433,9 @@
 
             let actionsHtml = '';
             if (isPending) {
-                // Step 1: Pesanan/Booking baru dibuat -> Hanya "Konfirmasi Jadwal" dan "Batalkan"
+                // Step 1: Pesanan/Booking baru dibuat -> "Konfirmasi Jadwal" dan "Tolak Reservasi"
                 actionsHtml = `
-                    <label class="form-label-custom mb-2">Tindakan Alur (Tahap 1 - Konfirmasi Jadwal):</label>
+                    <label class="form-label-custom mb-2">Tindakan Konfirmasi Jadwal:</label>
                     <div class="row g-2">
                         <div class="col-sm-8 col-12">
                             <button type="button" class="btn btn-action-modal btn-modal-confirm w-100" onclick="submitBookingStatus('dikonfirmasi')">
@@ -384,27 +444,25 @@
                         </div>
                         <div class="col-sm-4 col-12">
                             <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="submitBookingStatus('dibatalkan')">
-                                <span>❌ Batalkan</span>
+                                <span>❌ Tolak</span>
                             </button>
                         </div>
                     </div>
                 `;
             } else if (isConfirmed) {
-                // Step 2: Jadwal sudah dikonfirmasi -> Hanya "Tandai Selesai" dan "Batalkan"
+                // Step 2: Jadwal sudah dikonfirmasi -> HANYA "Tandai Selesai" (Pilihan "Batalkan" TIDAK ADA)
                 actionsHtml = `
-                    <label class="form-label-custom mb-2">Tindakan Alur (Tahap 2 - Perawatan Berjalan):</label>
+                    <label class="form-label-custom mb-2">Tindakan Alur (Perawatan Sedang Berjalan):</label>
                     <div class="row g-2">
-                        <div class="col-sm-8 col-12">
+                        <div class="col-12">
                             <button type="button" class="btn btn-action-modal btn-modal-success w-100" onclick="submitBookingStatus('selesai')">
-                                <span>✅ Selesai Treatment & Perawatan</span>
-                            </button>
-                        </div>
-                        <div class="col-sm-4 col-12">
-                            <button type="button" class="btn btn-action-modal btn-modal-cancel w-100" onclick="submitBookingStatus('dibatalkan')">
-                                <span>❌ Batalkan</span>
+                                <span>✅ Selesai Treatment & Perawatan Grooming</span>
                             </button>
                         </div>
                     </div>
+                    <small class="text-muted d-block mt-2 font-italic text-center" style="font-size: 0.75rem;">
+                        ℹ️ Reservasi yang sudah dikonfirmasi tidak dapat dibatalkan kembali.
+                    </small>
                 `;
             } else if (isCompleted) {
                 // Step 3: Selesai
@@ -420,7 +478,7 @@
                 actionsHtml = `
                     <div class="p-3 bg-danger-subtle border border-1 border-danger rounded-2 text-center">
                         <span class="fs-5">❌</span>
-                        <div class="fw-bold text-danger mt-1">Jadwal Reservasi Telah Dibatalkan</div>
+                        <div class="fw-bold text-danger mt-1">Jadwal Reservasi Telah Ditolak / Dibatalkan</div>
                         <small class="text-muted">Jadwal ini telah dibatalkan dan slot waktu telah dilepas.</small>
                     </div>
                 `;
@@ -453,17 +511,50 @@
             }
         }
 
-        async function deleteBooking(id_booking) {
-            if (!confirm('Hapus riwayat booking grooming ini?')) return;
+        async function quickRejectBooking(id_booking) {
+            const b = adminBookings.find(item => item.id_booking === Number(id_booking));
+            const customerName = b ? b.customer_name : 'pelanggan ini';
+            if (!confirm(`Apakah Anda yakin ingin menolak jadwal reservasi dari ${customerName}?`)) return;
+
+            const catatan_admin = prompt('Alasan penolakan (opsional, akan dikirim ke pelanggan):', 'Mohon maaf, slot waktu penuh / tidak tersedia.') || 'Jadwal tidak tersedia.';
+
             try {
-                const res = await fetch(`/api/bookings/${id_booking}`, { method: 'DELETE' });
+                const res = await fetch(`/api/bookings/${id_booking}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'dibatalkan', catatan_admin })
+                });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(data.message, 'success');
+                    showToast(data.message || 'Jadwal reservasi berhasil ditolak.', 'success');
                     loadAdminBookings();
+                } else {
+                    showToast(data.message || 'Gagal menolak booking.', 'danger');
                 }
-            } catch (e) {}
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
         }
+
+        async function deleteBookingFromModal() {
+            if (!selectedBooking) return;
+            if (!confirm(`Apakah Anda yakin ingin menghapus permanen riwayat booking #BKG-${selectedBooking.id_booking} dari database?`)) return;
+            try {
+                const res = await fetch(`/api/bookings/${selectedBooking.id_booking}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || 'Data reservasi berhasil dihapus.', 'success');
+                    bookingActionModal.hide();
+                    loadAdminBookings();
+                } else {
+                    showToast(data.message || 'Gagal menghapus data reservasi.', 'danger');
+                }
+            } catch (e) {
+                showToast('Terjadi kesalahan jaringan.', 'danger');
+            }
+        }
+
+        let adminPakets = [];
 
         // ================= Paket Grooming CRUD =================
         async function loadAdminPakets() {
@@ -473,24 +564,25 @@
                 const data = await res.json();
 
                 if (data.success && data.data.length > 0) {
+                    adminPakets = data.data;
                     grid.innerHTML = data.data.map(p => `
                         <div class="col-lg-4 col-md-6">
                             <div class="card-modern p-4 h-100 d-flex flex-column justify-content-between">
                                 <div>
                                     <div class="d-flex align-items-center justify-content-between mb-2">
                                         <span class="${p.jenis_hewan === 'kucing' ? 'badge-pet-cat' : 'badge-pet-dog'} text-capitalize">
-                                            ${p.jenis_hewan}
+                                            ${escapeHtml(p.jenis_hewan)}
                                         </span>
                                         <span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold small">
                                             ⏱️ ${p.durasi_menit || 60} Menit
                                         </span>
                                     </div>
-                                    <h5 class="fw-bold text-dark mb-1">${p.nama_paket}</h5>
+                                    <h5 class="fw-bold text-dark mb-1">${escapeHtml(p.nama_paket)}</h5>
                                     <div class="fw-bold text-blue fs-5 mb-3">${formatRupiah(p.harga)}</div>
-                                    <p class="text-muted small mb-4">${p.keterangan_grooming}</p>
+                                    <p class="text-muted small mb-4">${escapeHtml(p.keterangan_grooming)}</p>
                                 </div>
                                 <div class="d-flex align-items-center gap-2 pt-3 border-top border-1 border-dark">
-                                    <button class="btn-table-action btn-action-white flex-fill justify-content-center" onclick='openEditPaketModal(${JSON.stringify(p)})'>
+                                    <button class="btn-table-action btn-action-white flex-fill justify-content-center" onclick="openEditPaketModalById(${p.id_paket})">
                                          <span>Edit Paket</span>
                                      </button>
                                      <button class="btn-table-action btn-action-danger flex-fill justify-content-center" onclick="deletePaket(${p.id_paket})">
@@ -519,7 +611,9 @@
             paketFormModal.show();
         }
 
-        function openEditPaketModal(p) {
+        function openEditPaketModalById(id_paket) {
+            const p = adminPakets.find(item => item.id_paket === Number(id_paket));
+            if (!p) return;
             document.getElementById('paketModalTitle').innerText = `Edit Paket Grooming: ${p.nama_paket}`;
             document.getElementById('formPaketId').value = p.id_paket;
             document.getElementById('formPaketNama').value = p.nama_paket;

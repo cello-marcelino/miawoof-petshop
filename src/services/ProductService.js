@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const ProductRepo = require('../repositories/ProductRepo');
-const Sanitizer = require('../utils/Sanitizer');
 
 class ProductService {
     static async getAllProducts(kategori = null, search = null) {
@@ -17,8 +16,7 @@ class ProductService {
     }
 
     static async createProduct(fields, uploadedFilename = null) {
-        const rawNama = fields.nama || fields.nama_produk || '';
-        const cleanNama = Sanitizer.cleanInput(rawNama);
+        const cleanNama = (fields.nama || fields.nama_produk || '').trim();
         const rawStock = fields.stock !== undefined ? fields.stock : fields.stok;
         const numStock = parseInt(rawStock, 10);
         const numHarga = parseInt(fields.harga, 10);
@@ -59,7 +57,7 @@ class ProductService {
         const existing = await this.getProductById(id); // Ensure product exists
 
         const rawNama = fields.nama || fields.nama_produk || existing.nama;
-        const cleanNama = Sanitizer.cleanInput(rawNama);
+        const cleanNama = (rawNama || '').trim();
         const rawStock = fields.stock !== undefined ? fields.stock : (fields.stok !== undefined ? fields.stok : existing.stock);
         const numStock = parseInt(rawStock, 10);
         const numHarga = fields.harga !== undefined ? parseInt(fields.harga, 10) : existing.harga;

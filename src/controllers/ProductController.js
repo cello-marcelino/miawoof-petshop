@@ -1,6 +1,7 @@
 const ProductService = require('../services/ProductService');
 const UploadHandler = require('../utils/UploadHandler');
 const SessionManager = require('../utils/SessionManager');
+const { parseJsonBody } = require('../utils/BodyParser');
 
 class ProductController {
     static async handleGetProducts(req, res, queryParams) {
@@ -45,15 +46,7 @@ class ProductController {
                 fields = parsed.fields;
                 filename = parsed.filename;
             } else {
-                fields = await new Promise((resolve, reject) => {
-                    let body = '';
-                    req.on('data', chunk => { body += chunk.toString(); });
-                    req.on('end', () => {
-                        try { resolve(body ? JSON.parse(body) : {}); }
-                        catch (e) { resolve({}); }
-                    });
-                    req.on('error', reject);
-                });
+                fields = await parseJsonBody(req);
             }
 
             const newProduct = await ProductService.createProduct(fields, filename);
@@ -83,15 +76,7 @@ class ProductController {
                 fields = parsed.fields;
                 filename = parsed.filename;
             } else {
-                fields = await new Promise((resolve, reject) => {
-                    let body = '';
-                    req.on('data', chunk => { body += chunk.toString(); });
-                    req.on('end', () => {
-                        try { resolve(body ? JSON.parse(body) : {}); }
-                        catch (e) { resolve({}); }
-                    });
-                    req.on('error', reject);
-                });
+                fields = await parseJsonBody(req);
             }
 
             await ProductService.updateProduct(id, fields, filename);

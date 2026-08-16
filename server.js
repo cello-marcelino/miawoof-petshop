@@ -12,6 +12,7 @@ const SlideController = require('./src/controllers/SlideController');
 const UserController = require('./src/controllers/UserController');
 const AssetController = require('./src/controllers/AssetController');
 const SessionManager = require('./src/utils/SessionManager');
+const { parseJsonBody } = require('./src/utils/BodyParser');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -42,21 +43,6 @@ function serveView(res, relativePath) {
         res.writeHead(404, { 'Content-Type': 'text/html' });
         res.end('<h1>404 Halaman Tidak Ditemukan</h1>');
     }
-}
-
-// Helper to parse JSON request body
-function parseJsonBody(req) {
-    return new Promise((resolve) => {
-        let body = '';
-        req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', () => {
-            try {
-                resolve(body ? JSON.parse(body) : {});
-            } catch (e) {
-                resolve({});
-            }
-        });
-    });
 }
 
 const server = http.createServer(async (req, res) => {
@@ -92,7 +78,7 @@ const server = http.createServer(async (req, res) => {
             const body = await parseJsonBody(req);
             return AuthController.handleRegister(req, res, body);
         }
-        if (pathname === '/api/auth/logout' || pathname === '/logout') {
+        if (pathname === '/api/auth/logout') {
             return AuthController.handleLogout(req, res);
         }
         if (pathname === '/api/auth/session' && method === 'GET') {

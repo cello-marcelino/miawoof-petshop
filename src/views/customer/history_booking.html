@@ -169,18 +169,18 @@
                             ? '<span class="badge-pet-cat text-capitalize" style="font-size: 0.7rem;">Kucing</span>'
                             : '<span class="badge-pet-dog text-capitalize" style="font-size: 0.7rem;">Anjing</span>';
 
-                        const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
+                        const canCancel = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
 
                         return `
                             <tr>
                                 <td class="fw-bold text-dark">#BKG-${b.id_booking}</td>
                                 <td>
-                                    <div class="fw-bold text-dark">🐾 ${b.nama_hewan || 'Anabul'}</div>
+                                    <div class="fw-bold text-dark">🐾 ${escapeHtml(b.nama_hewan || 'Anabul')}</div>
                                     <div class="mt-1">${speciesBadge}</div>
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">${b.nama_paket}</div>
-                                    <div class="text-muted small text-truncate" style="max-width: 200px;">${b.keterangan_grooming || '-'}</div>
+                                    <div class="fw-bold text-dark">${escapeHtml(b.nama_paket)}</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 200px;">${escapeHtml(b.keterangan_grooming || '-')}</div>
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">${formatTanggalIndo(b.tgl_booking)}</div>
@@ -189,9 +189,16 @@
                                 <td class="fw-bold text-dark">${formatRupiah(b.harga)}</td>
                                 <td>${statusBadge}</td>
                                 <td class="text-center">
-                                    <button class="btn-table-action btn-action-yellow" onclick='openCustomerDetailModal(${JSON.stringify(b)})' title="Lihat Detail & Instruksi Groomer">
-                                        <span>🔍 Detail</span>
-                                    </button>
+                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                        <button class="btn-table-action btn-action-yellow" onclick="openCustomerDetailModalById(${b.id_booking})" title="Lihat Detail & Instruksi Groomer">
+                                            <span>🔍 Detail</span>
+                                        </button>
+                                        ${canCancel ? `
+                                            <button class="btn-table-action btn-action-danger" onclick="cancelBooking(${b.id_booking})" title="Batalkan Reservasi">
+                                                <span>❌ Batal</span>
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -204,7 +211,20 @@
             }
         }
 
-        function openCustomerDetailModal(b) {
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function openCustomerDetailModalById(id_booking) {
+            const b = myBookings.find(item => item.id_booking === Number(id_booking));
+            if (!b) return;
+
             document.getElementById('detailModalTicketTitle').innerText = `Tiket Reservasi Grooming #BKG-${b.id_booking}`;
             document.getElementById('detailOwnerName').innerText = b.customer_name || '-';
             document.getElementById('detailOwnerPhone').innerText = b.customer_phone || '-';
@@ -243,8 +263,8 @@
             }
 
             const cancelBlock = document.getElementById('cancelActionContainer');
-            const isPending = b.status === 'menunggu_konfirmasi' || b.status === 'menunggu konfirmasi';
-            if (isPending) {
+            const canCancel = b.status !== 'selesai' && b.status !== 'dibatalkan';
+            if (canCancel) {
                 cancelBlock.style.display = 'flex';
                 document.getElementById('btnCancelFromModal').onclick = () => {
                     detailModal.hide();
@@ -258,10 +278,13 @@
         }
 
         async function cancelBooking(id_booking) {
-            if (!confirm('Apakah Anda yakin ingin membatalkan jadwal reservasi grooming ini?')) return;
+            if (!confirm(`Apakah Anda yakin ingin membatalkan jadwal reservasi grooming #BKG-${id_booking}?`)) return;
 
             try {
-                const res = await fetch(`/api/bookings/${id_booking}/cancel`, { method: 'POST' });
+                const res = await fetch(`/api/bookings/${id_booking}/cancel`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
                 const data = await res.json();
                 if (data.success) {
                     showToast(data.message, 'success');

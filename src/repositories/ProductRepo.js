@@ -4,10 +4,7 @@ class ProductRepo {
     static async getAllProducts(kategori = null, search = null) {
         return new Promise((resolve, reject) => {
             let sql = `
-                SELECT id_produk, nama, nama as nama_produk,
-                       kategori, stock, stock as stok,
-                       harga, gambar, tgl_dibuat,
-                       tgl_expired, tgl_expired as exp
+                SELECT id_produk, nama, kategori, stock, harga, gambar, tgl_dibuat, tgl_expired
                 FROM produk
                 WHERE 1=1
             `;
@@ -50,10 +47,7 @@ class ProductRepo {
     static async findById(id) {
         return new Promise((resolve, reject) => {
             const sql = `
-                SELECT id_produk, nama, nama as nama_produk,
-                       kategori, stock, stock as stok,
-                       harga, gambar, tgl_dibuat,
-                       tgl_expired, tgl_expired as exp
+                SELECT id_produk, nama, kategori, stock, harga, gambar, tgl_dibuat, tgl_expired
                 FROM produk
                 WHERE id_produk = ?
             `;

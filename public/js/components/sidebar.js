@@ -96,8 +96,3 @@ async function handleLogout() {
         window.location.href = '/logout';
     }
 }
-
-// Alias for backwards compatibility
-if (typeof window !== 'undefined') {
-    window.initAdminSidebar = initSidebar;
-}

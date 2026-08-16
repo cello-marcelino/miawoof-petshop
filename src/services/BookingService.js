@@ -1,6 +1,5 @@
 const BookingRepo = require('../repositories/BookingRepo');
-const Sanitizer = require('../utils/Sanitizer');
-
+ 
 class BookingService {
     // ================= Pakets CRUD =================
     static async getAllPaket() {
@@ -14,8 +13,8 @@ class BookingService {
     }
 
     static async createPaket({ nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar }) {
-        const cleanNama = Sanitizer.cleanInput(nama_paket);
-        const cleanKet = Sanitizer.cleanInput(keterangan_grooming);
+        const cleanNama = (nama_paket || '').trim();
+        const cleanKet = (keterangan_grooming || '').trim();
         const numHarga = parseInt(harga, 10);
         const numDurasi = parseInt(durasi_menit, 10) || 60;
 
@@ -39,8 +38,8 @@ class BookingService {
 
     static async updatePaket(id_paket, { nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar }) {
         await this.getPaketById(id_paket);
-        const cleanNama = Sanitizer.cleanInput(nama_paket);
-        const cleanKet = Sanitizer.cleanInput(keterangan_grooming);
+        const cleanNama = (nama_paket || '').trim();
+        const cleanKet = (keterangan_grooming || '').trim();
         const numHarga = parseInt(harga, 10);
         const numDurasi = parseInt(durasi_menit, 10) || 60;
 
@@ -105,7 +104,11 @@ class BookingService {
             throw new Error('Status booking tidak valid.');
         }
 
-        await this.getBookingById(id_booking);
+        const existing = await this.getBookingById(id_booking);
+        if (existing.status === 'dikonfirmasi' && status === 'dibatalkan') {
+            throw new Error('Reservasi yang sudah dikonfirmasi tidak dapat dibatalkan.');
+        }
+
         return await BookingRepo.updateBookingStatus(id_booking, status, catatan_admin);
     }
 
@@ -115,6 +118,13 @@ class BookingService {
     }
 
     static async cancelBookingByCustomer(id_booking, id_customer) {
+        const booking = await this.getBookingById(id_booking);
+        if (booking.id_customer !== id_customer) {
+            throw new Error('Anda tidak memiliki akses ke data reservasi ini.');
+        }
+        if (booking.status === 'dikonfirmasi' || booking.status === 'selesai' || booking.status === 'dibatalkan') {
+            throw new Error('Reservasi yang sudah dikonfirmasi atau selesai tidak dapat dibatalkan.');
+        }
         return await BookingRepo.cancelBookingByCustomer(id_booking, id_customer);
     }
 }

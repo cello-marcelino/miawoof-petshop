@@ -1,10 +1,15 @@
 const crypto = require('crypto');
-const cookie = require('cookie');
-
+ 
 class SessionManager {
     constructor() {
         this.sessions = new Map(); // sessionToken -> { userId, username, role, full_name, createdAt }
         this.SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+    }
+
+    _parseCookieToken(cookieHeader) {
+        if (!cookieHeader) return null;
+        const match = cookieHeader.match(/(?:^|;\s*)session_token=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : null;
     }
 
     createSession(user) {
@@ -22,8 +27,7 @@ class SessionManager {
     }
 
     getSession(req) {
-        const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
-        const sessionToken = cookies.session_token;
+        const sessionToken = this._parseCookieToken(req.headers.cookie);
         if (!sessionToken || !this.sessions.has(sessionToken)) {
             return null;
         }
@@ -38,28 +42,18 @@ class SessionManager {
     }
 
     destroySession(req) {
-        const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
-        const sessionToken = cookies.session_token;
+        const sessionToken = this._parseCookieToken(req.headers.cookie);
         if (sessionToken && this.sessions.has(sessionToken)) {
             this.sessions.delete(sessionToken);
         }
     }
 
     attachSessionCookie(res, sessionToken) {
-        res.setHeader('Set-Cookie', cookie.serialize('session_token', sessionToken, {
-            httpOnly: true,
-            path: '/',
-            maxAge: 60 * 60 * 24, // 1 day
-            sameSite: 'lax'
-        }));
+        res.setHeader('Set-Cookie', `session_token=${encodeURIComponent(sessionToken)}; Path=/; Max-Age=86400; HttpOnly; SameSite=Lax`);
     }
 
     clearSessionCookie(res) {
-        res.setHeader('Set-Cookie', cookie.serialize('session_token', '', {
-            httpOnly: true,
-            path: '/',
-            expires: new Date(0)
-        }));
+        res.setHeader('Set-Cookie', 'session_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax');
     }
 }
 
