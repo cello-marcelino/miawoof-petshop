@@ -697,11 +697,11 @@
                                         <button type="button" class="btn btn-table-action btn-action-yellow flex-grow-1 justify-content-center py-2" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide Baru">
                                             <span>🎠 Buat Slide</span>
                                         </button>
-                                    ` : ''}
-                                    ${a.isDeletable ? `
-                                        <button type="button" class="btn btn-table-action btn-action-danger px-2 justify-content-center py-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus File Permanen">
-                                            <span>🗑️</span>
-                                        </button>
+                                        ${a.isDeletable ? `
+                                            <button type="button" class="btn btn-table-action btn-action-danger px-2 justify-content-center py-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus File Promosi">
+                                                <span>🗑️</span>
+                                            </button>
+                                        ` : ''}
                                     ` : ''}
                                 </div>
                             </div>

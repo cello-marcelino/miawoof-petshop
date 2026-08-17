@@ -86,6 +86,16 @@ class AssetController {
         try {
             const safeFilename = path.basename(filename);
             
+            // Check if asset is of category 'katalog' (protected from gallery deletion)
+            const assetRecord = await AssetRepo.getAssetByUrlOrFilename(safeFilename);
+            if (assetRecord && assetRecord.kategori === 'katalog') {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({
+                    success: false,
+                    message: 'Aset berkas kategori Katalog Produk diproteksi dan tidak dapat dihapus dari Galeri Asset.'
+                }));
+            }
+
             // Check if asset is referenced by active products, slides, or packages
             const useCheck = await AssetRepo.isAssetInUse(safeFilename);
             if (useCheck.inUse) {
