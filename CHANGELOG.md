@@ -1,113 +1,41 @@
-# Changelog & Rekam Jejak Transformasi Arsitektur
+# Changelog MiaWoof Petshop
 
-Semua catatan perubahan, pembaruan, refaktorisasi arsitektur, dan perbaikan keamanan dari versi aplikasi warisan (*Legacy PHP Native*) ke sistem modern **MiaWoof Petshop CMS** didokumentasikan dalam berkas ini.
+Semua perubahan yang tercatat di dokumen ini diurutkan berdasarkan implementasi sejak versi *Frontend UI* pertama kali diintegrasikan.
 
-Format pencatatan mengacu pada standar [Keep a Changelog](https://keepachangelog.com/id/1.0.0/) dan prinsip [Semantic Versioning](https://semver.org/).
+## [Terkini] - 2026-08-17
 
----
+### 🚀 Fitur Baru (New Features)
+- **Manajemen Banner & Slide Promosi (Admin CMS)**: Fitur CRUD banner promosi visual dengan *live image preview*, target tautan, urutan tayang dinamis, status aktif/non-aktif, serta opsi pengelolaan berkas gambar lama vs galeri aset.
+- **Pustaka Media & Galeri Asset (`/api/assets`)**: Halaman penjelajah aset media server secara visual yang dilengkapi informasi ukuran file (*KB*), direktori asal, fitur pencarian nama gambar, tombol salin URL instan, dan integrasi *Asset Picker Modal* pada formulir produk dan slide promosi.
+- **Manajemen Produk Interaktif (Admin)**: Formulir penambahan dan pembaruan produk dengan dukungan *live image preview*, file upload *multipart/form-data*, pemilih media dari galeri aset, opsi penghapusan gambar lama dari server, dan badge stok dinamis (*Habis / Kritis / Aman*).
+- **Master Paket Perawatan Grooming**: Modul CRUD paket grooming khusus anjing dan kucing dengan estimasi durasi waktu pengerjaan, rincian manfaat treatment, dan tarif harga yang terintegrasi langsung ke form reservasi pelanggan.
+- **Alur Konfirmasi Progresif Reservasi Grooming (Admin)**: Alur status bertahap (*Step Workflow*) mulai dari `menunggu_konfirmasi` $\to$ `dikonfirmasi` $\to$ `selesai` / `dibatalkan` lengkap dengan input catatan/edukasi groomer ke pelanggan.
+- **Alur Konfirmasi Progresif Pesanan Belanja (Admin)**: Alur status pemenuhan pesanan mulai dari `menunggu_konfirmasi` $\to$ `disiapkan_di_toko` / `dalam_pengantaran` $\to$ `selesai`, serta modul penanganan resolusi komplain pelanggan.
+- **Modal Tiket Detail Transaksi (Customer)**: Halaman riwayat belanja (`history_pesanan.html`) dan riwayat reservasi (`history_booking.html`) dengan modal detail interaktif untuk melihat instruksi toko/groomer, pengajuan keluhan, dan konfirmasi penerimaan barang.
+- **Pemberitahuan Floating Toast**: Sistem notifikasi melayang non-blocking untuk memberikan konfirmasi visual instan kepada pengguna saat operasi CRUD, checkout, atau reservasi berhasil maupun gagal.
 
-## 📑 Ringkasan Perbandingan Arsitektur
+### 🎨 Peningkatan UI/UX (Enhancements)
+- **Desain Sistem Neo-Brutalism Modern**: Penerapan palet 3-warna terpadu (*Deep Midnight Navy*, *Sunny Cyber Yellow*, dan *Crisp White*), garis border tegas 2px solid hitam, sudut membulat proporsional (*rounded 4px–8px*), dan bayangan kontras (*tactile offset shadow*).
+- **Search Bar Full-Height Neo-Brutalist**: Standardisasi bilah pencarian pada seluruh dashboard admin dan katalog belanja dengan tombol kuning "Cari &rarr;" berformat *full-height* yang menyatu rapat (*seamless*) tanpa celah.
+- **Penyempurnaan Tombol Aksi Tabel Reservasi Admin**: Mengganti tombol aksi tabel menjadi **"Detail"** dan **"Tolak"**, serta memindahkan tombol **"Hapus"** ke dalam modal detail untuk mencegah penghapusan data secara tidak sengaja (*anti-accidental deletion*).
+- **Penguncian Pembatalan pada Reservasi Terkonfirmasi**: Menghilangkan opsi "Batalkan" baik di sisi admin maupun pelanggan ketika reservasi telah berstatus `dikonfirmasi`, mengunci alur langsung menuju tahap penyelesaian treatment.
+- **Pembersihan Riwayat Sisi Pelanggan**: Menyediakan opsi **"🗑️ Hapus Riwayat"** pada modal detail untuk reservasi yang berstatus `dibatalkan` atau `selesai`, serta menonaktifkan tombol batal yang redundan.
+- **Standardisasi Header & Navigasi**: Navigasi sticky dengan 3-part grid alignment, penanda halaman aktif (*active pills*), identitas logo seragam (*font Irish Grover*), dan tombol pintas panel admin saat login sebagai administrator.
+- **Katalog Belanja Cerdas**: Navigasi tab kategori (*Semua, Kucing, Anjing*) dengan border konsisten di setiap state hover/active, pencarian instan, dan kartu produk responsif.
 
-| Aspek Arsitektur | Versi Legacy (*PHP Native*) | Versi Refactored (*Node.js Native*) |
-|---|---|---|
-| **Pola Arsitektur** | Pseudo-MVC / Spaghetti Code (*God Files ~400 baris*) | **Layered Architecture Murni** (*Controllers, Services, Repositories, Utils, Views*) |
-| **Keamanan Database** | Interpolasi string rentan *SQL Injection* | **100% Parameterized Queries** di seluruh layer Repository |
-| **Penyimpanan Password** | Plain text / Hashing lemah | **Bcrypt Hashing** (10 putaran salt) |
-| **Otorisasi & Hak Akses** | Celah *Privilege Escalation* pada register publik | **Role customer dikunci server-side**, Strict Session Guard |
-| **Penanganan Upload** | *Double move_uploaded_file* & tanpa sanitasi | **Whitelist MIME validation**, UUID/Timestamp hashing, Anti-Traversal |
-| **Manajemen Transaksi** | Tidak ada transaksi (*potensi inkonsistensi stok*) | **ACID Database Transactions** (*Atomic stock deduction & rollback*) |
-| **Frontend & UI** | Copy-paste layout di setiap file HTML/PHP | **Vanilla Web Components Injection (DRY)** & **Desain Neo-Brutalist** |
-| **Standar Penamaan** | Typo sistematis (*costumer, katergori, berasil*) | **Clean English/Indonesian Convention** (*customer, kategori, berhasil*) |
+### 🐛 Perbaikan Kutu (Bug Fixes)
+- **Preview Gambar Produk (Admin & Client)**: Menormalisasi jalur URL gambar produk agar selalu mengembalikan rute absolut publik (`/uploads/...` atau `/images/...`), menuntaskan isu pratinjau gambar rusak atau galat 404 pada dashboard admin dan katalog.
+- **Undefined Data Rendering**: Menambahkan SQL column aliasing pada `ProductRepo.js` (`nama as nama_produk`, `stock as stok`, `tgl_expired as exp`) sehingga data produk dan metrik dasbor ter-render sempurna tanpa galat teks `undefined`.
+- **Formulir Slide Promosi Error**: Menambahkan input `formSlideUrutan` yang sebelumnya hilang pada modal formulir slide promosi dan memperbaiki validasi tipe data integer/boolean pada `SlideService.js`.
+- **Empty Booking Table & Database Query Error**: Memperbaiki relasi LEFT JOIN dan migrasi kolom `created_at` SQLite sehingga jadwal reservasi grooming pelanggan tampil akurat pada antarmuka admin.
+- **Logout 404 & Session Destruction**: Memperbaiki penanganan endpoint `POST /api/auth/logout` pada navbar dengan penghapusan sesi yang bersih dan respons JSON yang aman.
 
----
-
-## [2.0.0] - 2026-08-15 (Major Modernization Release)
-
-### 🛡️ Keamanan & Penambalan Celah Kritis (*Security Fixes*)
-- **Fixed (Critical) SQL Injection**: Mengganti semua query interpolasi string dengan *parameterized queries* (`?`) terisolasi di layer SQLite Repository.
-- **Fixed (Critical) Privilege Escalation**: Menghapus opsi pemilihan role pada formulir registrasi publik dan mengunci role `customer` secara *hardcoded* di sisi server.
-- **Fixed (High) Insecure File Upload**: Menerapkan validasi ketat *MIME type whitelist* (`image/jpeg`, `image/png`, `image/webp`), batas ukuran berkas 2MB, dan penamaan berkas acak kriptografis.
-- **Fixed (High) Directory Traversal**: Mengamankan endpoint manajemen dan penghapusan aset (`/api/assets/*`) dengan fungsi sanitasi `path.basename()`.
-- **Fixed (Medium) Password Exposure**: Mengintegrasikan library `bcrypt` untuk enkripsi satu arah kata sandi pengguna saat registrasi dan verifikasi saat login.
-- **Fixed (Medium) Session Bypassing**: Memasang *Route Guard Middleware* dan *HTTP-only Cookie Session* untuk membatasi akses area `/admin/*` hanya untuk akun terverifikasi ber-role `admin`.
-
----
-
-### 🏗️ Refaktorisasi Arsitektur & Clean Code (*Architecture Refactor*)
-- **Pemisahan Tanggung Jawab (*Separation of Concerns*)**:
-  - **`src/controllers/`**: Menangani permintaan dan respons HTTP, validasi masukan, dan kode status REST.
-  - **`src/services/`**: Menampung logika bisnis murni (*Business Logic*), kalkulasi harga, validasi ketersediaan stok, dan manajemen berkas.
-  - **`src/repositories/`**: Satu-satunya layer yang berhak mengeksekusi query database ke SQLite.
-  - **`src/utils/`**: Helper pendukung seperti `SessionManager`, `UploadHandler`, dan `formatters`.
-  - **`src/views/`**: Antarmuka murni bebas logika database.
-- **Pemberantasan Duplikasi Kode (*DRY Component Standard*)**:
-  - Mengisolasi komponen berulang ke dalam modul JavaScript: `sidebar.js`, `navbar.js`, dan `footer.js`.
-  - Komponen disuntikkan secara dinamis ke elemen root (`#sidebar-root`, `#navbar-root`, `#footer-root`).
-- **ACID Database Transactions**:
-  - Pemesanan produk menjalankan pemotongan stok dan pembuatan invoice secara atomik.
-  - Pembatalan pesanan (*Cancel Order*) secara otomatis mengembalikan stok barang ke inventori.
+### ⚙️ Sistem & Arsitektur (Backend)
+- **Pure Layered Architecture**: Pemisahan tanggung jawab kode secara tegas ke dalam layer `Controllers` (HTTP & input parsing), `Services` (logika bisnis & siklus hidup file), `Repositories` (query SQL terparameterisasi murni), dan `Utils`.
+- **Komponen Modular Frontend (DRY)**: Reusable Vanilla JS components (`sidebar.js`, `navbar.js`, `footer.js`) yang diinjeksi secara terpusat ke seluruh halaman HTML tanpa duplikasi markup.
+- **Proteksi Akses Role & Session Guard**: Autentikasi sesi cookie aman untuk rute dashboard `/admin/*` dan penguncian hak akses level pengguna/pelanggan.
+- **ACID Database Transactions**: Pemotongan stok produk secara atomik saat pemesanan barang dan pemulihan stok otomatis saat pesanan dibatalkan.
+- **Pembersihan Dead Code & Refactoring**: Pembersihan fungsi tidak terpakai, optimasi parser body request (JSON & multipart), dan konsistensi penamaan variabel standar industri.
 
 ---
-
-### ✨ Fitur Baru & Peningkatan Alur Bisnis (*New Features*)
-
-#### 1. 🛍️ Sistem Pesanan Belanja & Pemenuhan Fleksibel
-- **Metode Pengambilan**: Pelanggan dapat memilih opsi **`🏪 Ambil Sendiri di Toko`** atau **`🚚 Diantar Kurir ke Alamat`**.
-- **Data Penerima Lengkap**: Input nama penerima, nomor WhatsApp/telepon aktif, alamat pengiriman, dan catatan pesanan khusus.
-- **Pusat Komplain & Solusi**: Pelanggan dapat mengajukan komplain resmi jika pesanan mengalami kendala, dan admin dapat memberikan tanggapan/solusi resmi langsung pada sistem.
-
-#### 2. ✂️ Reservasi Layanan Salon & Grooming
-- **Paket Perawatan Komprehensif**: Master data paket Reguler dan Premium untuk anjing dan kucing beserta rincian perlakuan medis/higienis.
-- **Batas Slot & Antrean**: Pelanggan dapat memilih tanggal dan waktu reservasi secara terstruktur.
-- **Catatan Edukasi & Kondisi Anabul**: Admin dapat menambahkan catatan hasil perawatan (*e.g. kondisi telinga, bulu, jamur*) untuk dilihat pelanggan.
-
-#### 3. 🔄 Alur Konfirmasi Status Bertahap (*Progressive Step Workflow*)
-- **Reservasi Grooming (Admin Pop-up)**:
-  - Saat `menunggu_konfirmasi`: Opsi **`📅 Konfirmasi Jadwal Sesi`** dan **`❌ Batalkan`**.
-  - Saat `dikonfirmasi`: Opsi **`✅ Selesai Treatment & Perawatan`** dan **`❌ Batalkan`**.
-  - Saat `selesai`/`dibatalkan`: Menampilkan info tuntas tanpa tombol aksi redundant.
-- **Pesanan Belanja (Admin Pop-up)**:
-  - Saat `menunggu_konfirmasi`: Opsi **`🏪 Siapkan & Keep di Toko`** / **`🚚 Konfirmasi & Kirim Kurir`** dan **`❌ Batalkan`**.
-  - Saat `disiapkan_di_toko`/`dalam_pengantaran`: Opsi **`✅ Tandai Selesai / Diterima`** dan **`❌ Batalkan`**.
-  - Saat `komplain`: Menampilkan form respon solusi admin untuk menuntaskan komplain.
-
-#### 4. 🖼️ Manajemen Banner Promosi & Galeri Asset Media (`/api/assets`)
-- **Upload File Visual Murni**: Form slide promosi berfokus penuh pada estetika visual banner tanpa ketergantungan teks judul/deskripsi.
-- **Pratinjau Langsung (*Live Image Preview*)**: Banner langsung ditampilkan di modal sebelum disimpan.
-- **Opsi Hapus/Simpan Gambar Lama**: Admin dapat memilih menghapus file lama dari server (*hemat penyimpanan disk*) atau menyimpannya di Galeri Asset saat mengedit banner.
-- **Pustaka Media & Galeri Asset**:
-  - Grid visual seluruh gambar di `/uploads/` dan `/images/banners/`.
-  - Informasi ukuran file (*e.g. 245 KB*), direktori asal, fitur pencarian nama file, dan salin URL instan.
-  - **Asset Picker Modal**: Memungkinkan pemilihan banner dari galeri yang sudah ada tanpa perlu upload ulang.
-
-#### 5. 🪟 Desain Tabel Ramping & Modal Tiket Detail Transaksi (*Clean Table Pattern*)
-- **Riwayat Pelanggan Ramping ([`history_booking.html`](file:///C:/Users/USER/marcell-porto-project/miawoof-petshop/src/views/customer/history_booking.html) & [`history_pesanan.html`](file:///C:/Users/USER/marcell-porto-project/miawoof-petshop/src/views/customer/history_pesanan.html))**:
-  - Kolom catatan panjang dan tombol bertumpuk dihapus dari baris tabel.
-  - Baris tabel hanya menampilkan informasi utama dengan **1 tombol bersih: `🔍 Detail`**.
-  - Seluruh interaksi mendalam (konfirmasi penerimaan, pembatalan, pengajuan keluhan, catatan toko) dipusatkan secara elegan di dalam **Modal Tiket Detail**.
-
----
-
-### 🎨 Desain Sistem & Standarisasi UI/UX (*Design System*)
-- **Estetika Neo-Brutalist Modern**:
-  - Palet 3-warna master: **Deep Midnight Navy** (`#0A192F`), **Cyber Yellow** (`#FFD600`), dan **Pure White** (`#FFFFFF`).
-  - Border tegas 2px solid hitam, sudut *rounded* proporsional (4px - 8px), dan bayangan kontras (*tactile offset shadow*).
-- **Standarisasi Tombol Aksi**:
-  - Tombol Tabel: `.btn-table-action` (`.btn-action-yellow`, `.btn-action-blue`, `.btn-action-white`, `.btn-action-danger`).
-  - Tombol Modal: `.btn-action-modal` (`.btn-modal-confirm`, `.btn-modal-primary`, `.btn-modal-success`, `.btn-modal-cancel`).
-- **Anti-Redundansi Modal**: Menghapus tombol "Tutup" tambahan di bagian bawah footer modal jika header sudah dilengkapi tombol silang `✕` (*btn-close*).
-- **Tipografi Harmonis**: Google Fonts `"Irish Grover"` (Brand Headings) dan `"Inria Sans"` (Data Legibility).
-
----
-
-### 🔤 Perbaikan Ejaan & Konvensi Penamaan (*Typo Fixes*)
-- `costumer` $\to$ `customer` (*seluruh layer route, variabel, DTO, dan tabel*).
-- `katergori` $\to$ `kategori`.
-- `berasil` $\to$ `berhasil`.
-- `tb_costumer` / `tb_barang` / `tb_beli` $\to$ skema baku `users`, `produk`, `pesanan`, `booking`, `paket_grooming`, `slides`.
-
----
-
-## [1.0.0] - Versi Legacy (PHP Native Spaghetti)
-- Kode awal warisan PHP native dengan query langsung di dalam berkas tampilan HTML.
-- Format tabel database lama dengan celah keamanan SQL injection dan otorisasi tidak terlindungi.
+*Catatan Historis: Laporan ini direkap mulai dari titik komit "feat(frontend): refactor and modernize entire design system and components" saat UI pertama kali diintegrasikan.*
