@@ -321,8 +321,8 @@ const server = http.createServer(async (req, res) => {
     res.end('<div style="text-align:center; padding: 4rem; font-family: sans-serif;"><h1>404 - Halaman Tidak Ditemukan</h1><p><a href="/">Kembali ke Beranda</a></p></div>');
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(`🐾 MiaWoof Petshop Server Running on port ${PORT}`);
+    console.log(`🐾 MiaWoof Petshop Server Running on http://localhost:${PORT}`);
     console.log(`====================================================`);
 });
