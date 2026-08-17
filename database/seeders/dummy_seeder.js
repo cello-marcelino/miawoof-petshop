@@ -25,20 +25,20 @@ db.serialize(() => {
     // Admin
     userStmt.run('admin', adminPassword, 'MiaWoof Head Admin', 'admin@miawoof.com', '081234567890', 'Ruko Pet Center No. 1, Jakarta', 'admin');
 
-    // Customers
+    // Customers (5 PBL Developers)
     const customers = [
-        ['budi_santoso', 'Budi Santoso', 'budi@gmail.com', '089612345678', 'Jl. Merdeka No. 12, Jakarta'],
-        ['siti_aminah', 'Siti Aminah', 'siti@gmail.com', '089623456789', 'Jl. Mawar No. 4, Depok'],
-        ['dewi_lestari', 'Dewi Lestari', 'dewi@gmail.com', '089634567890', 'Perumahan Indah Blok B3, Tangerang'],
-        ['rizky_aditya', 'Rizky Aditya', 'rizky@gmail.com', '089645678901', 'Jl. Sukajadi No. 88, Bandung'],
-        ['putri_anindya', 'Putri Anindya', 'putri@gmail.com', '089656789012', 'Jl. Diponegoro No. 45, Bogor']
+        ['dea_asnuari', 'Dea Asnuari', 'dea.asnuari@miawoof.com', '081234567801', 'Batam Centre, Kota Batam'],
+        ['hamdan_azmi', 'Hamdan Azmi', 'hamdan.azmi@miawoof.com', '081234567802', 'Batu Aji, Kota Batam'],
+        ['christian_marcelino', 'Christian Marcelino Sinaga', 'marcelino@miawoof.com', '081234567803', 'Tiban Indah, Kota Batam'],
+        ['setya_pramudiya', 'Setya Pramudiya Hakim', 'setya.pramudiya@miawoof.com', '081234567804', 'Bengkong, Kota Batam'],
+        ['fatra_syahreza', 'Fatra Syahreza', 'fatra.syahreza@miawoof.com', '081234567805', 'Nongsa, Kota Batam']
     ];
 
     customers.forEach(c => {
         userStmt.run(c[0], customerPassword, c[1], c[2], c[3], c[4], 'customer');
     });
     userStmt.finalize();
-    console.log('✅ Users berhasil dibuat (1 Admin, 5 Customers).');
+    console.log('✅ Users berhasil dibuat (1 Admin, 5 Customer Pengembang PBL).');
 
     // 3. Insert Paket Grooming
     const paketStmt = db.prepare(`INSERT INTO paket_grooming (nama_paket, jenis_hewan, harga, keterangan_grooming) VALUES (?, ?, ?, ?)`);

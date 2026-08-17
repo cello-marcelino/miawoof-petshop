@@ -124,10 +124,12 @@ Tersedia akun simulasi yang siap digunakan untuk menguji fungsionalitas sistem:
 - **Akun Pengelola (Administrator)**:
   - **Username**: `admin`
   - **Password**: `admin123`
-- **Akun Pelanggan (Customer)**:
-  - **Username**: `budi_santoso`
-  - **Password**: `customer123`
-  - *(Tersedia pula akun pelanggan lain: `siti_aminah`, `dewi_lestari`, `rizky_aditya`, `putri_anindya` dengan password yang sama `customer123`)*
+- **Akun Pelanggan (Customer / Anggota Tim Pengembang)**:
+  - `dea_asnuari` | Password: `customer123`
+  - `hamdan_azmi` | Password: `customer123`
+  - `christian_marcelino` | Password: `customer123`
+  - `setya_pramudiya` | Password: `customer123`
+  - `fatra_syahreza` | Password: `customer123`
 
 ---
 
