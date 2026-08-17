@@ -23,36 +23,38 @@
         }
         .asset-img-container {
             width: 100%;
-            height: 140px;
-            background: #f1f3f5;
+            height: 155px;
+            background: #f8f9fa;
             display: flex;
             align-items: center;
             justify-content: center;
             border-bottom: 2px solid #000000;
             position: relative;
             overflow: hidden;
+            padding: 8px;
         }
         .asset-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
             transition: transform 0.2s ease;
         }
         .asset-card:hover .asset-img-container img {
-            transform: scale(1.04);
+            transform: scale(1.05);
         }
         .asset-picker-card {
             cursor: pointer;
             border: 2px solid #000000;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             background: #fff;
+            box-shadow: 2px 2px 0 #000000;
             transition: all 0.15s ease;
         }
         .asset-picker-card:hover {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.4);
-            transform: translateY(-2px);
+            border-color: #000000;
+            box-shadow: 4px 4px 0 #000000;
+            transform: translate(-2px, -2px);
         }
         .nav-tabs-custom {
             border-bottom: 2px solid #000000;
@@ -172,24 +174,27 @@
                     <!-- Tab 2: Galeri Asset Media -->
                     <div class="tab-pane fade" id="tab-assets" role="tabpanel">
                         <div class="card-modern p-4 mb-4">
-                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
                                 <div>
-                                    <h5 class="fw-bold text-dark mb-1">Galeri Asset & Media Library</h5>
-                                    <p class="text-muted small mb-0">Kelola semua file gambar banner dan produk yang telah diunggah ke sistem MiaWoof.</p>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold">MEDIA STORAGE</span>
+                                        <h5 class="fw-bold text-dark mb-0">Galeri Asset & Media Library</h5>
+                                    </div>
+                                    <p class="text-muted small mb-0">Kelola semua file gambar banner dan produk yang telah diunggah ke sistem penyimpanan server.</p>
                                 </div>
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <input type="file" id="assetGalleryUploadInput" class="d-none" accept="image/*" onchange="uploadDirectAsset(this.files[0])">
-                                    <button class="btn btn-primary-custom btn-sm" onclick="document.getElementById('assetGalleryUploadInput').click()">
-                                        <img src="/images/icons/plus.svg" alt="Upload" width="14" height="14">
+                                    <button class="btn btn-primary-custom" onclick="document.getElementById('assetGalleryUploadInput').click()">
+                                        <img src="/images/icons/plus.svg" alt="Upload" width="16" height="16">
                                         <span>Unggah Gambar Baru</span>
                                     </button>
-                                    <button class="btn btn-outline-custom btn-sm" onclick="loadAdminAssets()">
+                                    <button class="btn btn-outline-custom" onclick="loadAdminAssets()">
                                         <span>🔄 Refresh</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="row g-2 mb-4">
+                            <div class="row g-3 mb-4">
                                 <div class="col-md-6 col-12">
                                     <div class="search-input-group">
                                         <div class="search-input-icon">
@@ -204,8 +209,8 @@
                                 </div>
                             </div>
 
-                            <!-- Assets Grid Container -->
-                            <div class="row g-3" id="assetsGridContainer">
+                            <!-- Assets Grid Container (Generous Spacing g-4) -->
+                            <div class="row g-4" id="assetsGridContainer">
                                 <div class="col-12 text-center py-5 text-muted">Memuat galeri asset...</div>
                             </div>
                         </div>
@@ -595,32 +600,32 @@
             container.innerHTML = assets.map(a => {
                 const isUpload = a.folder === 'uploads';
                 const folderBadge = isUpload 
-                    ? '<span class="badge bg-yellow text-dark border border-1 border-dark small">📁 /uploads</span>' 
-                    : '<span class="badge bg-light text-dark border border-1 border-dark small">🔒 Preset Banner</span>';
+                    ? '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold" style="font-size: 0.7rem;">📁 /uploads</span>' 
+                    : '<span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 fw-bold" style="font-size: 0.7rem;">🔒 Preset Banner</span>';
 
                 return `
                     <div class="col-xl-3 col-lg-4 col-md-6 col-12">
-                        <div class="asset-card h-100 d-flex flex-column">
+                        <div class="asset-card h-100 d-flex flex-column justify-content-between">
                             <div class="asset-img-container">
                                 <img src="${a.url}" alt="${a.filename}" onerror="this.src='/images/placeholders/default_product.png'">
                             </div>
                             <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
-                                <div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-2 pb-1 border-bottom border-1 border-light">
                                         ${folderBadge}
-                                        <small class="text-muted fw-bold">${a.sizeFormatted}</small>
+                                        <span class="badge bg-dark text-white font-monospace px-2 py-1" style="font-size: 0.68rem;">${a.sizeFormatted}</span>
                                     </div>
-                                    <div class="fw-bold text-dark text-truncate small mb-2" title="${a.filename}">${a.filename}</div>
+                                    <div class="fw-bold text-dark text-truncate small" title="${a.filename}">${a.filename}</div>
                                 </div>
-                                <div class="pt-2 border-top border-1 border-dark d-flex gap-1 flex-wrap">
-                                    <button class="btn btn-outline-custom btn-sm flex-fill py-1 px-1 small" onclick="copyAssetUrl('${a.url}')" title="Salin URL Gambar">
+                                <div class="pt-3 border-top border-1 border-dark d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-table-action btn-action-white flex-grow-1 justify-content-center py-2" onclick="copyAssetUrl('${a.url}')" title="Salin URL Gambar">
                                         <span>📋 Salin</span>
                                     </button>
-                                    <button class="btn btn-yellow-custom btn-sm flex-fill py-1 px-1 small" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide">
-                                        <span>🎠 Jadikan Slide</span>
+                                    <button type="button" class="btn btn-table-action btn-action-yellow flex-grow-1 justify-content-center py-2" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide Baru">
+                                        <span>🎠 Slide</span>
                                     </button>
                                     ${a.isDeletable ? `
-                                        <button class="btn btn-table-action btn-action-danger btn-sm py-1 px-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus Permanen">
+                                        <button type="button" class="btn btn-table-action btn-action-danger px-2 justify-content-center py-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus File Permanen">
                                             <span>🗑️</span>
                                         </button>
                                     ` : ''}
@@ -702,15 +707,20 @@
         function renderPickerGrid(assets) {
             const container = document.getElementById('pickerGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Tidak ada file gambar.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file gambar di galeri asset.</div>';
                 return;
             }
 
             container.innerHTML = assets.map(a => `
                 <div class="col-md-4 col-sm-6 col-12">
-                    <div class="asset-picker-card p-2 text-center" onclick="selectAssetForSlide('${a.url}')">
-                        <img src="${a.url}" alt="${a.filename}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #000;">
-                        <div class="small fw-bold text-dark text-truncate mt-1">${a.filename}</div>
+                    <div class="asset-picker-card p-3 text-center h-100 d-flex flex-column justify-content-between" onclick="selectAssetForSlide('${a.url}')">
+                        <div style="height: 100px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 1.5px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 8px; padding: 4px;">
+                            <img src="${a.url}" alt="${a.filename}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div class="small fw-bold text-dark text-truncate mb-2" title="${a.filename}">${a.filename}</div>
+                            <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold w-100" style="font-size: 0.72rem;">Pilih Gambar Ini</span>
+                        </div>
                     </div>
                 </div>
             `).join('');

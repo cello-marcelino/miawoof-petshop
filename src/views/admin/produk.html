@@ -476,17 +476,19 @@
         function renderPickerGrid(assets) {
             const container = document.getElementById('pickerGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Tidak ada gambar yang cocok.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada gambar yang cocok.</div>';
                 return;
             }
 
             container.innerHTML = assets.map(a => `
                 <div class="col-md-3 col-sm-4 col-6">
-                    <div class="p-2 bg-white border border-2 border-dark rounded-2 text-center h-100 d-flex flex-column justify-content-between" style="cursor: pointer; box-shadow: 2px 2px 0px #000;" onclick="selectProductAsset('${a.url}')">
-                        <img src="${a.url}" alt="${a.filename}" style="width: 100%; height: 75px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" onerror="this.src='/images/placeholders/default_product.png'">
-                        <div class="mt-2">
-                            <div class="small fw-bold text-dark text-truncate" title="${a.filename}">${a.filename}</div>
-                            <span class="badge bg-yellow text-dark border border-1 border-dark px-1 py-0 mt-1" style="font-size: 0.65rem;">Pilih Gambar</span>
+                    <div class="p-3 bg-white border border-2 border-dark rounded-2 text-center h-100 d-flex flex-column justify-content-between" style="cursor: pointer; box-shadow: 2px 2px 0px #000; transition: transform 0.15s ease;" onclick="selectProductAsset('${a.url}')">
+                        <div style="height: 85px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 1.5px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 8px; padding: 4px;">
+                            <img src="${a.url}" alt="${a.filename}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='/images/placeholders/default_product.png'">
+                        </div>
+                        <div>
+                            <div class="small fw-bold text-dark text-truncate mb-2" title="${a.filename}">${a.filename}</div>
+                            <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold w-100" style="font-size: 0.7rem;">Pilih Gambar</span>
                         </div>
                     </div>
                 </div>
