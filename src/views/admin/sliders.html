@@ -582,19 +582,33 @@
             }
         }
 
-        // ------------------ ASSET GALLERY LIBRARY ------------------
+        function normalizeAsset(a) {
+            let kategori = a.kategori;
+            if (!kategori) {
+                const isPromosi = a.folder === 'banners' || /^(banner|petads|slide|promo)/i.test(a.filename);
+                kategori = isPromosi ? 'promosi' : 'katalog';
+            }
+            const kategoriLabel = kategori === 'promosi' ? 'Promosi & Banner' : 'Katalog Produk';
+            return {
+                ...a,
+                kategori,
+                kategoriLabel
+            };
+        }
 
         async function loadAdminAssets() {
             const container = document.getElementById('assetsGridContainer');
-            container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Memuat galeri asset...</div>';
+            if (container) container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Memuat galeri asset...</div>';
 
             try {
                 const res = await fetch('/api/assets');
                 const data = await res.json();
 
-                if (data.success && data.data.length > 0) {
-                    allAssets = data.data;
-                    document.getElementById('badgeAssetCount').innerText = allAssets.length;
+                if (data.success && data.data && data.data.length > 0) {
+                    allAssets = data.data.map(normalizeAsset);
+                    if (document.getElementById('badgeAssetCount')) {
+                        document.getElementById('badgeAssetCount').innerText = allAssets.length;
+                    }
 
                     // Update category counts
                     const countPromo = allAssets.filter(a => a.kategori === 'promosi').length;
@@ -604,11 +618,13 @@
 
                     filterAssets();
                 } else {
-                    document.getElementById('badgeAssetCount').innerText = '0';
-                    container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada file media yang diunggah.</div>';
+                    if (document.getElementById('badgeAssetCount')) {
+                        document.getElementById('badgeAssetCount').innerText = '0';
+                    }
+                    if (container) container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada file media yang diunggah.</div>';
                 }
             } catch (err) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat galeri aset.</div>';
+                if (container) container.innerHTML = '<div class="col-12 text-center py-5 text-danger">Gagal memuat galeri aset.</div>';
             }
         }
 
@@ -626,7 +642,8 @@
         }
 
         function filterAssets() {
-            const query = (document.getElementById('filterAssetSearch').value || '').toLowerCase().trim();
+            const searchEl = document.getElementById('filterAssetSearch');
+            const query = (searchEl ? searchEl.value : '').toLowerCase().trim();
             let filtered = allAssets.filter(a => a.kategori === currentAssetCategory);
 
             if (query) {
