@@ -1,131 +1,144 @@
-# MiaWoof Petshop CMS, Booking & Media Asset Management System (Refactored Version)
+# Miawoof Petshop - Mini E-commerce catalog, Booking System and media asset management
 
-Selamat datang di repositori **MiaWoof Petshop CMS, Booking & Media Asset Management System**! Proyek ini merupakan hasil *refactoring* menyeluruh dari arsitektur warisan PHP Native menjadi sistem modern berbasis **Node.js Native** dengan **Layered Architecture Murni**, **Bootstrap 5**, dan **Vanilla Web Components** dengan estetika modern *Neo-Brutalist*.
+Dokumentasi studi dan panduan implementasi sistem informasi **Miawoof Petshop**, sebuah platform berbasis web yang dikembangkan sebagai proyek **Project Based Learning (PBL) Tahun 2024** di **Politeknik Negeri Batam**.
 
----
-
-## 🚀 Keunggulan & Fitur Utama
-
-1. **Keamanan Ekstra (Zero Vulnerabilities)**:
-   - Kebal serangan *SQL Injection* berkat *Parameterized Queries* di seluruh layer *Repository*.
-   - Kata sandi dienkripsi menggunakan *Bcrypt Hashing* dengan 10 putaran salt.
-   - Hak akses role `admin` dikunci secara server-side (mencegah celah *Privilege Escalation* pada form register).
-   - Pengelolaan upload gambar dengan validasi *MIME type whitelist*, penamaan acak aman, dan proteksi *Directory Traversal*.
-   - Proteksi sesi ketat berbasis *HTTP-only Cookie* dan *Route Guard Middleware*.
-
-2. **Katalog Belanja & Checkout Atomik (E-Commerce Mini)**:
-   - Pencarian produk instan dan filter kategori cepat (Khusus Kucing / Khusus Anjing).
-   - Opsi metode pemenuhan pesanan: **🏪 Ambil Sendiri di Toko** atau **🚚 Diantar Kurir ke Alamat**.
-   - Mekanisme pemotongan stok atomik (*ACID Transaction*) dan *automatic inventory rollback* saat pesanan dibatalkan.
-   - Sistem komplain pesanan terintegrasi dengan balasan solusi resmi dari admin.
-
-3. **Reservasi Salon & Perawatan (Grooming System)**:
-   - Pilihan paket perawatan Reguler & Premium dengan rincian *treatment* lengkap.
-   - Pemilihan slot tanggal & jam kedatangan dengan batas antrean teratur.
-   - Alur konfirmasi progresif bertahap (*Menunggu Konfirmasi $\to$ Dikonfirmasi $\to$ Selesai Perawatan*).
-
-4. **Kelola Banner Promosi & Galeri Asset Media (Media Library)**:
-   - **Upload Banner Visual murni**: Pratinjau gambar banner langsung sebelum disimpan.
-   - **Opsi Pergantian Gambar**: Pilihan untuk menghapus gambar lama dari server (*hemat penyimpanan*) atau menyimpannya di Galeri Asset.
-   - **Galeri Asset & Pustaka Media (`/api/assets`)**: Visual grid seluruh aset `/uploads/` dan `/images/banners/`, info ukuran file, pencarian aset, salin URL instan, dan *Asset Picker* terintegrasi.
-
-5. **Antarmuka Bersih & Alur Bertahap (*Clean Tables & Progressive Step Actions*)**:
-   - **Desain Tabel Ramping (Prinsip DRY)**: Baris tabel pelanggan ringkas dengan tombol tunggal `🔍 Detail`, memindahkan catatan panjang dan tombol aksi ke dalam Modal Tiket Detail.
-   - **Progressive Action Confirmation**: Tombol tindakan admin dan pelanggan berubah secara dinamis mengikuti status terkini (menghindari duplikasi tombol aksi).
+Sistem ini dirancang untuk mendigitalkan proses operasional toko hewan peliharaan secara menyeluruh, mencakup layanan belanja perlengkapan hewan (*Mini E-Commerce*), penjadwalan perawatan hewan (*Grooming Reservation*), serta pengelolaan konten spanduk dan berkas promosi toko (*Media Asset Management*).
 
 ---
 
-## 🛠️ Stack Teknologi & Alat (*Tech Stack*)
+## 📌 Latar Belakang & Tujuan Studi
 
-- **Backend / Server**: Node.js Native (*Modul standar `http`, `fs`, `path`, `crypto`*)
-- **Database**: SQLite3 (*File `database/petshop.db`*)
-- **Kriptografi & Sesi**: Bcrypt & Cookie-based Authentication
-- **Penangan Upload**: Formidable (Multi-part parser)
-- **Frontend**: HTML5, Vanilla JavaScript, Vanilla CSS Variables + Bootstrap 5
-- **Desain & Tema**: Neo-Brutalist dengan Palet Master 3-Warna (*Deep Navy, Cyber Yellow, Clean White*)
-- **Tipografi**: Google Fonts (*Irish Grover* & *Inria Sans*)
+Pada operasional toko hewan konvensional, pencatatan pesanan produk dan antrean perawatan salon hewan sering kali dilakukan secara manual, yang berisiko menimbulkan kesalahan pencatatan stok dan jadwal perawatan yang bertumpuk. 
+
+Proyek studi ini bertujuan untuk:
+1. **Memudahkan Pelanggan**: Memberikan kemudahan dalam menelusuri katalog produk, melakukan pemesanan belanja, dan memesan jadwal salon hewan secara mandiri kapan saja.
+2. **Membantu Pengelola Toko**: Menyediakan panel administrasi terpadu untuk memantau pesanan masuk, mengelola ketersediaan produk, mengatur antrean salon, serta memperbarui tampilan spanduk promo di halaman utama.
+3. **Menerapkan Standar Perangkat Lunak yang Baik**: Mengimplementasikan arsitektur aplikasi berlapis yang rapi, aman, dan mudah dikembangkan lebih lanjut.
 
 ---
 
-## 📂 Struktur Arsitektur (Layered Standard)
+## 🌟 Fitur Utama Sistem
+
+### 1. Katalog Belanja & Pemesanan Produk (*Mini E-Commerce*)
+- **Pencarian & Filter Kategori**: Pelanggan dapat mencari produk berdasarkan nama atau menyaring kategori khusus kebutuhan kucing maupun anjing.
+- **Pilihan Metode Pengambilan Fleksibel**:
+  - 🏪 **Ambil Sendiri di Toko** (Bebas biaya ongkir, barang disiapkan pengelola).
+  - 🚚 **Diantar Kurir Toko** (Pengiriman langsung ke alamat rumah pelanggan).
+- **Pengelolaan Stok Otomatis**: Jumlah stok berkurang secara otomatis saat pesanan dibuat dan akan dikembalikan (*restock*) secara otomatis jika pesanan dibatalkan.
+- **Layanan Komplain Pesanan**: Pelanggan dapat menyampaikan kendala pesanan melalui sistem dan menerima tanggapan langsung dari pengelola toko.
+
+### 2. Layanan Reservasi Salon & Perawatan (*Grooming Booking*)
+- **Katalog Paket Perawatan**: Informasi transparan mengenai paket perawatan (mandi sehat, potong kuku, pembersihan telinga, hingga paket styling kutu dan jamur).
+- **Penjadwalan Teratur**: Pelanggan memilih tanggal dan jam kedatangan yang diinginkan untuk menghindari antrean panjang di lokasi.
+- **Alur Konfirmasi Bertahap**: Status reservasi dipantau secara langsung mulai dari *Menunggu Konfirmasi*, *Dikonfirmasi oleh Toko*, hingga *Selesai Perawatan*.
+
+### 3. Pengelolaan Banner Promosi & Galeri Media (*Media Asset Management*)
+- **Upload Spanduk Promosi Visual**: Pengelola dapat mengunggah gambar spanduk baru untuk ditampilkan pada korsel beranda toko secara interaktif.
+- **Pustaka Galeri Media Terpusat**: Seluruh gambar produk dan banner tersimpan rapi dalam pustaka media yang dilengkapi fitur pencarian, salin tautan gambar, dan pratinjau instan.
+- **Efisiensi Penyimpanan**: Dilengkapi opsi untuk menghapus gambar lama dari server atau menyimpannya kembali di galeri saat melakukan pembaruan berkas.
+
+### 4. Pusat Aktivitas Pelanggan & Riwayat Terpadu
+- **Riwayat Belanja & Booking**: Pelanggan dapat melacak status pengiriman barang dan jadwal salon melalui halaman akun pribadi.
+- **Tampilan Tiket Detail**: Seluruh rincian biaya, catatan pengiriman, dan alamat disajikan dalam format tiket informasi yang bersih dan mudah dibaca.
+- **Pengelolaan Riwayat**: Pelanggan dapat membersihkan data riwayat pesanan atau reservasi yang telah selesai/dibatalkan.
+
+### 5. Keamanan & Kenyamanan Pengguna
+- **Pemisahan Peran Akun**: Pembagian akses yang tegas antara pengelola toko (*Admin*) dan pembeli (*Customer*).
+- **Perlindungan Data Sandi**: Kata sandi akun disimpan dalam bentuk acak yang terenkripsi aman.
+- **Validasi Berkas Unggahan**: Berkas gambar diperiksa format dan ukurannya secara otomatis untuk mencegah kesalahan sistem.
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+Aplikasi ini dibangun menggunakan teknologi web standar yang ringan, mandiri, dan mudah dipelajari:
+
+- **Lingkungan & Server**: **Node.js** (Menjalankan server web dan layanan data secara mandiri tanpa ketergantungan framework yang rumit).
+- **Basis Data**: **SQLite3** (Penyimpanan basis data lokal berbasis berkas yang praktis, cepat, dan terstruktur).
+- **Antarmuka Pengguna (Frontend)**: **HTML5**, **Vanilla JavaScript**, dan **Bootstrap 5**.
+- **Konsep Desain Tampilan**: Desain modern dengan gaya **Neo-Brutalist** yang mengutamakan garis batas tegas, tata letak yang lapang, serta perpaduan warna kontras (*Deep Navy, Cyber Yellow, dan Clean White*) untuk kemudahan navigasi.
+
+---
+
+## 📂 Struktur Penataan Berkas Proyek
 
 ```text
 miawoof-petshop/
-├── database/
-│   ├── petshop.db                # File database SQLite (terproteksi di .gitignore)
-│   └── seeders/
-│       └── dummy_seeder.js       # Script seeder admin, customer, produk, paket & slides
+├── database/                     # Tempat penyimpanan basis data lokal
+│   ├── petshop.db                # Berkas utama basis data SQLite
+│   └── seeders/                  # Skrip pembuat data awal untuk uji coba sistem
 │
-├── src/
-│   ├── config/database.js        # Konfigurasi koneksi SQLite & migrasi otomatis tabel
-│   ├── controllers/              # HTTP request/response handler (Auth, Product, Order, Booking, Slide, Asset, User)
-│   ├── services/                 # Logika bisnis murni (validasi stok, kalkulasi total, enkripsi, asset handling)
-│   ├── repositories/             # Query database terisolasi (CRUD SQLite terenkapsulasi)
-│   ├── utils/                    # Session manager, file uploader, formatters
-│   └── views/                    # Tampilan antarmuka HTML
-│       ├── admin/                # Panel Admin (Dashboard, Pesanan, Grooming, Produk, Sliders, Users, Profil)
-│       ├── customer/             # Portal Pelanggan (Home, Katalog, Grooming, Riwayat Pesanan, Riwayat Booking, Profil)
-│       └── auth/                 # Halaman Login & Registrasi
+├── src/                          # Kode sumber utama aplikasi (Backend & Tampilan)
+│   ├── config/                   # Pengaturan koneksi dan struktur tabel basis data
+│   ├── controllers/              # Pengatur alur permintaan data (Katalog, Booking, Pengguna, Media)
+│   ├── services/                 # Logika utama (pengecekan stok, perhitungan biaya, enkripsi)
+│   ├── repositories/             # Perintah pengolahan data ke SQLite (Simpan, Baca, Ubah, Hapus)
+│   ├── utils/                    # Fungsi pembantu (pengatur sesi login, pengunggah berkas)
+│   └── views/                    # Halaman antarmuka web (HTML)
+│       ├── admin/                # Halaman kendali pengelola toko (Pesanan, Grooming, Produk, Banner)
+│       ├── customer/             # Halaman utama untuk pelanggan (Beranda, Katalog, Booking, Riwayat)
+│       └── auth/                 # Halaman Masuk (Login) dan Pendaftaran Akun Baru
 │
-├── public/
-│   ├── css/                      # Token tema (variables.css), custom style (style.css), components (components.css)
-│   ├── js/                       # Vanilla Web Components (navbar.js, sidebar.js, footer.js, formatters.js)
-│   ├── uploads/                  # Repositori media foto produk, banner, dan berkas yang diunggah
-│   └── images/                   # Aset gambar statis, branding, logo, dan preset banner
+├── public/                       # Aset publik yang dapat diakses langsung oleh peramban
+│   ├── css/                      # Lembar gaya dan penataan warna tampilan web
+│   ├── js/                       # Skrip komponen antarmuka (Menu Navigasi, Sidebar, Footer)
+│   ├── uploads/                  # Folder penyimpanan berkas gambar yang diunggah pengguna
+│   └── images/                   # Gambar ilustrasi, logo toko, dan spanduk bawaan
 │
-├── server.js                     # Native HTTP router, REST API dispatcher & static file server
-└── package.json                  # Konfigurasi Node & dependencies
+├── server.js                     # Berkas utama peladen (Entry Point Server Aplikasi)
+└── package.json                  # Catatan konfigurasi dan pustaka pendukung aplikasi
 ```
 
 ---
 
-## 💻 Cara Menjalankan Secara Lokal (*Local Setup*)
+## 💻 Panduan Menjalankan Aplikasi Secara Lokal
 
-Ikuti langkah-langkah di bawah ini untuk menjalankan server secara lokal:
+Untuk menguji dan menjalankan aplikasi ini pada komputer lokal, ikuti tahapan berikut:
 
-1. Pastikan Anda telah memasang **[Node.js](https://nodejs.org)** (v16 atau lebih baru).
-2. Buka terminal dan masuk ke direktori proyek:
+1. **Persiapan**: Pastikan komputer telah terpasang **[Node.js](https://nodejs.org)** (versi 16 atau lebih baru).
+2. **Masuk ke Direktori Proyek**: Buka aplikasi terminal/Command Prompt dan arahkan ke folder proyek:
    ```bash
    cd miawoof-petshop
    ```
-3. Unduh seluruh dependensi aplikasi:
+3. **Instalasi Paket Pendukung**: Jalankan perintah instalasi dependensi:
    ```bash
    npm install
    ```
-4. Jalankan injeksi data simulasi awal (*Seeding Database*):
+4. **Injeksi Data Awal (Opsional untuk Uji Coba)**: Masukkan data contoh (produk, layanan grooming, banner, dan akun simulasi):
    ```bash
    npm run seed
    ```
-5. Hidupkan server aplikasi:
+5. **Jalankan Peladen (Server)**:
    ```bash
    node server.js
    ```
-6. Buka browser dan akses alamat:
+6. **Akses Aplikasi**: Buka peramban web (*browser*) dan kunjungi tautan:
    **`http://localhost:3000`**
 
 ---
 
-### 🔑 Informasi Akun Pengujian (*Demo Login*)
+## 🔑 Informasi Akun Pengujian (*Demo Login*)
 
-Sistem telah dilengkapi data simulasi siap uji:
-- **Akun Administrator**:
-  - Username: `admin` | Password: `admin123`
-- **Akun Customer (Pelanggan)**:
-  - Username: `budi_santoso` | Password: `customer123`
-  - *(Tersedia juga akun: `siti_aminah`, `dewi_lestari`, `rizky_aditya`, `putri_anindya` dengan password `customer123`)*
+Tersedia akun simulasi yang siap digunakan untuk menguji fungsionalitas sistem:
+
+- **Akun Pengelola (Administrator)**:
+  - **Username**: `admin`
+  - **Password**: `admin123`
+- **Akun Pelanggan (Customer)**:
+  - **Username**: `budi_santoso`
+  - **Password**: `customer123`
+  - *(Tersedia pula akun pelanggan lain: `siti_aminah`, `dewi_lestari`, `rizky_aditya`, `putri_anindya` dengan password yang sama `customer123`)*
 
 ---
 
 ## 👥 Tim Pengembang Project Based Learning (PBL)
 
-Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di **Politeknik Negeri Batam** oleh:
+Aplikasi ini dikembangkan sebagai karya studi terapan pada program **Project Based Learning (PBL) Tahun 2024** di **Politeknik Negeri Batam** oleh:
 
-| No. | NIM Mahasiswa | Nama Anggota Pengembang | Peran & Tanggung Jawab |
-|:---:|:---:|:---|:---|
-| 1 | `3312411001` | **Dea Asnuari** | Developer PBL |
-| 2 | `3312411004` | **Hamdan Azmi** | Developer PBL |
-| 3 | `3312411008` | **Christian Marcelino Sinaga** | Developer PBL |
-| 4 | `3312411030` | **Setya Pramudiya Hakim** | Developer PBL |
-| 5 | `3312411031` | **Fatra Syahreza** | Developer PBL |
-
-
+| No. | NIM Mahasiswa | Nama Anggota Pengembang |
+|:---:|:---:|:---|
+| 1 | `3312411001` | **Dea Asnuari** |
+| 2 | `3312411004` | **Hamdan Azmi** |
+| 3 | `3312411008` | **Christian Marcelino Sinaga** |
+| 4 | `3312411030` | **Setya Pramudiya Hakim** |
+| 5 | `3312411031` | **Fatra Syahreza** |
