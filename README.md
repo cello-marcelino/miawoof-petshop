@@ -114,3 +114,16 @@ Sistem telah dilengkapi data simulasi siap uji:
   - Username: `budi_santoso` | Password: `customer123`
   - *(Tersedia juga akun: `siti_aminah`, `dewi_lestari`, `rizky_aditya`, `putri_anindya` dengan password `customer123`)*
 
+---
+
+## 👥 Tim Pengembang Project Based Learning (PBL)
+
+Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di **Politeknik Negeri Batam** oleh:
+
+1. `3312411001` – **Dea Asnuari**
+2. `3312411004` – **Hamdan Azmi**
+3. `3312411008` – **Christian Marcelino Sinaga**
+4. `3312411030` – **Setya Pramudiya Hakim**
+5. `3312411031` – **Fatra Syahreza**
+
+

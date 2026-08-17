@@ -73,6 +73,7 @@ function initFooter() {
                             <strong>3312411001</strong> &mdash; Dea Asnuari &nbsp;&bull;&nbsp; 
                             <strong>3312411004</strong> &mdash; Hamdan Azmi &nbsp;&bull;&nbsp; 
                             <strong>3312411008</strong> &mdash; Christian Marcelino Sinaga &nbsp;&bull;&nbsp; 
+                            <strong>3312411030</strong> &mdash; Setya Pramudiya Hakim &nbsp;&bull;&nbsp; 
                             <strong>3312411031</strong> &mdash; Fatra Syahreza
                         </div>
                     </div>
