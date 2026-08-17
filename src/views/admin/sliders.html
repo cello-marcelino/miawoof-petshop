@@ -194,8 +194,8 @@
                                 </div>
                             </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6 col-12">
+                            <div class="row g-3 align-items-center mb-4">
+                                <div class="col-lg-5 col-md-6 col-12">
                                     <div class="search-input-group">
                                         <div class="search-input-icon">
                                             <img src="/images/icons/search.svg" alt="Search" width="18" height="18">
@@ -206,6 +206,18 @@
                                             <span>&rarr;</span>
                                         </button>
                                     </div>
+                                </div>
+                                <div class="col-lg-7 col-md-6 col-12 d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
+                                    <span class="small fw-bold text-dark me-1">Kategori:</span>
+                                    <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active asset-cat-btn fw-bold px-3 py-1" data-cat="all" onclick="filterAssetCategory('all', this)">
+                                        <span>Semua (<span id="countCatAll">0</span>)</span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-action-white border-2 border-dark asset-cat-btn fw-bold px-3 py-1" data-cat="promosi" onclick="filterAssetCategory('promosi', this)">
+                                        <span>🎠 Promosi & Banner (<span id="countCatPromo">0</span>)</span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-action-white border-2 border-dark asset-cat-btn fw-bold px-3 py-1" data-cat="katalog" onclick="filterAssetCategory('katalog', this)">
+                                        <span>🛍️ Katalog Produk (<span id="countCatKatalog">0</span>)</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -310,10 +322,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="mb-3">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3">
                         <input type="text" id="pickerSearch" class="form-control form-control-custom" placeholder="Cari file gambar..." oninput="filterPickerAssets()">
+                        <div class="d-flex gap-1 flex-shrink-0">
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active picker-cat-btn fw-bold px-2 py-1" data-cat="all" onclick="filterPickerCategory('all', this)">Semua</button>
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark picker-cat-btn fw-bold px-2 py-1" data-cat="promosi" onclick="filterPickerCategory('promosi', this)">🎠 Promosi</button>
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark picker-cat-btn fw-bold px-2 py-1" data-cat="katalog" onclick="filterPickerCategory('katalog', this)">🛍️ Katalog</button>
+                        </div>
                     </div>
-                    <div class="row g-2 overflow-auto" id="pickerGridContainer" style="max-height: 380px;">
+                    <div class="row g-3 overflow-auto" id="pickerGridContainer" style="max-height: 380px;">
                         <div class="col-12 text-center py-4 text-muted">Memuat galeri...</div>
                     </div>
                 </div>
@@ -334,6 +351,8 @@
         let assetPickerModal = null;
         let isEditing = false;
         let isImageChanged = false;
+        let currentAssetCategory = 'all';
+        let currentPickerCategory = 'all';
 
         document.addEventListener('DOMContentLoaded', async () => {
             slideFormModal = new bootstrap.Modal(document.getElementById('slideFormModal'));
@@ -580,7 +599,16 @@
                 if (data.success && data.data.length > 0) {
                     allAssets = data.data;
                     document.getElementById('badgeAssetCount').innerText = allAssets.length;
-                    renderAssetsGrid(allAssets);
+
+                    // Update category counts
+                    const countAll = allAssets.length;
+                    const countPromo = allAssets.filter(a => a.kategori === 'promosi').length;
+                    const countKatalog = allAssets.filter(a => a.kategori === 'katalog').length;
+                    if (document.getElementById('countCatAll')) document.getElementById('countCatAll').innerText = countAll;
+                    if (document.getElementById('countCatPromo')) document.getElementById('countCatPromo').innerText = countPromo;
+                    if (document.getElementById('countCatKatalog')) document.getElementById('countCatKatalog').innerText = countKatalog;
+
+                    filterAssets();
                 } else {
                     document.getElementById('badgeAssetCount').innerText = '0';
                     container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Belum ada file media yang diunggah.</div>';
@@ -590,18 +618,50 @@
             }
         }
 
+        function filterAssetCategory(cat, btn) {
+            currentAssetCategory = cat;
+            document.querySelectorAll('.asset-cat-btn').forEach(b => {
+                b.classList.remove('active', 'btn-action-yellow');
+                b.classList.add('btn-action-white');
+            });
+            if (btn) {
+                btn.classList.add('active', 'btn-action-yellow');
+                btn.classList.remove('btn-action-white');
+            }
+            filterAssets();
+        }
+
+        function filterAssets() {
+            const query = (document.getElementById('filterAssetSearch').value || '').toLowerCase().trim();
+            let filtered = allAssets;
+
+            if (currentAssetCategory !== 'all') {
+                filtered = filtered.filter(a => a.kategori === currentAssetCategory);
+            }
+
+            if (query) {
+                filtered = filtered.filter(a => a.filename.toLowerCase().includes(query));
+            }
+
+            renderAssetsGrid(filtered);
+        }
+
         function renderAssetsGrid(assets) {
             const container = document.getElementById('assetsGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file yang cocok dengan pencarian.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file yang cocok dengan filter atau pencarian.</div>';
                 return;
             }
 
             container.innerHTML = assets.map(a => {
                 const isUpload = a.folder === 'uploads';
                 const folderBadge = isUpload 
-                    ? '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold" style="font-size: 0.7rem;">📁 /uploads</span>' 
-                    : '<span class="badge bg-light text-dark border border-1 border-dark px-2 py-1 fw-bold" style="font-size: 0.7rem;">🔒 Preset Banner</span>';
+                    ? '<span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">📁 /uploads</span>' 
+                    : '<span class="badge bg-light text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">🔒 Preset</span>';
+
+                const catBadge = a.kategori === 'promosi'
+                    ? '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">🎠 Promosi & Banner</span>'
+                    : '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">🛍️ Katalog Produk</span>';
 
                 return `
                     <div class="col-xl-3 col-lg-4 col-md-6 col-12">
@@ -611,9 +671,12 @@
                             </div>
                             <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
                                 <div class="mb-3">
-                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-2 pb-1 border-bottom border-1 border-light">
-                                        ${folderBadge}
-                                        <span class="badge bg-dark text-white font-monospace px-2 py-1" style="font-size: 0.68rem;">${a.sizeFormatted}</span>
+                                    <div class="d-flex align-items-center justify-content-between gap-1 mb-2 pb-1 border-bottom border-1 border-light flex-wrap">
+                                        <div class="d-flex align-items-center gap-1 flex-wrap">
+                                            ${folderBadge}
+                                            ${catBadge}
+                                        </div>
+                                        <span class="badge bg-dark text-white font-monospace px-2 py-0" style="font-size: 0.68rem;">${a.sizeFormatted}</span>
                                     </div>
                                     <div class="fw-bold text-dark text-truncate small" title="${a.filename}">${a.filename}</div>
                                 </div>
@@ -635,12 +698,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        function filterAssets() {
-            const query = document.getElementById('filterAssetSearch').value.toLowerCase().trim();
-            const filtered = allAssets.filter(a => a.filename.toLowerCase().includes(query));
-            renderAssetsGrid(filtered);
         }
 
         async function uploadDirectAsset(file) {
@@ -700,35 +757,77 @@
         // ------------------ ASSET PICKER MODAL ------------------
 
         function openAssetPickerModal() {
-            renderPickerGrid(allAssets);
+            currentPickerCategory = 'all';
+            document.querySelectorAll('.picker-cat-btn').forEach(b => {
+                b.classList.remove('active', 'btn-action-yellow');
+                b.classList.add('btn-action-white');
+                if (b.dataset.cat === 'all') {
+                    b.classList.add('active', 'btn-action-yellow');
+                    b.classList.remove('btn-action-white');
+                }
+            });
+            document.getElementById('pickerSearch').value = '';
+            filterPickerAssets();
             assetPickerModal.show();
+        }
+
+        function filterPickerCategory(cat, btn) {
+            currentPickerCategory = cat;
+            document.querySelectorAll('.picker-cat-btn').forEach(b => {
+                b.classList.remove('active', 'btn-action-yellow');
+                b.classList.add('btn-action-white');
+            });
+            if (btn) {
+                btn.classList.add('active', 'btn-action-yellow');
+                btn.classList.remove('btn-action-white');
+            }
+            filterPickerAssets();
         }
 
         function renderPickerGrid(assets) {
             const container = document.getElementById('pickerGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file gambar di galeri asset.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file gambar yang cocok di galeri asset.</div>';
                 return;
             }
 
-            container.innerHTML = assets.map(a => `
+            container.innerHTML = assets.map(a => {
+                const catBadge = a.kategori === 'promosi'
+                    ? '<span class="badge bg-primary text-white border border-1 border-dark px-1 py-0 fw-bold" style="font-size: 0.65rem;">🎠 Promosi</span>'
+                    : '<span class="badge bg-success text-white border border-1 border-dark px-1 py-0 fw-bold" style="font-size: 0.65rem;">🛍️ Katalog</span>';
+
+                return `
                 <div class="col-md-4 col-sm-6 col-12">
                     <div class="asset-picker-card p-3 text-center h-100 d-flex flex-column justify-content-between" onclick="selectAssetForSlide('${a.url}')">
                         <div style="height: 100px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 1.5px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 8px; padding: 4px;">
                             <img src="${a.url}" alt="${a.filename}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         </div>
                         <div>
+                            <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                ${catBadge}
+                                <span class="badge bg-dark text-white font-monospace" style="font-size: 0.65rem;">${a.sizeFormatted}</span>
+                            </div>
                             <div class="small fw-bold text-dark text-truncate mb-2" title="${a.filename}">${a.filename}</div>
                             <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold w-100" style="font-size: 0.72rem;">Pilih Gambar Ini</span>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function filterPickerAssets() {
-            const query = document.getElementById('pickerSearch').value.toLowerCase().trim();
-            const filtered = allAssets.filter(a => a.filename.toLowerCase().includes(query));
+            const query = (document.getElementById('pickerSearch').value || '').toLowerCase().trim();
+            let filtered = allAssets;
+
+            if (currentPickerCategory !== 'all') {
+                filtered = filtered.filter(a => a.kategori === currentPickerCategory);
+            }
+
+            if (query) {
+                filtered = filtered.filter(a => a.filename.toLowerCase().includes(query));
+            }
+
             renderPickerGrid(filtered);
         }
 

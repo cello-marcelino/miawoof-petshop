@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const db = require('../config/database');
 const UploadHandler = require('../utils/UploadHandler');
 const SessionManager = require('../utils/SessionManager');
 
@@ -20,6 +21,19 @@ class AssetController {
         if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
+            // Retrieve image lists from database to classify categories accurately
+            const [productRows, slideRows] = await Promise.all([
+                new Promise(r => db.all('SELECT gambar FROM produk', [], (e, rows) => r(rows || []))),
+                new Promise(r => db.all('SELECT gambar FROM slides', [], (e, rows) => r(rows || [])))
+            ]);
+
+            const productImgSet = new Set(
+                productRows.map(p => path.basename(p.gambar || ''))
+            );
+            const slideImgSet = new Set(
+                slideRows.map(s => path.basename(s.gambar || ''))
+            );
+
             const assets = [];
 
             // 1. Scan uploads directory
@@ -30,6 +44,18 @@ class AssetController {
                     try {
                         const stat = fs.statSync(filePath);
                         if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
+                            // Determine category (Promosi vs Katalog)
+                            let kategori = 'katalog';
+                            let kategoriLabel = 'Katalog Produk';
+
+                            if (slideImgSet.has(file) || /slide|banner|promo/i.test(file)) {
+                                kategori = 'promosi';
+                                kategoriLabel = 'Promosi & Banner';
+                            } else if (productImgSet.has(file)) {
+                                kategori = 'katalog';
+                                kategoriLabel = 'Katalog Produk';
+                            }
+
                             assets.push({
                                 filename: file,
                                 url: `/uploads/${file}`,
@@ -38,7 +64,9 @@ class AssetController {
                                 sizeFormatted: AssetController.formatBytes(stat.size),
                                 mtime: stat.mtime,
                                 isDeletable: true,
-                                folder: 'uploads'
+                                folder: 'uploads',
+                                kategori,
+                                kategoriLabel
                             });
                         }
                     } catch (statErr) {}
@@ -61,7 +89,9 @@ class AssetController {
                                 sizeFormatted: AssetController.formatBytes(stat.size),
                                 mtime: stat.mtime,
                                 isDeletable: false, // Preset banners are protected
-                                folder: 'banners'
+                                folder: 'banners',
+                                kategori: 'promosi',
+                                kategoriLabel: 'Promosi & Banner'
                             });
                         }
                     } catch (statErr) {}

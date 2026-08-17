@@ -188,10 +188,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="mb-3">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3">
                         <input type="text" id="pickerSearch" class="form-control form-control-custom" placeholder="Cari file gambar produk..." oninput="filterPickerAssets()">
+                        <div class="d-flex gap-1 flex-shrink-0">
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active prod-picker-cat-btn fw-bold px-2 py-1" data-cat="all" onclick="filterProdPickerCategory('all', this)">Semua</button>
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark prod-picker-cat-btn fw-bold px-2 py-1" data-cat="katalog" onclick="filterProdPickerCategory('katalog', this)">🛍️ Katalog</button>
+                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark prod-picker-cat-btn fw-bold px-2 py-1" data-cat="promosi" onclick="filterProdPickerCategory('promosi', this)">🎠 Promosi</button>
+                        </div>
                     </div>
-                    <div class="row g-2 overflow-auto" id="pickerGridContainer" style="max-height: 380px;">
+                    <div class="row g-3 overflow-auto" id="pickerGridContainer" style="max-height: 380px;">
                         <div class="col-12 text-center py-4 text-muted">Memuat galeri asset...</div>
                     </div>
                 </div>
@@ -450,9 +455,34 @@
             productModal.show();
         }
 
+        let currentPickerCategory = 'all';
+
         async function openAssetPickerForProduct() {
+            currentPickerCategory = 'all';
+            document.querySelectorAll('.prod-picker-cat-btn').forEach(b => {
+                b.classList.remove('active', 'btn-action-yellow');
+                b.classList.add('btn-action-white');
+                if (b.dataset.cat === 'all') {
+                    b.classList.add('active', 'btn-action-yellow');
+                    b.classList.remove('btn-action-white');
+                }
+            });
+            document.getElementById('pickerSearch').value = '';
             assetPickerModal.show();
             await loadPickerAssets();
+        }
+
+        function filterProdPickerCategory(cat, btn) {
+            currentPickerCategory = cat;
+            document.querySelectorAll('.prod-picker-cat-btn').forEach(b => {
+                b.classList.remove('active', 'btn-action-yellow');
+                b.classList.add('btn-action-white');
+            });
+            if (btn) {
+                btn.classList.add('active', 'btn-action-yellow');
+                btn.classList.remove('btn-action-white');
+            }
+            filterPickerAssets();
         }
 
         async function loadPickerAssets() {
@@ -464,7 +494,7 @@
                 const data = await res.json();
                 if (data.success && data.data.length > 0) {
                     allAssets = data.data;
-                    renderPickerGrid(allAssets);
+                    filterPickerAssets();
                 } else {
                     container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Belum ada file media yang diunggah.</div>';
                 }
@@ -476,28 +506,47 @@
         function renderPickerGrid(assets) {
             const container = document.getElementById('pickerGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada gambar yang cocok.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada gambar yang cocok dengan filter atau pencarian.</div>';
                 return;
             }
 
-            container.innerHTML = assets.map(a => `
+            container.innerHTML = assets.map(a => {
+                const catBadge = a.kategori === 'promosi'
+                    ? '<span class="badge bg-primary text-white border border-1 border-dark px-1 py-0 fw-bold" style="font-size: 0.65rem;">🎠 Promosi</span>'
+                    : '<span class="badge bg-success text-white border border-1 border-dark px-1 py-0 fw-bold" style="font-size: 0.65rem;">🛍️ Katalog</span>';
+
+                return `
                 <div class="col-md-3 col-sm-4 col-6">
                     <div class="p-3 bg-white border border-2 border-dark rounded-2 text-center h-100 d-flex flex-column justify-content-between" style="cursor: pointer; box-shadow: 2px 2px 0px #000; transition: transform 0.15s ease;" onclick="selectProductAsset('${a.url}')">
                         <div style="height: 85px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 1.5px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 8px; padding: 4px;">
                             <img src="${a.url}" alt="${a.filename}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='/images/placeholders/default_product.png'">
                         </div>
                         <div>
+                            <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                ${catBadge}
+                                <span class="badge bg-dark text-white font-monospace" style="font-size: 0.65rem;">${a.sizeFormatted}</span>
+                            </div>
                             <div class="small fw-bold text-dark text-truncate mb-2" title="${a.filename}">${a.filename}</div>
                             <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-1 fw-bold w-100" style="font-size: 0.7rem;">Pilih Gambar</span>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function filterPickerAssets() {
-            const term = document.getElementById('pickerSearch').value.toLowerCase().trim();
-            const filtered = allAssets.filter(a => a.filename.toLowerCase().includes(term));
+            const term = (document.getElementById('pickerSearch').value || '').toLowerCase().trim();
+            let filtered = allAssets;
+
+            if (currentPickerCategory !== 'all') {
+                filtered = filtered.filter(a => a.kategori === currentPickerCategory);
+            }
+
+            if (term) {
+                filtered = filtered.filter(a => a.filename.toLowerCase().includes(term));
+            }
+
             renderPickerGrid(filtered);
         }
 
