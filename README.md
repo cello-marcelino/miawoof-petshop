@@ -120,10 +120,12 @@ Sistem telah dilengkapi data simulasi siap uji:
 
 Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di **Politeknik Negeri Batam** oleh:
 
-1. `3312411001` – **Dea Asnuari**
-2. `3312411004` – **Hamdan Azmi**
-3. `3312411008` – **Christian Marcelino Sinaga**
-4. `3312411030` – **Setya Pramudiya Hakim**
-5. `3312411031` – **Fatra Syahreza**
+| No. | NIM Mahasiswa | Nama Anggota Pengembang | Peran & Tanggung Jawab |
+|:---:|:---:|:---|:---|
+| 1 | `3312411001` | **Dea Asnuari** | Developer PBL |
+| 2 | `3312411004` | **Hamdan Azmi** | Developer PBL |
+| 3 | `3312411008` | **Christian Marcelino Sinaga** | Developer PBL |
+| 4 | `3312411030` | **Setya Pramudiya Hakim** | Developer PBL |
+| 5 | `3312411031` | **Fatra Syahreza** | Developer PBL |
 
 

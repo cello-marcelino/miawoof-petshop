@@ -63,22 +63,38 @@ function initFooter() {
                 </div>
 
                 <!-- PBL Attribution & Student Info -->
-                <div class="pt-3 border-top border-1 border-secondary mb-3 d-flex flex-column flex-lg-row align-items-center justify-content-between gap-3 text-center text-lg-start">
-                    <div style="font-size: 0.8rem; line-height: 1.6;" class="text-light">
-                        <div class="fw-bold mb-1 d-flex align-items-center justify-content-center justify-content-lg-start gap-2 flex-wrap">
+                <div class="pt-3 border-top border-1 border-secondary mb-3">
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 mb-2 text-center text-lg-start">
+                        <div class="fw-bold d-flex align-items-center justify-content-center justify-content-lg-start gap-2 flex-wrap text-light">
                             <span class="badge bg-yellow text-dark border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem; letter-spacing: 0.4px;">PROJECT PBL</span>
-                            <span class="opacity-90">Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di <strong>Politeknik Negeri Batam</strong> oleh:</span>
+                            <span class="opacity-90 small">Aplikasi ini dikembangkan sebagai Proyek Project Based Learning (PBL) di <strong>Politeknik Negeri Batam</strong> oleh:</span>
                         </div>
-                        <div class="text-light opacity-85">
-                            <strong>3312411001</strong> &mdash; Dea Asnuari &nbsp;&bull;&nbsp; 
-                            <strong>3312411004</strong> &mdash; Hamdan Azmi &nbsp;&bull;&nbsp; 
-                            <strong>3312411008</strong> &mdash; Christian Marcelino Sinaga &nbsp;&bull;&nbsp; 
-                            <strong>3312411030</strong> &mdash; Setya Pramudiya Hakim &nbsp;&bull;&nbsp; 
-                            <strong>3312411031</strong> &mdash; Fatra Syahreza
+                        <div>
+                            <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-1 fw-bold" style="box-shadow: 2px 2px 0px #000000; font-size: 0.75rem;">Politeknik Negeri Batam</span>
                         </div>
                     </div>
-                    <div class="text-nowrap">
-                        <span class="badge bg-yellow text-dark border border-2 border-dark px-3 py-1 fw-bold" style="box-shadow: 2px 2px 0px #000000; font-size: 0.75rem;">Politeknik Negeri Batam</span>
+                    <!-- Structured Member Badges for High Legibility -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-2 pt-1">
+                        <div class="d-inline-flex align-items-center bg-black bg-opacity-50 border border-1 border-secondary rounded-2 px-2 py-1" style="font-size: 0.78rem;">
+                            <span class="badge bg-yellow text-dark font-monospace fw-bold me-2 px-2 py-0" style="font-size: 0.72rem;">3312411001</span>
+                            <span class="text-white fw-semibold">Dea Asnuari</span>
+                        </div>
+                        <div class="d-inline-flex align-items-center bg-black bg-opacity-50 border border-1 border-secondary rounded-2 px-2 py-1" style="font-size: 0.78rem;">
+                            <span class="badge bg-yellow text-dark font-monospace fw-bold me-2 px-2 py-0" style="font-size: 0.72rem;">3312411004</span>
+                            <span class="text-white fw-semibold">Hamdan Azmi</span>
+                        </div>
+                        <div class="d-inline-flex align-items-center bg-black bg-opacity-50 border border-1 border-secondary rounded-2 px-2 py-1" style="font-size: 0.78rem;">
+                            <span class="badge bg-yellow text-dark font-monospace fw-bold me-2 px-2 py-0" style="font-size: 0.72rem;">3312411008</span>
+                            <span class="text-white fw-semibold">Christian Marcelino Sinaga</span>
+                        </div>
+                        <div class="d-inline-flex align-items-center bg-black bg-opacity-50 border border-1 border-secondary rounded-2 px-2 py-1" style="font-size: 0.78rem;">
+                            <span class="badge bg-yellow text-dark font-monospace fw-bold me-2 px-2 py-0" style="font-size: 0.72rem;">3312411030</span>
+                            <span class="text-white fw-semibold">Setya Pramudiya Hakim</span>
+                        </div>
+                        <div class="d-inline-flex align-items-center bg-black bg-opacity-50 border border-1 border-secondary rounded-2 px-2 py-1" style="font-size: 0.78rem;">
+                            <span class="badge bg-yellow text-dark font-monospace fw-bold me-2 px-2 py-0" style="font-size: 0.72rem;">3312411031</span>
+                            <span class="text-white fw-semibold">Fatra Syahreza</span>
+                        </div>
                     </div>
                 </div>
 
