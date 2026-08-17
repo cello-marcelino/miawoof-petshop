@@ -23,7 +23,22 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 function initializeTables() {
     db.serialize(() => {
-        // 1. Users Table (Admin & Customer)
+        // 1. Media Assets Table (Centralized Single Source of Truth for Images)
+        db.run(`
+            CREATE TABLE IF NOT EXISTS media_assets (
+                id_asset INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL,
+                file_url TEXT NOT NULL UNIQUE,
+                kategori TEXT NOT NULL CHECK(kategori IN ('promosi', 'katalog')),
+                file_size INTEGER DEFAULT 0,
+                size_formatted TEXT,
+                mime_type TEXT DEFAULT 'image/jpeg',
+                is_deletable INTEGER DEFAULT 1,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // 2. Users Table (Admin & Customer)
         db.run(`
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +52,7 @@ function initializeTables() {
             )
         `);
 
-        // 2. Produk Table
+        // 3. Produk Table
         db.run(`
             CREATE TABLE IF NOT EXISTS produk (
                 id_produk INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,12 +61,14 @@ function initializeTables() {
                 stock INTEGER NOT NULL DEFAULT 0 CHECK(stock >= 0),
                 harga INTEGER NOT NULL CHECK(harga >= 0),
                 gambar TEXT,
+                id_asset INTEGER,
                 tgl_dibuat TEXT DEFAULT CURRENT_TIMESTAMP,
-                tgl_expired TEXT
+                tgl_expired TEXT,
+                FOREIGN KEY (id_asset) REFERENCES media_assets(id_asset) ON DELETE SET NULL
             )
         `);
 
-        // 3. Paket Grooming Table
+        // 4. Paket Grooming Table
         db.run(`
             CREATE TABLE IF NOT EXISTS paket_grooming (
                 id_paket INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,11 +77,13 @@ function initializeTables() {
                 harga INTEGER NOT NULL CHECK(harga >= 0),
                 durasi_menit INTEGER DEFAULT 60,
                 keterangan_grooming TEXT NOT NULL,
-                gambar TEXT
+                gambar TEXT,
+                id_asset INTEGER,
+                FOREIGN KEY (id_asset) REFERENCES media_assets(id_asset) ON DELETE SET NULL
             )
         `);
 
-        // 4. Pesanan Table (Orders with Pickup/Delivery, Workflow & Complaints)
+        // 5. Pesanan Table (Orders with Pickup/Delivery, Workflow & Complaints)
         db.run(`
             CREATE TABLE IF NOT EXISTS pesanan (
                 id_pesanan INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,7 +106,7 @@ function initializeTables() {
             )
         `);
 
-        // 5. Booking Table (Grooming Schedule)
+        // 6. Booking Table (Grooming Schedule)
         db.run(`
             CREATE TABLE IF NOT EXISTS booking (
                 id_booking INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,35 +125,21 @@ function initializeTables() {
             )
         `);
 
-        // 6. Slides Table (Content Management for Homepage Promotional Banners)
+        // 7. Slides Table (Content Management for Homepage Promotional Banners)
         db.run(`
             CREATE TABLE IF NOT EXISTS slides (
                 id_slide INTEGER PRIMARY KEY AUTOINCREMENT,
                 judul TEXT NOT NULL,
                 subjudul TEXT,
                 gambar TEXT NOT NULL,
+                id_asset INTEGER,
                 link_url TEXT DEFAULT '/produk',
                 urutan INTEGER DEFAULT 0,
                 is_active INTEGER DEFAULT 1,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (id_asset) REFERENCES media_assets(id_asset) ON DELETE SET NULL
             )
-        `, () => {
-            // Seed default slides if table is empty
-            db.get('SELECT COUNT(*) as count FROM slides', [], (err, row) => {
-                if (!err && row && row.count === 0) {
-                    const defaultSlides = [
-                        ['Promo Nutrisi Anabul Premium', 'Diskon Spesial hingga 30% untuk varian Royal Canin & ProPlan', '/images/banners/banner1.jpg', '/produk', 1],
-                        ['Salon & Spa Higienis Berlisensi', 'Treatment anti-kutu & jamur dengan peralatan steril medis', '/images/banners/banner2.jpg', '/grooming', 2],
-                        ['Snack & Treats Berkualitas', 'Dukung daya tahan tubuh dan keindahan bulu anabul kesayangan', '/images/banners/banner3.jpg', '/produk', 3],
-                        ['Layanan Cepat Ambil di Toko / Diantar', 'Pesan praktis dari rumah, siap dikirim atau diambil langsung', '/images/banners/petAds1.jpg', '/produk', 4]
-                    ];
-
-                    const insertStmt = db.prepare('INSERT INTO slides (judul, subjudul, gambar, link_url, urutan, is_active) VALUES (?, ?, ?, ?, ?, 1)');
-                    defaultSlides.forEach(slide => insertStmt.run(slide));
-                    insertStmt.finalize();
-                }
-            });
-        });
+        `);
     });
 }
 

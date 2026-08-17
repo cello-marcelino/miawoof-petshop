@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('../config/database');
+const AssetRepo = require('../repositories/AssetRepo');
 const UploadHandler = require('../utils/UploadHandler');
 const SessionManager = require('../utils/SessionManager');
 
 const UPLOADS_DIR = path.resolve(__dirname, '../../public/uploads');
-const BANNERS_DIR = path.resolve(__dirname, '../../public/images/banners');
 
 class AssetController {
     static formatBytes(bytes, decimals = 1) {
@@ -21,78 +20,11 @@ class AssetController {
         if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
-            // Retrieve image lists from database to classify categories accurately
-            const [productRows, slideRows] = await Promise.all([
-                new Promise(r => db.all('SELECT gambar FROM produk', [], (e, rows) => r(rows || []))),
-                new Promise(r => db.all('SELECT gambar FROM slides', [], (e, rows) => r(rows || [])))
-            ]);
+            const parsedUrl = new URL(req.url, 'http://localhost');
+            const kategori = parsedUrl.searchParams.get('kategori');
+            const search = parsedUrl.searchParams.get('search');
 
-            const productImgSet = new Set(
-                productRows.map(p => path.basename(p.gambar || ''))
-            );
-            const slideImgSet = new Set(
-                slideRows.map(s => path.basename(s.gambar || ''))
-            );
-
-            const assets = [];
-
-            // 1. Scan uploads directory
-            if (fs.existsSync(UPLOADS_DIR)) {
-                const uploadFiles = fs.readdirSync(UPLOADS_DIR);
-                for (const file of uploadFiles) {
-                    const filePath = path.join(UPLOADS_DIR, file);
-                    try {
-                        const stat = fs.statSync(filePath);
-                        if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
-                            // Determine category: banner* and petAds* (and slide/promo) are promosi, rest are katalog
-                            const isPromosi = /^(banner|petads|slide|promo)/i.test(file) || slideImgSet.has(file);
-                            const kategori = isPromosi ? 'promosi' : 'katalog';
-                            const kategoriLabel = isPromosi ? 'Promosi & Banner' : 'Katalog Produk';
-
-                            assets.push({
-                                filename: file,
-                                url: `/uploads/${file}`,
-                                path: filePath,
-                                size: stat.size,
-                                sizeFormatted: AssetController.formatBytes(stat.size),
-                                mtime: stat.mtime,
-                                isDeletable: true,
-                                folder: 'uploads',
-                                kategori,
-                                kategoriLabel
-                            });
-                        }
-                    } catch (statErr) {}
-                }
-            }
-
-            // 2. Scan preset banners directory
-            if (fs.existsSync(BANNERS_DIR)) {
-                const bannerFiles = fs.readdirSync(BANNERS_DIR);
-                for (const file of bannerFiles) {
-                    const filePath = path.join(BANNERS_DIR, file);
-                    try {
-                        const stat = fs.statSync(filePath);
-                        if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
-                            assets.push({
-                                filename: file,
-                                url: `/images/banners/${file}`,
-                                path: filePath,
-                                size: stat.size,
-                                sizeFormatted: AssetController.formatBytes(stat.size),
-                                mtime: stat.mtime,
-                                isDeletable: false, // Preset banners are protected
-                                folder: 'banners',
-                                kategori: 'promosi',
-                                kategoriLabel: 'Promosi & Banner'
-                            });
-                        }
-                    } catch (statErr) {}
-                }
-            }
-
-            // Sort newest first
-            assets.sort((a, b) => new Date(b.mtime) - new Date(a.mtime));
+            const assets = await AssetRepo.getAllAssets(kategori, search);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true, data: assets }));
@@ -106,20 +38,41 @@ class AssetController {
         if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
-            const { filename } = await UploadHandler.parseForm(req);
+            const { filename, fields } = await UploadHandler.parseForm(req);
             if (!filename) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ success: false, message: 'Tidak ada file gambar yang diunggah.' }));
             }
 
+            const filePath = path.join(UPLOADS_DIR, filename);
+            let fileSize = 0;
+            if (fs.existsSync(filePath)) {
+                fileSize = fs.statSync(filePath).size;
+            }
+            const sizeFormatted = AssetController.formatBytes(fileSize);
+
+            // Determine category from form field or filename
+            let reqKategori = fields && fields.kategori ? fields.kategori.toLowerCase() : null;
+            if (!reqKategori || (reqKategori !== 'promosi' && reqKategori !== 'katalog')) {
+                const isPromo = /^(banner|petads|slide|promo)/i.test(filename);
+                reqKategori = isPromo ? 'promosi' : 'katalog';
+            }
+
+            const newAsset = await AssetRepo.createAsset({
+                filename,
+                file_url: `/uploads/${filename}`,
+                kategori: reqKategori,
+                file_size: fileSize,
+                size_formatted: sizeFormatted,
+                mime_type: 'image/' + (path.extname(filename).slice(1) || 'jpeg'),
+                is_deletable: 1
+            });
+
             res.writeHead(201, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({
                 success: true,
-                message: 'File gambar berhasil diunggah ke Galeri Asset.',
-                data: {
-                    filename,
-                    url: `/uploads/${filename}`
-                }
+                message: 'File gambar berhasil disimpan ke Database Galeri Asset.',
+                data: newAsset
             }));
         } catch (err) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -131,22 +84,37 @@ class AssetController {
         if (!SessionManager.requireAdmin(req, res, 'Akses khusus Admin.')) return;
 
         try {
-            // Prevent Directory Traversal Attack
             const safeFilename = path.basename(filename);
-            const targetPath = path.join(UPLOADS_DIR, safeFilename);
+            
+            // Check if asset is referenced by active products, slides, or packages
+            const useCheck = await AssetRepo.isAssetInUse(safeFilename);
+            if (useCheck.inUse) {
+                const reasons = [];
+                if (useCheck.productCount > 0) reasons.push(`${useCheck.productCount} Produk`);
+                if (useCheck.slideCount > 0) reasons.push(`${useCheck.slideCount} Slide Promosi`);
+                if (useCheck.paketCount > 0) reasons.push(`${useCheck.paketCount} Paket Grooming`);
 
-            if (!fs.existsSync(targetPath)) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, message: 'File aset tidak ditemukan di server.' }));
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({
+                    success: false,
+                    message: `Berkas gambar ini tidak dapat dihapus karena sedang aktif digunakan pada: ${reasons.join(', ')}.`
+                }));
             }
 
-            fs.unlinkSync(targetPath);
+            // Remove file from disk if in uploads
+            const targetPath = path.join(UPLOADS_DIR, safeFilename);
+            if (fs.existsSync(targetPath)) {
+                try { fs.unlinkSync(targetPath); } catch (e) {}
+            }
+
+            // Remove record from database
+            await AssetRepo.deleteAssetByFilename(safeFilename);
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, message: `File asset "${safeFilename}" berhasil dihapus dari server.` }));
+            res.end(JSON.stringify({ success: true, message: `Berkas aset "${safeFilename}" berhasil dihapus secara permanen.` }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, message: 'Gagal menghapus file: ' + err.message }));
+            res.end(JSON.stringify({ success: false, message: 'Gagal menghapus aset: ' + err.message }));
         }
     }
 }
