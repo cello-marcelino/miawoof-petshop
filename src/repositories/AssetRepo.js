@@ -1,6 +1,61 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../config/database');
 
 class AssetRepo {
+    static formatBytes(bytes, decimals = 1) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    static async syncOrGetAsset(imagePath, defaultKategori = 'katalog') {
+        if (!imagePath || typeof imagePath !== 'string') return null;
+        if (imagePath.includes('default_product.png') || imagePath.includes('placeholder')) return null;
+
+        const filename = path.basename(imagePath);
+        const fileUrl = imagePath.startsWith('/') ? imagePath : `/uploads/${filename}`;
+        
+        // 1. Cek apakah sudah terdaftar di media_assets
+        const existing = await this.getAssetByUrlOrFilename(filename);
+        if (existing) {
+            return existing.id_asset;
+        }
+
+        // 2. Jika belum, hitung ukuran file & tentukan kategori
+        const uploadPath = path.resolve(__dirname, '../../public/uploads', filename);
+        const bannerPath = path.resolve(__dirname, '../../public/images/banners', filename);
+        let fileSize = 0;
+
+        if (fs.existsSync(uploadPath)) {
+            try { fileSize = fs.statSync(uploadPath).size; } catch (e) {}
+        } else if (fs.existsSync(bannerPath)) {
+            try { fileSize = fs.statSync(bannerPath).size; } catch (e) {}
+        }
+
+        let kategori = defaultKategori;
+        if (fileUrl.startsWith('/images/banners/') || /^(banner|petads|slide|promo)/i.test(filename)) {
+            kategori = 'promosi';
+        }
+
+        const sizeFormatted = AssetRepo.formatBytes(fileSize);
+        const ext = path.extname(filename).slice(1) || 'jpeg';
+
+        const newAsset = await this.createAsset({
+            filename,
+            file_url: fileUrl,
+            kategori,
+            file_size: fileSize,
+            size_formatted: sizeFormatted,
+            mime_type: 'image/' + ext,
+            is_deletable: fileUrl.startsWith('/images/banners/') ? 0 : 1
+        });
+
+        return newAsset ? newAsset.id_asset : null;
+    }
     static async getAllAssets(kategori = null, search = null) {
         return new Promise((resolve, reject) => {
             let sql = `

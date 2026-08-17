@@ -1,4 +1,5 @@
 const BookingRepo = require('../repositories/BookingRepo');
+const AssetRepo = require('../repositories/AssetRepo');
  
 class BookingService {
     // ================= Pakets CRUD =================
@@ -26,13 +27,19 @@ class BookingService {
             throw new Error('Jenis hewan paket grooming harus kucing atau anjing.');
         }
 
+        let idAsset = null;
+        if (gambar) {
+            idAsset = await AssetRepo.syncOrGetAsset(gambar, 'katalog');
+        }
+
         return await BookingRepo.createPaket({
             nama_paket: cleanNama,
             jenis_hewan,
             harga: numHarga,
             durasi_menit: numDurasi,
             keterangan_grooming: cleanKet,
-            gambar: gambar || null
+            gambar: gambar || null,
+            id_asset: idAsset
         });
     }
 
@@ -47,13 +54,19 @@ class BookingService {
             throw new Error('Nama paket, tarif harga, dan rincian perawatan grooming wajib diisi.');
         }
 
+        let idAsset = null;
+        if (gambar) {
+            idAsset = await AssetRepo.syncOrGetAsset(gambar, 'katalog');
+        }
+
         return await BookingRepo.updatePaket(id_paket, {
             nama_paket: cleanNama,
             jenis_hewan,
             harga: numHarga,
             durasi_menit: numDurasi,
             keterangan_grooming: cleanKet,
-            gambar: gambar || null
+            gambar: gambar || null,
+            id_asset: idAsset
         });
     }
 

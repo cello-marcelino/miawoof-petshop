@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ProductRepo = require('../repositories/ProductRepo');
+const AssetRepo = require('../repositories/AssetRepo');
 
 class ProductService {
     static async getAllProducts(kategori = null, search = null) {
@@ -43,12 +44,16 @@ class ProductService {
             finalGambar = fields.existing_gambar_url || fields.gambar;
         }
 
+        // Automatically sync with Media Asset Master Table (kategori: katalog)
+        const idAsset = await AssetRepo.syncOrGetAsset(finalGambar, 'katalog');
+
         return await ProductRepo.createProduct({
             nama: cleanNama,
             kategori,
             stock: numStock,
             harga: numHarga,
             gambar: finalGambar,
+            id_asset: idAsset,
             tgl_expired: exp
         });
     }
@@ -69,12 +74,18 @@ class ProductService {
         }
 
         let newGambar = null;
+        let idAsset = existing.id_asset || null;
+
         if (uploadedFilename) {
             newGambar = `/uploads/${uploadedFilename}`;
         } else if (fields.existing_gambar_url) {
             newGambar = fields.existing_gambar_url;
         } else if (fields.gambar) {
             newGambar = fields.gambar;
+        }
+
+        if (newGambar) {
+            idAsset = await AssetRepo.syncOrGetAsset(newGambar, 'katalog');
         }
 
         // Optional delete old image if requested and new image is provided
@@ -95,6 +106,7 @@ class ProductService {
             stock: numStock,
             harga: numHarga,
             gambar: newGambar,
+            id_asset: idAsset,
             tgl_expired: exp
         });
     }

@@ -26,20 +26,20 @@ class SlideRepo {
         });
     }
 
-    static async createSlide({ judul, subjudul, gambar, link_url, urutan, is_active }) {
+    static async createSlide({ judul, subjudul, gambar, id_asset, link_url, urutan, is_active }) {
         return new Promise((resolve, reject) => {
             const sql = `
-                INSERT INTO slides (judul, subjudul, gambar, link_url, urutan, is_active)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO slides (judul, subjudul, gambar, id_asset, link_url, urutan, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `;
-            db.run(sql, [judul, subjudul || '', gambar, link_url || '/produk', urutan || 0, is_active !== undefined ? is_active : 1], function (err) {
+            db.run(sql, [judul, subjudul || '', gambar, id_asset || null, link_url || '/produk', urutan || 0, is_active !== undefined ? is_active : 1], function (err) {
                 if (err) reject(err);
-                else resolve({ id_slide: this.lastID, judul, gambar });
+                else resolve({ id_slide: this.lastID, judul, gambar, id_asset });
             });
         });
     }
 
-    static async updateSlide(id_slide, { judul, subjudul, gambar, link_url, urutan, is_active }) {
+    static async updateSlide(id_slide, { judul, subjudul, gambar, id_asset, link_url, urutan, is_active }) {
         return new Promise((resolve, reject) => {
             let sql = `
                 UPDATE slides 
@@ -48,8 +48,8 @@ class SlideRepo {
             const params = [judul, subjudul || '', link_url || '/produk', urutan || 0, is_active !== undefined ? is_active : 1];
 
             if (gambar) {
-                sql += ', gambar = ?';
-                params.push(gambar);
+                sql += ', gambar = ?, id_asset = ?';
+                params.push(gambar, id_asset || null);
             }
             sql += ' WHERE id_slide = ?';
             params.push(id_slide);

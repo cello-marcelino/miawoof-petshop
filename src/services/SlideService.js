@@ -1,4 +1,5 @@
 const SlideRepo = require('../repositories/SlideRepo');
+const AssetRepo = require('../repositories/AssetRepo');
 const path = require('path');
 const fs = require('fs');
 
@@ -23,6 +24,10 @@ class SlideService {
         data.subjudul = data.subjudul || '';
         data.urutan = data.urutan !== undefined ? parseInt(data.urutan, 10) : 0;
         data.is_active = data.is_active !== undefined ? (data.is_active === '1' || data.is_active === 1 || data.is_active === 'true' || data.is_active === true ? 1 : 0) : 1;
+
+        // Automatically sync with Media Asset Master Table (kategori: promosi)
+        data.id_asset = await AssetRepo.syncOrGetAsset(data.gambar, 'promosi');
+
         return await SlideRepo.createSlide(data);
     }
 
@@ -33,8 +38,9 @@ class SlideService {
         fields.urutan = fields.urutan !== undefined ? parseInt(fields.urutan, 10) : existingSlide.urutan;
         fields.is_active = fields.is_active !== undefined ? (fields.is_active === '1' || fields.is_active === 1 || fields.is_active === 'true' || fields.is_active === true ? 1 : 0) : existingSlide.is_active;
 
+        let finalImage = null;
         if (newFilename) {
-            const newImagePath = `/uploads/${newFilename}`;
+            finalImage = `/uploads/${newFilename}`;
 
             // If admin opted to delete old image from server
             if (delete_old_image && existingSlide.gambar && existingSlide.gambar.startsWith('/uploads/')) {
@@ -49,9 +55,14 @@ class SlideService {
                 }
             }
 
-            fields.gambar = newImagePath;
+            fields.gambar = finalImage;
         } else if (fields.existing_gambar_url) {
-            fields.gambar = fields.existing_gambar_url;
+            finalImage = fields.existing_gambar_url;
+            fields.gambar = finalImage;
+        }
+
+        if (fields.gambar) {
+            fields.id_asset = await AssetRepo.syncOrGetAsset(fields.gambar, 'promosi');
         }
 
         return await SlideRepo.updateSlide(id, fields);

@@ -20,23 +20,23 @@ class BookingRepo {
         });
     }
 
-    static async createPaket({ nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar }) {
+    static async createPaket({ nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar, id_asset }) {
         return new Promise((resolve, reject) => {
-            const sql = 'INSERT INTO paket_grooming (nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar) VALUES (?, ?, ?, ?, ?, ?)';
-            db.run(sql, [nama_paket, jenis_hewan, harga, durasi_menit || 60, keterangan_grooming, gambar || null], function (err) {
+            const sql = 'INSERT INTO paket_grooming (nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar, id_asset) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            db.run(sql, [nama_paket, jenis_hewan, harga, durasi_menit || 60, keterangan_grooming, gambar || null, id_asset || null], function (err) {
                 if (err) reject(err);
-                else resolve({ id_paket: this.lastID, nama_paket, harga });
+                else resolve({ id_paket: this.lastID, nama_paket, harga, id_asset });
             });
         });
     }
 
-    static async updatePaket(id_paket, { nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar }) {
+    static async updatePaket(id_paket, { nama_paket, jenis_hewan, harga, durasi_menit, keterangan_grooming, gambar, id_asset }) {
         return new Promise((resolve, reject) => {
             let sql = 'UPDATE paket_grooming SET nama_paket = ?, jenis_hewan = ?, harga = ?, durasi_menit = ?, keterangan_grooming = ?';
             const params = [nama_paket, jenis_hewan, harga, durasi_menit || 60, keterangan_grooming];
             if (gambar) {
-                sql += ', gambar = ?';
-                params.push(gambar);
+                sql += ', gambar = ?, id_asset = ?';
+                params.push(gambar, id_asset || null);
             }
             sql += ' WHERE id_paket = ?';
             params.push(id_paket);

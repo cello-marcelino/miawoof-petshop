@@ -58,24 +58,24 @@ class ProductRepo {
         });
     }
 
-    static async createProduct({ nama, kategori, stock, harga, gambar, tgl_expired }) {
+    static async createProduct({ nama, kategori, stock, harga, gambar, id_asset, tgl_expired }) {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO produk (nama, kategori, stock, harga, gambar, tgl_expired) VALUES (?, ?, ?, ?, ?, ?)`;
-            db.run(sql, [nama, kategori, stock, harga, gambar, tgl_expired], function (err) {
+            const sql = `INSERT INTO produk (nama, kategori, stock, harga, gambar, id_asset, tgl_expired) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            db.run(sql, [nama, kategori, stock, harga, gambar, id_asset || null, tgl_expired], function (err) {
                 if (err) reject(err);
-                else resolve({ id_produk: this.lastID, nama, stock, harga });
+                else resolve({ id_produk: this.lastID, nama, stock, harga, id_asset });
             });
         });
     }
 
-    static async updateProduct(id, { nama, kategori, stock, harga, gambar, tgl_expired }) {
+    static async updateProduct(id, { nama, kategori, stock, harga, gambar, id_asset, tgl_expired }) {
         return new Promise((resolve, reject) => {
             let sql = 'UPDATE produk SET nama = ?, kategori = ?, stock = ?, harga = ?, tgl_expired = ?';
             const params = [nama, kategori, stock, harga, tgl_expired];
 
             if (gambar) {
-                sql += ', gambar = ?';
-                params.push(gambar);
+                sql += ', gambar = ?, id_asset = ?';
+                params.push(gambar, id_asset || null);
             }
             sql += ' WHERE id_produk = ?';
             params.push(id);
