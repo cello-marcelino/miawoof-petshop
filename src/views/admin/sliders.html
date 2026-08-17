@@ -208,11 +208,8 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-7 col-md-6 col-12 d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
-                                    <span class="small fw-bold text-dark me-1">Kategori:</span>
-                                    <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active asset-cat-btn fw-bold px-3 py-1" data-cat="all" onclick="filterAssetCategory('all', this)">
-                                        <span>Semua (<span id="countCatAll">0</span>)</span>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-action-white border-2 border-dark asset-cat-btn fw-bold px-3 py-1" data-cat="promosi" onclick="filterAssetCategory('promosi', this)">
+                                    <span class="small fw-bold text-dark me-1">Kategori Media:</span>
+                                    <button type="button" class="btn btn-sm btn-action-yellow border-2 border-dark active asset-cat-btn fw-bold px-3 py-1" data-cat="promosi" onclick="filterAssetCategory('promosi', this)">
                                         <span>🎠 Promosi & Banner (<span id="countCatPromo">0</span>)</span>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-action-white border-2 border-dark asset-cat-btn fw-bold px-3 py-1" data-cat="katalog" onclick="filterAssetCategory('katalog', this)">
@@ -325,8 +322,7 @@
                     <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3">
                         <input type="text" id="pickerSearch" class="form-control form-control-custom" placeholder="Cari file gambar..." oninput="filterPickerAssets()">
                         <div class="d-flex gap-1 flex-shrink-0">
-                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active picker-cat-btn fw-bold px-2 py-1" data-cat="all" onclick="filterPickerCategory('all', this)">Semua</button>
-                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark picker-cat-btn fw-bold px-2 py-1" data-cat="promosi" onclick="filterPickerCategory('promosi', this)">🎠 Promosi</button>
+                            <button type="button" class="btn btn-sm btn-action-yellow border-2 border-dark active picker-cat-btn fw-bold px-2 py-1" data-cat="promosi" onclick="filterPickerCategory('promosi', this)">🎠 Promosi</button>
                             <button type="button" class="btn btn-sm btn-action-white border-2 border-dark picker-cat-btn fw-bold px-2 py-1" data-cat="katalog" onclick="filterPickerCategory('katalog', this)">🛍️ Katalog</button>
                         </div>
                     </div>
@@ -351,8 +347,8 @@
         let assetPickerModal = null;
         let isEditing = false;
         let isImageChanged = false;
-        let currentAssetCategory = 'all';
-        let currentPickerCategory = 'all';
+        let currentAssetCategory = 'promosi';
+        let currentPickerCategory = 'promosi';
 
         document.addEventListener('DOMContentLoaded', async () => {
             slideFormModal = new bootstrap.Modal(document.getElementById('slideFormModal'));
@@ -601,10 +597,8 @@
                     document.getElementById('badgeAssetCount').innerText = allAssets.length;
 
                     // Update category counts
-                    const countAll = allAssets.length;
                     const countPromo = allAssets.filter(a => a.kategori === 'promosi').length;
                     const countKatalog = allAssets.filter(a => a.kategori === 'katalog').length;
-                    if (document.getElementById('countCatAll')) document.getElementById('countCatAll').innerText = countAll;
                     if (document.getElementById('countCatPromo')) document.getElementById('countCatPromo').innerText = countPromo;
                     if (document.getElementById('countCatKatalog')) document.getElementById('countCatKatalog').innerText = countKatalog;
 
@@ -633,11 +627,7 @@
 
         function filterAssets() {
             const query = (document.getElementById('filterAssetSearch').value || '').toLowerCase().trim();
-            let filtered = allAssets;
-
-            if (currentAssetCategory !== 'all') {
-                filtered = filtered.filter(a => a.kategori === currentAssetCategory);
-            }
+            let filtered = allAssets.filter(a => a.kategori === currentAssetCategory);
 
             if (query) {
                 filtered = filtered.filter(a => a.filename.toLowerCase().includes(query));
@@ -649,7 +639,7 @@
         function renderAssetsGrid(assets) {
             const container = document.getElementById('assetsGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file yang cocok dengan filter atau pencarian.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada file yang cocok dengan kategori ini atau pencarian.</div>';
                 return;
             }
 
@@ -662,6 +652,8 @@
                 const catBadge = a.kategori === 'promosi'
                     ? '<span class="badge bg-primary text-white border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">🎠 Promosi & Banner</span>'
                     : '<span class="badge bg-success text-white border border-1 border-dark px-2 py-0 fw-bold" style="font-size: 0.68rem;">🛍️ Katalog Produk</span>';
+
+                const isPromosi = a.kategori === 'promosi';
 
                 return `
                     <div class="col-xl-3 col-lg-4 col-md-6 col-12">
@@ -682,11 +674,13 @@
                                 </div>
                                 <div class="pt-3 border-top border-1 border-dark d-flex align-items-center gap-2">
                                     <button type="button" class="btn btn-table-action btn-action-white flex-grow-1 justify-content-center py-2" onclick="copyAssetUrl('${a.url}')" title="Salin URL Gambar">
-                                        <span>📋 Salin</span>
+                                        <span>📋 Salin URL</span>
                                     </button>
-                                    <button type="button" class="btn btn-table-action btn-action-yellow flex-grow-1 justify-content-center py-2" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide Baru">
-                                        <span>🎠 Slide</span>
-                                    </button>
+                                    ${isPromosi ? `
+                                        <button type="button" class="btn btn-table-action btn-action-yellow flex-grow-1 justify-content-center py-2" onclick="createSlideFromAsset('${a.url}')" title="Gunakan sebagai Slide Baru">
+                                            <span>🎠 Buat Slide</span>
+                                        </button>
+                                    ` : ''}
                                     ${a.isDeletable ? `
                                         <button type="button" class="btn btn-table-action btn-action-danger px-2 justify-content-center py-2" onclick="deleteAssetFile('${a.filename}')" title="Hapus File Permanen">
                                             <span>🗑️</span>
@@ -757,11 +751,11 @@
         // ------------------ ASSET PICKER MODAL ------------------
 
         function openAssetPickerModal() {
-            currentPickerCategory = 'all';
+            currentPickerCategory = 'promosi';
             document.querySelectorAll('.picker-cat-btn').forEach(b => {
                 b.classList.remove('active', 'btn-action-yellow');
                 b.classList.add('btn-action-white');
-                if (b.dataset.cat === 'all') {
+                if (b.dataset.cat === 'promosi') {
                     b.classList.add('active', 'btn-action-yellow');
                     b.classList.remove('btn-action-white');
                 }
@@ -818,11 +812,7 @@
 
         function filterPickerAssets() {
             const query = (document.getElementById('pickerSearch').value || '').toLowerCase().trim();
-            let filtered = allAssets;
-
-            if (currentPickerCategory !== 'all') {
-                filtered = filtered.filter(a => a.kategori === currentPickerCategory);
-            }
+            let filtered = allAssets.filter(a => a.kategori === currentPickerCategory);
 
             if (query) {
                 filtered = filtered.filter(a => a.filename.toLowerCase().includes(query));

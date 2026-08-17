@@ -44,17 +44,10 @@ class AssetController {
                     try {
                         const stat = fs.statSync(filePath);
                         if (stat.isFile() && /\.(jpg|jpeg|png|webp|jfif|svg)$/i.test(file)) {
-                            // Determine category (Promosi vs Katalog)
-                            let kategori = 'katalog';
-                            let kategoriLabel = 'Katalog Produk';
-
-                            if (slideImgSet.has(file) || /slide|banner|promo/i.test(file)) {
-                                kategori = 'promosi';
-                                kategoriLabel = 'Promosi & Banner';
-                            } else if (productImgSet.has(file)) {
-                                kategori = 'katalog';
-                                kategoriLabel = 'Katalog Produk';
-                            }
+                            // Determine category: banner* and petAds* (and slide/promo) are promosi, rest are katalog
+                            const isPromosi = /^(banner|petads|slide|promo)/i.test(file) || slideImgSet.has(file);
+                            const kategori = isPromosi ? 'promosi' : 'katalog';
+                            const kategoriLabel = isPromosi ? 'Promosi & Banner' : 'Katalog Produk';
 
                             assets.push({
                                 filename: file,

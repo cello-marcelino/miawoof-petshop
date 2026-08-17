@@ -191,8 +191,7 @@
                     <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3">
                         <input type="text" id="pickerSearch" class="form-control form-control-custom" placeholder="Cari file gambar produk..." oninput="filterPickerAssets()">
                         <div class="d-flex gap-1 flex-shrink-0">
-                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark active prod-picker-cat-btn fw-bold px-2 py-1" data-cat="all" onclick="filterProdPickerCategory('all', this)">Semua</button>
-                            <button type="button" class="btn btn-sm btn-action-white border-2 border-dark prod-picker-cat-btn fw-bold px-2 py-1" data-cat="katalog" onclick="filterProdPickerCategory('katalog', this)">🛍️ Katalog</button>
+                            <button type="button" class="btn btn-sm btn-action-yellow border-2 border-dark active prod-picker-cat-btn fw-bold px-2 py-1" data-cat="katalog" onclick="filterProdPickerCategory('katalog', this)">🛍️ Katalog</button>
                             <button type="button" class="btn btn-sm btn-action-white border-2 border-dark prod-picker-cat-btn fw-bold px-2 py-1" data-cat="promosi" onclick="filterProdPickerCategory('promosi', this)">🎠 Promosi</button>
                         </div>
                     </div>
@@ -455,14 +454,14 @@
             productModal.show();
         }
 
-        let currentPickerCategory = 'all';
+        let currentPickerCategory = 'katalog';
 
         async function openAssetPickerForProduct() {
-            currentPickerCategory = 'all';
+            currentPickerCategory = 'katalog';
             document.querySelectorAll('.prod-picker-cat-btn').forEach(b => {
                 b.classList.remove('active', 'btn-action-yellow');
                 b.classList.add('btn-action-white');
-                if (b.dataset.cat === 'all') {
+                if (b.dataset.cat === 'katalog') {
                     b.classList.add('active', 'btn-action-yellow');
                     b.classList.remove('btn-action-white');
                 }
@@ -506,7 +505,7 @@
         function renderPickerGrid(assets) {
             const container = document.getElementById('pickerGridContainer');
             if (assets.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada gambar yang cocok dengan filter atau pencarian.</div>';
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">Tidak ada gambar yang cocok dengan kategori ini atau pencarian.</div>';
                 return;
             }
 
@@ -537,11 +536,7 @@
 
         function filterPickerAssets() {
             const term = (document.getElementById('pickerSearch').value || '').toLowerCase().trim();
-            let filtered = allAssets;
-
-            if (currentPickerCategory !== 'all') {
-                filtered = filtered.filter(a => a.kategori === currentPickerCategory);
-            }
+            let filtered = allAssets.filter(a => a.kategori === currentPickerCategory);
 
             if (term) {
                 filtered = filtered.filter(a => a.filename.toLowerCase().includes(term));
