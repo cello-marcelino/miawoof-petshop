@@ -330,7 +330,7 @@
                 if (data.success && data.data.length > 0) {
                     countBadge.innerText = `Menampilkan ${data.data.length} Produk`;
                     grid.innerHTML = data.data.map(p => {
-                        const imgSrc = p.gambar ? (p.gambar.startsWith('/') ? p.gambar : ('/uploads/' + p.gambar)) : '/images/placeholders/default_product.png';
+                        const imgSrc = formatProductImg(p.gambar);
                         return `
                         <div class="col-xl-3 col-lg-4 col-md-6">
                             <div class="card-product">
@@ -371,7 +371,7 @@
             document.getElementById('modalProductName').innerText = product.nama;
             document.getElementById('modalProductPrice').innerText = formatRupiah(product.harga);
             document.getElementById('modalProductStock').innerText = `Sisa Stok Tersedia: ${product.stock} unit`;
-            document.getElementById('modalProductImg').src = `/uploads/${product.gambar || 'default_product.png'}`;
+            document.getElementById('modalProductImg').src = formatProductImg(product.gambar);
             document.getElementById('orderQuantity').value = 1;
             document.getElementById('orderQuantity').max = product.stock;
             document.getElementById('orderTotal').innerText = formatRupiah(product.harga);

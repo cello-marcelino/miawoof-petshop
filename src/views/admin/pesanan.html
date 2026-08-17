@@ -415,7 +415,7 @@
             document.getElementById('detailProductName').innerText = order.nama_produk;
             document.getElementById('detailProductPrice').innerText = `${order.jumlah} unit x ${formatRupiah(order.harga)}`;
             document.getElementById('detailTotalAmount').innerText = formatRupiah(order.total);
-            document.getElementById('detailProductImg').src = order.gambar || '/images/placeholders/default_product.png';
+            document.getElementById('detailProductImg').src = formatProductImg(order.gambar);
 
             // Handle Complaint Section Visibility
             const complaintSection = document.getElementById('complaintSection');

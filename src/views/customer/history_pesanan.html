@@ -241,7 +241,7 @@
                                 <td class="fw-bold text-dark">#ORD-${o.id_pesanan}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <img src="${o.gambar || '/images/placeholders/default_product.png'}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 4px; background: #fff; border: 1.5px solid #000;" onerror="this.src='/images/placeholders/default_product.png'">
+                                        <img src="${formatProductImg(o.gambar)}" alt="${o.nama_produk}" style="width: 44px; height: 44px; object-fit: contain; border-radius: 4px; background: #fff; border: 1.5px solid #000;" onerror="this.src='/images/placeholders/default_product.png'">
                                         <div>
                                             <div class="fw-bold text-dark">${o.nama_produk}</div>
                                             <div class="text-muted small">${o.jumlah} unit &bull; ${formatRupiah(o.harga)}</div>
@@ -290,7 +290,7 @@
             document.getElementById('detailCustomerNotes').innerText = o.catatan || 'Tidak ada catatan pesanan.';
             document.getElementById('detailProductName').innerText = o.nama_produk || '-';
             document.getElementById('detailProductUnitPrice').innerText = `${o.jumlah} unit × ${formatRupiah(o.harga)}`;
-            document.getElementById('detailProductImg').src = o.gambar || '/images/placeholders/default_product.png';
+            document.getElementById('detailProductImg').src = formatProductImg(o.gambar);
             document.getElementById('detailTotalAmount').innerText = formatRupiah(o.total);
 
             let statusBadge = '';

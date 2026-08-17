@@ -36,9 +36,23 @@ class OrderRepo {
 
             db.all(sql, params, (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve((rows || []).map(r => OrderRepo.normalizeOrderRow(r)));
             });
         });
+    }
+
+    static normalizeOrderRow(row) {
+        if (!row) return null;
+        let gambar = row.gambar;
+        if (gambar && !gambar.startsWith('/') && !gambar.startsWith('http://') && !gambar.startsWith('https://')) {
+            gambar = '/uploads/' + gambar;
+        } else if (!gambar) {
+            gambar = '/images/placeholders/default_product.png';
+        }
+        return {
+            ...row,
+            gambar
+        };
     }
 
     static async getOrdersByCustomer(id_pembeli) {
@@ -55,7 +69,7 @@ class OrderRepo {
             `;
             db.all(sql, [id_pembeli], (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve((rows || []).map(r => OrderRepo.normalizeOrderRow(r)));
             });
         });
     }
@@ -72,7 +86,7 @@ class OrderRepo {
             `;
             db.get(sql, [id_pesanan], (err, row) => {
                 if (err) reject(err);
-                else resolve(row);
+                else resolve(row ? OrderRepo.normalizeOrderRow(row) : null);
             });
         });
     }
