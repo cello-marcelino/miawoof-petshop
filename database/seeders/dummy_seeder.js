@@ -239,9 +239,13 @@ db.serialize(() => {
     bookStmt.run(3, 3, '2026-08-17', '13:30', 'menunggu konfirmasi');
     bookStmt.run(2, 4, '2026-08-18', '11:00', 'dikonfirmasi');
     bookStmt.run(4, 5, '2026-08-19', '15:00', 'menunggu konfirmasi');
-    bookStmt.finalize();
-    console.log('✅ 4 Jadwal Reservasi Grooming Dummy berhasil dibuat.');
-
-    console.log('🎉 Seeding MiaWoof Petshop Selesai Sepenuhnya!');
-    setTimeout(() => process.exit(0), 400);
+    bookStmt.finalize(() => {
+        console.log('✅ 4 Jadwal Reservasi Grooming Dummy berhasil dibuat.');
+        console.log('🎉 Seeding MiaWoof Petshop Selesai Sepenuhnya!');
+        db.close((err) => {
+            if (err) console.error('Error closing db:', err.message);
+            else console.log('🔒 Database connection closed.');
+            process.exit(0);
+        });
+    });
 });
